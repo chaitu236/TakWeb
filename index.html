@@ -20,45 +20,56 @@
       var camera, scene, renderer, light;
       var mesh;
 
-      var boardsize;
+      var piece_size = 88;
+      var piece_height = 15;
+      var sq_size = 90;
+      var sq_height = 30;
+
+      var board_squaresize;
       var totpieces;
       var totcaps;
       var mycolor;
 
-      var boardloc = {};
+      var board_squaresloc = {};
 
       var raycaster = new THREE.Raycaster();
       var mouse = new THREE.Vector2();
-      var offset = new THREE.Vector3(), INTERSECTED, SELECTED;
+      var offset = new THREE.Vector3(), INTERSECTED, SELECTED=null, HIGHLIGHTED=null;
       var plane;
 
       var objects = [];
+      var board_squares = [];
+      var board = [];
 
       init();
       animate();
 
-      function addboard() {
+      function addboard_squares() {
         var white_texture = THREE.ImageUtils.loadTexture( 'images/whitesquare2.png' );
         var black_texture = THREE.ImageUtils.loadTexture( 'images/blacksquare2.png' );
 
-        var sq_size = 90;
-        var geometry = new THREE.BoxGeometry( sq_size, 30, sq_size);
+        var geometry = new THREE.BoxGeometry( sq_size, sq_height, sq_size);
 
         var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
         var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
 
-        var startx=-boardsize*sq_size/2.0;
-        var starty=-boardsize*sq_size/2.0;
+        var startx=-(board_squaresize*sq_size)/2.0;
+        var starty=-(board_squaresize*sq_size)/2.0;
 
-        boardloc[0] = startx;
-        boardloc[1] = starty;
-        boardloc[2] = startx+boardsize*sq_size;
-        boardloc[3] = starty+boardsize*sq_size;
+        board_squaresloc[0] = startx;
+        board_squaresloc[1] = starty;
+        board_squaresloc[2] = startx+board_squaresize*sq_size;
+        board_squaresloc[3] = starty+board_squaresize*sq_size;
 
-        for(i=0;i<boardsize;i++){
-          for(j=0;j<boardsize;j++){
+        for(i=0;i<board_squaresize;i++){
+          for(j=0;j<board_squaresize;j++){
             piece = new THREE.Mesh(geometry, ((i+j)%2)?white_material:black_material);
             piece.position.set(startx+i*sq_size, 0, starty+j*sq_size);
+
+            piece.file = i;//String.fromCharCode('A'.charCodeAt(0)+i);
+            piece.rank = board_squaresize-1-j;
+
+            board_squares.push(piece);
             scene.add(piece);
           }
         }
@@ -68,8 +79,6 @@
         var white_texture = THREE.ImageUtils.loadTexture( 'images/whitetile3.png' );
         var black_texture = THREE.ImageUtils.loadTexture( 'images/blacktile3.png' );
 
-        var piece_size = 88;
-        var piece_height = 15;
         var geometry = new THREE.BoxGeometry( piece_size, piece_height, piece_size);
 
         var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
@@ -82,14 +91,14 @@
           var piece;
 
           piece = new THREE.Mesh(geometry, white_material);
-          piece.position.set(boardloc[2]+50, stackheight*piece_height, boardloc[3]-piece_size - stackno*(piece_size+15));
+          piece.position.set(board_squaresloc[2]+50, stackheight*piece_height, board_squaresloc[3]-piece_size - stackno*(piece_size+15));
           piece.iswhitepiece = true;
 
           objects.push(piece);
           scene.add(piece);
 
           piece = new THREE.Mesh(geometry, black_material);
-          piece.position.set(boardloc[0]-50-piece_size, stackheight*piece_height, boardloc[1]+stackno*(piece_size+15));
+          piece.position.set(board_squaresloc[0]-50-piece_size, stackheight*piece_height, board_squaresloc[1]+stackno*(piece_size+15));
           piece.isblackpiece = true;
 
           objects.push(piece);
@@ -106,13 +115,30 @@
 
         scene = new THREE.Scene();
 
-        boardsize = 4;
+        board_squaresize = 4;
         totpieces = 15;
         totcaps = 0;
         mycolor = "white";
 
-        addboard();
+        addboard_squares();
         addpieces();
+
+        for(i=0;i<board_squaresize;i++){
+          board[i] = [];
+          for(j=0;j<board_squaresize;j++){
+            board[i][j] = [];
+            console.log(typeof(board[0][0]), board[0][0]);
+            console.log(i, j, "output", board[i][j].length);
+          }
+        }
+            console.log("tst", board[1]);
+        /*board = new Array(board_squaresize);
+        for(i=0;i<board_squaresize;i++){
+          board[i] = new Array(board_squaresize);
+          for(j=0;j<board_squaresize;j++)
+            board[j] = new Array(0);
+        }*/
+
         plane = new THREE.Mesh(
                 new THREE.PlaneBufferGeometry(2000, 2000, 8, 8),
                 new THREE.MeshBasicMaterial({visible: false})
@@ -135,6 +161,7 @@
 
         document.addEventListener('mousedown', onDocumentMouseDown, false);
         //document.addEventListener('mousemove', onDocumentMouseMove, false);
+        document.addEventListener('mousemove', onDocumentMouseMove2, false);
       }
 
       function onWindowResize() {
@@ -152,6 +179,42 @@
 
         renderer.render( scene, camera );
         controls.update();
+      }
+
+      function onDocumentMouseMove2(e) {
+        e.preventDefault();
+
+        raycaster.setFromCamera(mouse, camera);
+
+        mouse.x = (e.clientX / window.innerWidth)*2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
+
+        if(!SELECTED)
+          return;
+
+        var intersects = raycaster.intersectObjects(board_squares);
+
+        if(intersects.length>0){
+          obj = intersects[0].object;
+          highlight_sq(obj);
+        } else {
+          unhighlight_sq();
+        }
+      }
+
+      function highlight_sq(sq) {
+        if(HIGHLIGHTED && HIGHLIGHTED!=sq){
+          HIGHLIGHTED.position.y=0;
+        }
+        HIGHLIGHTED=sq;
+        HIGHLIGHTED.position.y = 20;
+      }
+
+      function unhighlight_sq() {
+        if(HIGHLIGHTED){
+          HIGHLIGHTED.position.y = 0;
+          HIGHLIGHTED = null;
+        }
       }
 
       function onDocumentMouseMove(e) {
@@ -183,14 +246,44 @@
         }
       }
 
+      function get_stack(sq) {
+        console.log("getstack ", sq.file, sq.rank);
+        console.log(typeof(board[sq.file][sq.rank]), typeof(board[0][0]));
+        return board[sq.file][sq.rank];
+      }
+
+      function unselect() {
+        if(SELECTED != null) {
+          SELECTED.position.y-=5;
+          SELECTED = null;
+        }
+      }
+
       function onDocumentMouseDown(e) {
         e.preventDefault();
 
         mouse.x = (e.clientX / window.innerWidth)*2 - 1;
         mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
 
+        if(HIGHLIGHTED && SELECTED) {
+          st = get_stack(HIGHLIGHTED)
+          hlt = HIGHLIGHTED;
+          unhighlight_sq();
+
+          if(st.length==0){
+            //SELECTED.copy(hlt.position);
+            SELECTED.position.x = hlt.position.x;
+            SELECTED.position.y = sq_height;
+            SELECTED.position.z = hlt.position.z;
+            st.push(SELECTED);
+          }
+            unselect();
+        }
+
+        unhighlight_sq();
+
         if(SELECTED != null) {
-          SELECTED = null;
+          unselect();
           return;
         }
         raycaster.setFromCamera(mouse, camera);
