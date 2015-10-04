@@ -21,10 +21,20 @@
       var mesh;
       var board = {};
 
+      var boardsize;
+      var totpieces;
+      var totcaps;
+      var mycolor;
+
+      var boardloc = {};
+
+      var blackpieces = {};
+      var whitepieces = {};
+
       init();
       animate();
 
-      function addboard(size) {
+      function addboard() {
         var white_texture = THREE.ImageUtils.loadTexture( 'images/whitesquare2.png' );
         var black_texture = THREE.ImageUtils.loadTexture( 'images/blacksquare2.png' );
 
@@ -39,11 +49,16 @@
         mesh.position.set(0, 0, 0);
         //scene.add( mesh );
 
-        var startx=-size*sq_size/2.0;
-        var starty=-size*sq_size/2.0;
+        var startx=-boardsize*sq_size/2.0;
+        var starty=-boardsize*sq_size/2.0;
 
-        for(i=0;i<size;i++){
-          for(j=0;j<size;j++){
+        boardloc[0] = startx;
+        boardloc[1] = starty;
+        boardloc[2] = startx+boardsize*sq_size;
+        boardloc[3] = starty+boardsize*sq_size;
+
+        for(i=0;i<boardsize;i++){
+          for(j=0;j<boardsize;j++){
             board[i] = {};
             board[i][j] = new THREE.Mesh(geometry, ((i+j)%2)?white_material:black_material);
             board[i][j].position.set(startx+i*sq_size, 0, starty+j*sq_size);
@@ -52,6 +67,32 @@
         }
       }
       
+      function addpieces() {
+        var white_texture = THREE.ImageUtils.loadTexture( 'images/whitetile2.png' );
+        var black_texture = THREE.ImageUtils.loadTexture( 'images/blacktile2.png' );
+
+        var piece_size = 88;
+        var piece_height = 15;
+        var geometry = new THREE.BoxGeometry( piece_size, piece_height, piece_size);
+
+        var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
+        var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
+
+        for(i=0;i<totpieces;i++){
+          var stackno = Math.floor(i/10);
+          console.log("i=", i, " stackno=", stackno);
+          var stackheight = i%10;
+
+          whitepieces[i] = new THREE.Mesh(geometry, white_material);
+          whitepieces[i].position.set(boardloc[2]+50, stackheight*piece_height, boardloc[3]-piece_size - stackno*(piece_size+15));
+          scene.add(whitepieces[i]);
+
+          blackpieces[i] = new THREE.Mesh(geometry, black_material);
+          blackpieces[i].position.set(boardloc[0]-50-piece_size, stackheight*piece_height, boardloc[1]+stackno*(piece_size+15));
+          scene.add(blackpieces[i]);
+        }
+      }
+
       function init() {
 
         camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1300 );
@@ -61,7 +102,13 @@
 
         scene = new THREE.Scene();
 
-        addboard(4);
+        boardsize = 4;
+        totpieces = 15;
+        totcaps = 0;
+        mycolor = "white";
+
+        addboard();
+        addpieces();
         //light = new THREE.PointLight(0xFFFF00);
         //light.position.set(10, 0, 10);
         //scene.add(light);
