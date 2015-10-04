@@ -55,9 +55,17 @@
         boardloc[2] = startx+boardsize*sq_size;
         boardloc[3] = starty+boardsize*sq_size;
 
+        if(mycolor == "white") {
+          mymat = white_material;
+          othermat = black_material;
+        }else {
+          mymat = black_material;
+          othermat = white_material;
+        }
+
         for(i=0;i<boardsize;i++){
           for(j=0;j<boardsize;j++){
-            piece = new THREE.Mesh(geometry, ((i+j)%2)?white_material:black_material);
+            piece = new THREE.Mesh(geometry, ((i+j)%2)?mymat:othermat);
             piece.position.set(startx+i*sq_size, 0, starty+j*sq_size);
             scene.add(piece);
           }
@@ -65,8 +73,8 @@
       }
       
       function addpieces() {
-        var white_texture = THREE.ImageUtils.loadTexture( 'images/whitetile2.png' );
-        var black_texture = THREE.ImageUtils.loadTexture( 'images/blacktile2.png' );
+        var white_texture = THREE.ImageUtils.loadTexture( 'images/whitetile3.png' );
+        var black_texture = THREE.ImageUtils.loadTexture( 'images/blacktile3.png' );
 
         var piece_size = 88;
         var piece_height = 15;
@@ -75,21 +83,37 @@
         var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
         var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
 
+        if(mycolor == "white") {
+          mymat = white_material;
+          othermat = black_material;
+        }else {
+          mymat = black_material;
+          othermat = white_material;
+        }
+
         for(i=0;i<totpieces;i++){
           var stackno = Math.floor(i/10);
           var stackheight = i%10;
 
           var piece;
 
-          piece = new THREE.Mesh(geometry, white_material);
+          piece = new THREE.Mesh(geometry, mymat);
           piece.position.set(boardloc[2]+50, stackheight*piece_height, boardloc[3]-piece_size - stackno*(piece_size+15));
-          piece.iswhitepiece = true;
+          if(mycolor == "white")
+            piece.iswhitepiece = true;
+          else
+            piece.isblackpiece = true;
+
           objects.push(piece);
           scene.add(piece);
 
-          piece = new THREE.Mesh(geometry, black_material);
+          piece = new THREE.Mesh(geometry, othermat);
           piece.position.set(boardloc[0]-50-piece_size, stackheight*piece_height, boardloc[1]+stackno*(piece_size+15));
-          piece.isblackpiece = true;
+          if(mycolor == "white")
+            piece.isblackpiece = true;
+          else
+            piece.iswhitepiece = true;
+
           objects.push(piece);
           scene.add(piece);
         }
@@ -132,7 +156,7 @@
         controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         document.addEventListener('mousedown', onDocumentMouseDown, false);
-        document.addEventListener('mousemove', onDocumentMouseMove, false);
+        //document.addEventListener('mousemove', onDocumentMouseMove, false);
       }
 
       function onWindowResize() {
@@ -206,11 +230,6 @@
             }
           }
         }
-      }
-      function onDocumentMouseUp(e) {
-        e.preventDefault();
-        if(INTERSECTED) 
-          plane.position.copy(INTERSECTED.position);
       }
 
     </script>
