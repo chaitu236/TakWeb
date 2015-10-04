@@ -19,7 +19,6 @@
 
       var camera, scene, renderer, light;
       var mesh;
-      var board = {};
 
       var boardsize;
       var totpieces;
@@ -28,11 +27,12 @@
 
       var boardloc = {};
 
-      var blackpieces = {};
-      var whitepieces = {};
-
       var raycaster = new THREE.Raycaster();
       var mouse = new THREE.Vector2();
+      var offset = new THREE.Vector3(), INTERSECTED, SELECTED;
+      var plane;
+
+      var objects = [];
 
       init();
       animate();
@@ -57,10 +57,9 @@
 
         for(i=0;i<boardsize;i++){
           for(j=0;j<boardsize;j++){
-            board[i] = {};
-            board[i][j] = new THREE.Mesh(geometry, ((i+j)%2)?white_material:black_material);
-            board[i][j].position.set(startx+i*sq_size, 0, starty+j*sq_size);
-            scene.add(board[i][j]);
+            piece = new THREE.Mesh(geometry, ((i+j)%2)?white_material:black_material);
+            piece.position.set(startx+i*sq_size, 0, starty+j*sq_size);
+            scene.add(piece);
           }
         }
       }
@@ -80,15 +79,19 @@
           var stackno = Math.floor(i/10);
           var stackheight = i%10;
 
-          whitepieces[i] = new THREE.Mesh(geometry, white_material);
-          whitepieces[i].position.set(boardloc[2]+50, stackheight*piece_height, boardloc[3]-piece_size - stackno*(piece_size+15));
-          whitepieces[i].iswhitepiece = true;
-          scene.add(whitepieces[i]);
+          var piece;
 
-          blackpieces[i] = new THREE.Mesh(geometry, black_material);
-          blackpieces[i].position.set(boardloc[0]-50-piece_size, stackheight*piece_height, boardloc[1]+stackno*(piece_size+15));
-          blackpieces[i].isblackpiece = true;
-          scene.add(blackpieces[i]);
+          piece = new THREE.Mesh(geometry, white_material);
+          piece.position.set(boardloc[2]+50, stackheight*piece_height, boardloc[3]-piece_size - stackno*(piece_size+15));
+          piece.iswhitepiece = true;
+          objects.push(piece);
+          scene.add(piece);
+
+          piece = new THREE.Mesh(geometry, black_material);
+          piece.position.set(boardloc[0]-50-piece_size, stackheight*piece_height, boardloc[1]+stackno*(piece_size+15));
+          piece.isblackpiece = true;
+          objects.push(piece);
+          scene.add(piece);
         }
       }
 
@@ -108,6 +111,11 @@
 
         addboard();
         addpieces();
+        plane = new THREE.Mesh(
+                new THREE.PlaneBufferGeometry(2000, 2000, 8, 8),
+                new THREE.MeshBasicMaterial({visible: false})
+        );
+        scene.add(plane);
         //light = new THREE.PointLight(0xFFFF00);
         //light.position.set(10, 0, 10);
         //scene.add(light);
@@ -124,6 +132,7 @@
         controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         document.addEventListener('mousedown', onDocumentMouseDown, false);
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
       }
 
       function onWindowResize() {
@@ -143,17 +152,65 @@
         controls.update();
       }
 
-      function onDocumentMouseDown(e) {
-        mouse.x = (e.clientX / window.innerWidth)*2 - 1;
-        mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
+      function onDocumentMouseMove(e) {
+        e.preventDefault();
 
         raycaster.setFromCamera(mouse, camera);
 
-        var objs = raycaster.intersectObjects(scene.children);
-        if(objs.length > 0){
-          if(objs[0].object.iswhitepiece || objs[0].object.isblackpiece)
-            objs[0].object.position.y += 30;
+        mouse.x = (e.clientX / window.innerWidth)*2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
+
+        if(SELECTED) {
+          var intersects = raycaster.intersectObject(plane);
+          if(intersects.length > 0) {
+            SELECTED.position.copy(intersects[0].point.sub(offset));
+          }
+          return;
         }
+
+        var intersects = raycaster.intersectObjects(objects);
+        if(intersects.length>0){
+          if(INTERSECTED != intersects[0].object) {
+            INTERSECTED = intersects[0].object;
+
+            plane.position.copy(INTERSECTED.position);
+            plane.lookAt(camera.position);
+          }
+        } else {
+          INTERSECTED = null;
+        }
+      }
+
+      function onDocumentMouseDown(e) {
+        e.preventDefault();
+
+        mouse.x = (e.clientX / window.innerWidth)*2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
+
+        if(SELECTED != null) {
+          SELECTED = null;
+          return;
+        }
+        raycaster.setFromCamera(mouse, camera);
+
+        var intersects = raycaster.intersectObjects(objects);
+
+        if(intersects.length > 0){
+          if(intersects[0].object.iswhitepiece || intersects[0].object.isblackpiece) {
+            intersects[0].object.position.y += 5;
+            SELECTED = intersects[0].object;
+
+            var intersects = raycaster.intersectObject(plane);
+            if(intersects.length > 0) {
+              offset.copy(intersects[0].point).sub(plane.position);
+            }
+          }
+        }
+      }
+      function onDocumentMouseUp(e) {
+        e.preventDefault();
+        if(INTERSECTED) 
+          plane.position.copy(INTERSECTED.position);
       }
 
     </script>
