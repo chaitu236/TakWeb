@@ -27,8 +27,7 @@
 
       var raycaster = new THREE.Raycaster();
       var mouse = new THREE.Vector2();
-      var offset = new THREE.Vector3(), INTERSECTED;
-      var plane;
+      var offset = new THREE.Vector3();
 
       var objects = [];
       var board = {
@@ -107,9 +106,9 @@
         },
         leftclick: function() {
             if(board.highlighted && board.selected) {
-              st = get_stack(board.highlighted)
+              st =  board.get_stack(board.highlighted)
               hlt = board.highlighted;
-              unhighlight_sq();
+              board.unhighlight_sq();
 
               if(st.length==0){
                 //selected.copy(hlt.position);
@@ -118,13 +117,13 @@
                 board.selected.position.z = hlt.position.z;
                 st.push(board.selected);
               }
-                unselect();
+                board.unselect();
             }
 
-            unhighlight_sq();
+            board.unhighlight_sq();
 
-            if(board.selected != null) {
-              unselect();
+            if(board.selected !== null) {
+              board.unselect();
               return;
             }
             raycaster.setFromCamera(mouse, camera);
@@ -135,13 +134,45 @@
               if(!intersects[0].object.onboard) {
                 intersects[0].object.position.y += 5;
                 board.selected = intersects[0].object;
-
-                var intersects = raycaster.intersectObject(plane);
-                if(intersects.length > 0) {
-                  offset.copy(intersects[0].point).sub(plane.position);
-                }
               }
             }
+        },
+        mousemove: function() {
+            raycaster.setFromCamera(mouse, camera);
+
+            if(!board.selected)
+              return;
+
+            var intersects = raycaster.intersectObjects(board.board_objects);
+
+            if(intersects.length>0){
+              obj = intersects[0].object;
+              board.highlight_sq(obj);
+            } else {
+              board.unhighlight_sq();
+            }
+        },
+        unselect: function() {
+            if(board.selected !== null) {
+                board.selected.position.y-=5;
+                board.selected = null;
+            }
+        },
+        highlight_sq: function(sq) {
+          if(board.highlighted && board.highlighted!==sq){
+            board.highlighted.position.y=0;
+          }
+          board.highlighted=sq;
+          board.highlighted.position.y = 20;
+        },
+        unhighlight_sq: function() {
+            if(board.highlighted){
+                board.highlighted.position.y = 0;
+                board.highlighted = null;
+            }
+        },
+        get_stack: function(sq) {
+            return board.sq[sq.file][sq.rank];
         }
       };
 
@@ -149,7 +180,6 @@
       animate();
 
       function init() {
-
         camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1300 );
         //camera = new THREE.PerspectiveCamera( 70, 800/640, 1, 1000 );
         //camera.position.z = 900;
@@ -166,21 +196,6 @@
             board.sq[i][j] = [];
           }
         }
-        /*board = new Array(board.size);
-        for(i=0;i<board.size;i++){
-          board[i] = new Array(board.size);
-          for(j=0;j<board.size;j++)
-            board[j] = new Array(0);
-        }*/
-
-        plane = new THREE.Mesh(
-                new THREE.PlaneBufferGeometry(2000, 2000, 8, 8),
-                new THREE.MeshBasicMaterial({visible: false})
-        );
-        scene.add(plane);
-        //light = new THREE.PointLight(0xFFFF00);
-        //light.position.set(10, 0, 10);
-        //scene.add(light);
 
         renderer = new THREE.WebGLRenderer();
         renderer.setPixelRatio( window.devicePixelRatio );
@@ -194,111 +209,35 @@
         controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         document.addEventListener('mousedown', onDocumentMouseDown, false);
-        //document.addEventListener('mousemove', onDocumentMouseMove, false);
-        document.addEventListener('mousemove', onDocumentMouseMove2, false);
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
       }
 
       function onWindowResize() {
-
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
         renderer.setSize( window.innerWidth, window.innerHeight );
-
       }
 
       function animate() {
-
         requestAnimationFrame( animate );
 
         renderer.render( scene, camera );
         controls.update();
       }
 
-      function onDocumentMouseMove2(e) {
+      function onDocumentMouseMove(e) {
         e.preventDefault();
-
-        raycaster.setFromCamera(mouse, camera);
-
         mouse.x = (e.clientX / window.innerWidth)*2 - 1;
         mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
-
-        if(!board.selected)
-          return;
-
-        var intersects = raycaster.intersectObjects(board.board_objects);
-
-        if(intersects.length>0){
-          obj = intersects[0].object;
-          highlight_sq(obj);
-        } else {
-          unhighlight_sq();
-        }
-      }
-
-      function highlight_sq(sq) {
-        if(board.highlighted && board.highlighted!=sq){
-          board.highlighted.position.y=0;
-        }
-        board.highlighted=sq;
-        board.highlighted.position.y = 20;
-      }
-
-      function unhighlight_sq() {
-        if(board.highlighted){
-          board.highlighted.position.y = 0;
-          board.highlighted = null;
-        }
-      }
-
-      /*function onDocumentMouseMove(e) {
-        e.preventDefault();
-
-        raycaster.setFromCamera(mouse, camera);
-
-        mouse.x = (e.clientX / window.innerWidth)*2 - 1;
-        mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
-
-        if(board.selected) {
-          var intersects = raycaster.intersectObject(plane);
-          if(intersects.length > 0) {
-            board.selected.position.copy(intersects[0].point.sub(offset));
-          }
-          return;
-        }
-
-        var intersects = raycaster.intersectObjects(objects);
-        if(intersects.length>0){
-          if(INTERSECTED != intersects[0].object) {
-            INTERSECTED = intersects[0].object;
-
-            plane.position.copy(INTERSECTED.position);
-            plane.lookAt(camera.position);
-          }
-        } else {
-          INTERSECTED = null;
-        }
-      }*/
-
-      function get_stack(sq) {
-        return board.sq[sq.file][sq.rank];
-      }
-
-      function unselect() {
-        if(board.selected != null) {
-          board.selected.position.y-=5;
-          board.selected = null;
-        }
-      }
-      function isOnBoard(piece) {
-          //if(piece.x < )
+        board.mousemove();
       }
       
       function onDocumentMouseDown(e) {
-            e.preventDefault();
-            mouse.x = (e.clientX / window.innerWidth)*2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
-            board.leftclick();
+        e.preventDefault();
+        mouse.x = (e.clientX / window.innerWidth)*2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
+        board.leftclick();
       }
 
     </script>
