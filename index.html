@@ -22,7 +22,7 @@
       var piece_size = 88;
       var piece_height = 15;
       var sq_size = 90;
-      var sq_height = 30;
+      var sq_height = 15;
 
       var raycaster = new THREE.Raycaster();
       var mouse = new THREE.Vector2();
@@ -153,12 +153,13 @@
                 st =  this.get_stack(this.highlighted);
                 hlt = this.highlighted;
                 this.unhighlight_sq();
+                sel = this.selected;
+                this.unselect();
 
                 //place on board
                 if(st.length===0){
-                  this.push(hlt, this.selected);
+                  this.push(hlt, sel);
                 }
-                this.unselect();
                 return;
             }
 
@@ -175,6 +176,7 @@
                     this.push(this.highlighted, obj);
                     if(this.selectedStack.length === 0) {
                         this.selectedStack = null;
+                        this.unhighlight_sq();
                     }
                 }else{
                     this.unselectStack();
@@ -214,7 +216,6 @@
 
             pc.position.z = sq.position.z;
             pc.onsquare = sq;
-            console.log("y= ", pc.position.y);
             st.push(pc);
         },
         rotate: function(piece) {
@@ -246,7 +247,6 @@
         },
         mousemove: function() {
             raycaster.setFromCamera(mouse, camera);
-            console.log("mm", this.selected, this.selectedStack);
             if(!this.selected && !this.selectedStack)
               return;
 
@@ -260,12 +260,12 @@
             }
         },
         select: function(obj) {
-            obj.position.y += 5;
+            obj.position.y += 50;
             this.selected = obj;
         },
         unselect: function() {
-            if(this.selected !== null) {
-                this.selected.position.y-=5;
+            if(this.selected) {
+                this.selected.position.y-=50;
                 this.selected = null;
             }
         },
