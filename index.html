@@ -31,6 +31,9 @@
       var blackpieces = {};
       var whitepieces = {};
 
+      var raycaster = new THREE.Raycaster();
+      var mouse = new THREE.Vector2();
+
       init();
       animate();
 
@@ -43,11 +46,6 @@
 
         var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
         var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
-        //var material = new THREE.MeshBasicMaterial( { color: 0xff00ff } );
-
-        mesh = new THREE.Mesh( geometry, white_material );
-        mesh.position.set(0, 0, 0);
-        //scene.add( mesh );
 
         var startx=-boardsize*sq_size/2.0;
         var starty=-boardsize*sq_size/2.0;
@@ -80,15 +78,16 @@
 
         for(i=0;i<totpieces;i++){
           var stackno = Math.floor(i/10);
-          console.log("i=", i, " stackno=", stackno);
           var stackheight = i%10;
 
           whitepieces[i] = new THREE.Mesh(geometry, white_material);
           whitepieces[i].position.set(boardloc[2]+50, stackheight*piece_height, boardloc[3]-piece_size - stackno*(piece_size+15));
+          whitepieces[i].iswhitepiece = true;
           scene.add(whitepieces[i]);
 
           blackpieces[i] = new THREE.Mesh(geometry, black_material);
           blackpieces[i].position.set(boardloc[0]-50-piece_size, stackheight*piece_height, boardloc[1]+stackno*(piece_size+15));
+          blackpieces[i].isblackpiece = true;
           scene.add(blackpieces[i]);
         }
       }
@@ -124,6 +123,7 @@
         window.addEventListener( 'resize', onWindowResize, false );
         controls = new THREE.OrbitControls(camera, renderer.domElement);
 
+        document.addEventListener('mousedown', onDocumentMouseDown, false);
       }
 
       function onWindowResize() {
@@ -141,6 +141,19 @@
 
         renderer.render( scene, camera );
         controls.update();
+      }
+
+      function onDocumentMouseDown(e) {
+        mouse.x = (e.clientX / window.innerWidth)*2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight)*2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        var objs = raycaster.intersectObjects(scene.children);
+        if(objs.length > 0){
+          if(objs[0].object.iswhitepiece || objs[0].object.isblackpiece)
+            objs[0].object.position.y += 30;
+        }
       }
 
     </script>
