@@ -84,6 +84,7 @@
             var black_texture = THREE.ImageUtils.loadTexture( 'images/blacksquare2.png' );
 
             var geometry = new THREE.BoxGeometry( sq_size, sq_height, sq_size);
+            geometry.center();
 
             var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
             var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
@@ -115,6 +116,7 @@
             var black_texture = THREE.ImageUtils.loadTexture( 'images/blacktile3.png' );
 
             var geometry = new THREE.BoxGeometry( piece_size, piece_height, piece_size);
+            geometry.center();
 
             var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
             var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
@@ -148,54 +150,72 @@
         },
         leftclick: function() {
             if(this.highlighted && this.selected) {
-              st =  this.get_stack(this.highlighted);
-              hlt = this.highlighted;
-              this.unhighlight_sq();
+                st =  this.get_stack(this.highlighted);
+                hlt = this.highlighted;
+                this.unhighlight_sq();
 
-              //place on board
-              if(st.length===0){
-                this.selected.position.x = hlt.position.x;
-
-                if(this.selected.isstanding)
-                    this.selected.position.y = (piece_size+sq_height)/2+5;
-                else
-                    this.selected.position.y = (piece_height+sq_height)/2+5;
-
-                this.selected.position.z = hlt.position.z;
-                this.selected.onsquare = hlt;
-                st.push(this.selected);
-              }
+                //place on board
+                if(st.length===0){
+                  this.push(hlt, this.selected);
+                }
                 this.unselect();
                 return;
             }
 
-            this.unhighlight_sq();
             //if already selected, return
-            if(this.selected !== null) {
+            if(this.selected) {
               this.unselect();
               return;
             }
-            if(this.selectedStack!=null) {
-                this.unselectStack();
+            if(this.selectedStack) {
+                //move
+                if(this.highlighted && this.selectedStack.length>0){
+                    var obj = this.selectedStack.pop();
+                    this.unselectStackElem(obj);
+                    this.push(this.highlighted, obj);
+                    if(this.selectedStack.length === 0) {
+                        this.selectedStack = null;
+                    }
+                }else{
+                    this.unselectStack();
+                }
                 return;
             }
+
+            this.unhighlight_sq();
 
             raycaster.setFromCamera(mouse, camera);
             var intersects = raycaster.intersectObjects(scene.children);
             //select piece
             if(intersects.length > 0){
                 var obj = intersects[0].object;
-                if(!obj.isboard && obj.onsquare===null) {
+                if(!obj.isboard && !obj.onsquare) {
                     this.select(obj);
                 }
                 //select stack
-                else if(this.selectedStack==null){
+                else if(!this.selectedStack){
                     var sq = obj;
                     if(!obj.isboard)
                         sq = obj.onsquare;
-                    this.selectStack(this.get_stack(sq));
+                    var stk = this.get_stack(sq);
+                    if(stk.length>0)
+                        this.selectStack(stk);
                 }
             }
+        },
+        push: function(sq, pc) {
+            var st =  this.get_stack(sq);
+            pc.position.x = sq.position.x;
+
+            if(pc.isstanding)
+                pc.position.y = sq_height/2 + piece_size/2+piece_height*st.length;
+            else
+                pc.position.y = sq_height + st.length*piece_height;
+
+            pc.position.z = sq.position.z;
+            pc.onsquare = sq;
+            console.log("y= ", pc.position.y);
+            st.push(pc);
         },
         rotate: function(piece) {
             if(piece.isstanding)
@@ -226,8 +246,8 @@
         },
         mousemove: function() {
             raycaster.setFromCamera(mouse, camera);
-
-            if(!this.selected)
+            console.log("mm", this.selected, this.selectedStack);
+            if(!this.selected && !this.selectedStack)
               return;
 
             var intersects = raycaster.intersectObjects(this.board_objects);
@@ -250,28 +270,33 @@
             }
         },
         selectStack: function(stk) {
-            this.selectedStack = stk;
-            for(i=0;i<stk.length;i++){
-                stk[i].position.y+=15;
+            //this.selectedStack = stk;
+            this.selectedStack=[];
+            for(i=0;stk.length>0 && i<this.size;i++){
+                obj = stk.pop();
+                obj.position.y += 50;
+                this.selectedStack.push(obj);
             }
+        },
+        unselectStackElem: function(obj) {
+            obj.position.y -= 50;
         },
         unselectStack: function() {
             var stk = this.selectedStack;
             for(i=0;i<stk.length;i++){
-                stk[i].position.y-=15;
+                this.unselectStackElem(stk[i]);
+                this.push(stk[i].onsquare, stk[i]);
             }
             this.selectedStack = null;
         },
         highlight_sq: function(sq) {
-          if(this.highlighted && this.highlighted!==sq){
-            this.highlighted.position.y=0;
-          }
+          this.unhighlight_sq(this.highlighted);
           this.highlighted=sq;
-          this.highlighted.position.y = 20;
+          this.highlighted.position.y += 10;
         },
         unhighlight_sq: function() {
             if(this.highlighted){
-                this.highlighted.position.y = 0;
+                this.highlighted.position.y -= 10;
                 this.highlighted = null;
             }
         },
