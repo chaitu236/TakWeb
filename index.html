@@ -27,6 +27,7 @@
       var capstone_radius=20;
 
       var raycaster = new THREE.Raycaster();
+      var highlighter;
       var mouse = new THREE.Vector2();
       var offset = new THREE.Vector3();
 
@@ -463,12 +464,12 @@
             return ret;
         },
         select: function(obj) {
-            obj.position.y += 50;
+            obj.position.y += 60;
             this.selected = obj;
         },
         unselect: function() {
             if(this.selected) {
-                this.selected.position.y-=50;
+                this.selected.position.y-=60;
                 this.selected = null;
             }
         },
@@ -498,12 +499,17 @@
         highlight_sq: function(sq) {
           this.unhighlight_sq(this.highlighted);
           this.highlighted=sq;
-          this.highlighted.position.y += 10;
+
+          highlighter.position.x = sq.position.x;
+          highlighter.position.y = sq_height/2;
+          highlighter.position.z = sq.position.z;
+          scene.add(highlighter);
         },
         unhighlight_sq: function() {
             if(this.highlighted){
-                this.highlighted.position.y -= 10;
+                //this.highlighted.position.y -= 10;
                 this.highlighted = null;
+                scene.remove(highlighter);
             }
         },
         get_stack: function(sq) {
@@ -526,9 +532,15 @@
             return false;
         },
         move_stack_over: function(sq, stk) {
+            var top = this.top_of_stack(sq);
+            if(!top)
+                top = sq;
+
             for(i=0;i<stk.length;i++) {
                 this.selectedStack[i].position.x = sq.position.x;
                 this.selectedStack[i].position.z = sq.position.z;
+                this.selectedStack[i].position.y = top.position.y+60;
+                this.selectedStack[i].onsquare = sq;
             }
         }
       };
@@ -556,6 +568,12 @@
 
         window.addEventListener( 'resize', onWindowResize, false );
         controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        var material = new THREE.LineBasicMaterial({color:0x0000f0});
+        var geometry = new THREE.TorusGeometry(sq_size/2+5, 3, 16, 100);
+        //geometry.vertices.shift();
+        highlighter = new THREE.Mesh(geometry, material);
+        highlighter.rotateX(Math.PI/2);
 
         document.addEventListener('mousedown', onDocumentMouseDown, false);
         document.addEventListener('mousemove', onDocumentMouseMove, false);
