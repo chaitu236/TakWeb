@@ -223,6 +223,9 @@
                     this.push(this.highlighted, obj);
                     this.move.squares.push(this.highlighted);
 
+                    if(this.move.squares.length===2)
+                        this.setmovedir();
+
                     if(this.selectedStack.length === 0) {
                         this.move.end = this.highlighted;
                         this.selectedStack = null;
@@ -255,20 +258,35 @@
                     if(stk.length>0) {
                         this.selectStack(stk);
                         this.move.start = sq;
+                        this.move.squares.push(sq);
                     }
                 }
             }
+        },
+        setmovedir: function() {
+            var s1 = this.move.start;
+            var s2 = this.move.squares[1];
+            if(s1.file === s2.file) {
+                if(s2.rank>s1.rank)
+                    this.move.dir='N';
+                else
+                    this.move.dir = 'S';
+            } else {
+                if(s2.file>s1.file)
+                    this.move.dir = 'E';
+                else
+                    this.move.dir = 'W';
+            }
+            console.log('dir=',this.move.dir);
         },
         generateMove: function() {
             var st = this.squarename(this.move.start.file, this.move.start.rank);
             var end  = this.squarename(this.move.end.file, this.move.end.rank);
             var lst=[];
             var prev=null;
-            console.log("sz", this.move.squares.length);
 
             for(i=0,c=0;i<this.move.squares.length;i++){
                 var obj = this.move.squares[i];
-                console.log("sq ", this.squarename(obj.file, obj.rank));
                 if(obj === this.move.start)
                     continue;
 
@@ -276,7 +294,6 @@
                     lst[c-1] = lst[c-1]+1;
                 else {
                     prev = obj;
-                    console.log("cnt ",c);
                     lst[c] = 1;
                     c++;
                 }
@@ -327,16 +344,51 @@
             for(i=0;i<this.piece_objects.length;i++)
                 scene.remove(this.piece_objects[i]);
         },
+        sqrel: function(sq1, sq2){
+            var f1=sq1.file;
+            var r1=sq1.rank;
+            var f2=sq2.file;
+            var r2=sq2.rank;
+            if(f1==f2 && r1==r2)
+                return 'O';
+
+            if(f1===f2){
+                if(r2===r1+1)
+                    return 'N';
+                else if(r1===r2+1)
+                    return 'S';
+            } else if(r1===r2){
+                if(f2===f1+1)
+                    return 'E';
+                else if(f1===f2+1)
+                    return 'W';
+            }
+            return 'OUTSIDE';
+        },
         mousemove: function() {
             raycaster.setFromCamera(mouse, camera);
             if(!this.selected && !this.selectedStack)
               return;
 
-            var intersects = raycaster.intersectObjects(this.board_objects);
+            var intersects = raycaster.intersectObjects(scene.children);
 
             if(intersects.length>0){
-              obj = intersects[0].object;
-              this.highlight_sq(obj);
+                var obj = intersects[0].object;
+                if(!obj.isboard && !obj.onsquare)
+                    return;
+                if(!obj.isboard)
+                    obj = obj.onsquare;
+
+                if(this.selectedStack){
+                    var rel = this.sqrel(this.move.squares[this.move.squares.length-1], obj);
+                    console.log('rel',rel,'dir',this.move.dir);
+                    if(this.move.dir==='U' && rel!=='OUTSIDE')
+                        this.highlight_sq(obj);
+                    else if(this.move.dir===rel || rel==='O')
+                        this.highlight_sq(obj);
+                } else if(this.get_stack(obj).length==0){
+                  this.highlight_sq(obj);
+                }
             } else {
               this.unhighlight_sq();
             }
