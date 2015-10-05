@@ -226,7 +226,6 @@
                     this.move_stack_over(this.highlighted, this.selectedStack);
                     this.move.squares.push(this.highlighted);
 
-                    console.log('dir '+this.move.dir);
                     if(this.move.squares.length>1 && this.move.dir==='U')
                         this.setmovedir();
 
@@ -284,7 +283,10 @@
 
                 if(this.selectedStack){
                     var tp = this.top_of_stack(obj);
-                    if(tp && tp.isstanding && !this.selectedStack[0].iscapstone)
+                    if(tp && tp.iscapstone)
+                        return;
+                    if(tp && tp.isstanding &&
+                            !this.selectedStack[this.selectedStack.length-1].iscapstone)
                         return;
 
                     var prev = this.move.squares[this.move.squares.length-1];
@@ -349,6 +351,10 @@
         },
         push: function(sq, pc) {
             var st =  this.get_stack(sq);
+            var top = this.top_of_stack(sq);
+            if(top && top.isstanding && !top.iscapstone && pc.iscapstone)
+                this.rotate(top);
+
             pc.position.x = sq.position.x;
 
             if(pc.isstanding)
@@ -503,7 +509,7 @@
 
         scene = new THREE.Scene();
 
-        board.init(4, "black");
+        board.init(6, "black");
 
         renderer = new THREE.WebGLRenderer();
         renderer.setPixelRatio( window.devicePixelRatio );
