@@ -442,6 +442,7 @@
             for(i=0;i<stk.length;i++){
                 this.unselectStackElem(stk[i]);
                 this.push(lastsq, stk[i]);
+                this.move.squares.push(lastsq);
             }
             this.selectedStack = null;
         },
