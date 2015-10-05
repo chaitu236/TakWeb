@@ -223,6 +223,7 @@
                     var obj = this.selectedStack.pop();
                     this.unselectStackElem(obj);
                     this.push(this.highlighted, obj);
+                    this.move_stack_over(this.highlighted, this.selectedStack);
                     this.move.squares.push(this.highlighted);
 
                     if(this.move.squares.length===2)
@@ -233,10 +234,11 @@
                         this.selectedStack = null;
                         this.unhighlight_sq();
                         this.generateMove();
-                        this.movecount++;
                     }
                 }else{
+                    this.move.end = this.move.squares[this.move.squares.length-1];
                     this.unselectStack();
+                    this.generateMove();
                 }
                 return;
             }
@@ -263,6 +265,38 @@
                         this.move.squares.push(sq);
                     }
                 }
+            }
+        },
+        mousemove: function() {
+            raycaster.setFromCamera(mouse, camera);
+            if(!this.selected && !this.selectedStack)
+              return;
+
+            var intersects = raycaster.intersectObjects(scene.children);
+
+            if(intersects.length>0){
+                var obj = intersects[0].object;
+                if(!obj.isboard && !obj.onsquare)
+                    return;
+                if(!obj.isboard)
+                    obj = obj.onsquare;
+
+                if(this.selectedStack){
+                    var prev = this.move.squares[this.move.squares.length-1];
+
+                    var rel = this.sqrel(prev, obj);
+                    //console.log("rel=",rel,"obj",this.squarename(obj));
+                    //console.log(this.move.dir);
+
+                    if(this.move.dir==='U' && rel!=='OUTSIDE')
+                        this.highlight_sq(obj);
+                    else if(this.move.dir===rel || rel==='O')
+                        this.highlight_sq(obj);
+                } else if(this.get_stack(obj).length===0){
+                    this.highlight_sq(obj);
+                }
+            } else {
+              this.unhighlight_sq();
             }
         },
         setmovedir: function() {
@@ -299,9 +333,11 @@
                     c++;
                 }
             }
-            
+            if(st!==end){
+                console.log("Move ", this.movecount,st, end, lst);
+                this.movecount++;
+            }
             this.move = {start:null, end:null, dir:'U', squares:[]};
-            console.log("Move ", this.movecount,st, end, lst);
         },
         push: function(sq, pc) {
             var st =  this.get_stack(sq);
@@ -366,36 +402,6 @@
             }
             return 'OUTSIDE';
         },
-        mousemove: function() {
-            raycaster.setFromCamera(mouse, camera);
-            if(!this.selected && !this.selectedStack)
-              return;
-
-            var intersects = raycaster.intersectObjects(scene.children);
-
-            if(intersects.length>0){
-                var obj = intersects[0].object;
-                if(!obj.isboard && !obj.onsquare)
-                    return;
-                if(!obj.isboard)
-                    obj = obj.onsquare;
-
-                if(this.selectedStack){
-                    var prev = this.move.squares[this.move.squares.length-1];
-
-                    var rel = this.sqrel(prev, obj);
-
-                    if(this.move.dir==='U' && rel!=='OUTSIDE')
-                        this.highlight_sq(obj);
-                    else if(this.move.dir===rel || rel==='O')
-                        this.highlight_sq(obj);
-                } else if(this.get_stack(obj).length===0){
-                    this.highlight_sq(obj);
-                }
-            } else {
-              this.unhighlight_sq();
-            }
-        },
         ismymove: function() {
             var ret=false;
             if(this.mycolor==="white" && this.movecount%2===0)
@@ -431,9 +437,11 @@
         },
         unselectStack: function() {
             var stk = this.selectedStack.reverse();
+            var lastsq = this.move.squares[this.move.squares.length-1];
+            //push unselected stack elems onto last moved square
             for(i=0;i<stk.length;i++){
                 this.unselectStackElem(stk[i]);
-                this.push(stk[i].onsquare, stk[i]);
+                this.push(lastsq, stk[i]);
             }
             this.selectedStack = null;
         },
@@ -466,6 +474,12 @@
             if(!ts.iswhitepiece && this.mycolor!=="white")
                 return true;
             return false;
+        },
+        move_stack_over: function(sq, stk) {
+            for(i=0;i<stk.length;i++) {
+                this.selectedStack[i].position.x = sq.position.x;
+                this.selectedStack[i].position.z = sq.position.z;
+            }
         }
       };
 
