@@ -23,6 +23,8 @@
       var piece_height = 15;
       var sq_size = 90;
       var sq_height = 15;
+      var capstone_height=90;
+      var capstone_radius=20;
 
       var raycaster = new THREE.Raycaster();
       var mouse = new THREE.Vector2();
@@ -33,6 +35,7 @@
           totpieces:0,
           totcaps:0,
           mycolor:"white",
+          movecount:0,
           sq:[],
           board_objects: [],
           piece_objects: [],
@@ -62,6 +65,7 @@
               }
               this.mycolor = col;
               this.sq = [];
+              this.movecount = 0;
               this.board_objects = [];
               this.piece_objects = [];
               this.highlighted = null;
@@ -133,6 +137,7 @@
               piece.isstanding = false;
               piece.onsquare = null;
               piece.isboard = false;
+              piece.iscapstone = false;
 
               this.piece_objects.push(piece);
               scene.add(piece);
@@ -143,10 +148,41 @@
               piece.isstanding = false;
               piece.onsquare = null;
               piece.isboard = false;
+              piece.iscapstone =  false;
 
               this.piece_objects.push(piece);
               scene.add(piece);
             }
+            for(i=0;i<this.totcaps;i++){
+                var stackno = Math.floor(this.totpieces/10) + i;
+                var geometry = new THREE.CylinderGeometry(capstone_radius,
+                                    capstone_radius, capstone_height, 30);
+                geometry.center();
+                var piece = new THREE.Mesh(geometry, white_material);
+                piece.position.set(this.position.endx+50, capstone_height/2, this.position.endz-piece_size-stackno*(piece_size+15));
+                piece.iswhitepiece = true;
+                piece.isstanding = true;
+                piece.onsquare = null;
+                piece.isboard = false;
+                piece.iscapstone = true;
+
+                this.piece_objects.push(piece);
+                scene.add(piece);
+
+                piece = new THREE.Mesh(geometry, black_material);
+                piece.position.set(this.position.x-50-capstone_radius, capstone_height/2, this.position.z+stackno*(piece_size+15));
+                piece.iswhitepiece = false;
+                piece.isstanding = true;
+                piece.onsquare = null;
+                piece.isboard = false;
+                piece.iscapstone = true;
+
+                this.piece_objects.push(piece);
+                scene.add(piece);
+            }
+        },
+        file: function(no) {
+            return String.fromCharCode('A'.charCodeAt(0)+no);
         },
         leftclick: function() {
             if(this.highlighted && this.selected) {
@@ -159,6 +195,8 @@
                 //place on board
                 if(st.length===0){
                   this.push(hlt, sel);
+                  console.log("Place ",sel.iswhitepiece?'W':'B',this.file(hlt.file), hlt.rank);
+                  this.movecount++;
                 }
                 return;
             }
@@ -177,6 +215,7 @@
                     if(this.selectedStack.length === 0) {
                         this.selectedStack = null;
                         this.unhighlight_sq();
+                        this.movecount++;
                     }
                 }else{
                     this.unselectStack();
@@ -219,6 +258,8 @@
             st.push(pc);
         },
         rotate: function(piece) {
+            if(piece.iscapstone)
+                return;
             if(piece.isstanding)
                 this.flatten(piece);
             else
@@ -258,6 +299,17 @@
             } else {
               this.unhighlight_sq();
             }
+        },
+        ismymove: function() {
+            var ret=false;
+            if(this.mycolor==="white" && this.movecount%2===0)
+                ret = true;
+            else if (this.mycolor!=="white" && this.movecount%2===1)
+                ret = true;
+            if(this.movecount/2 === 0)
+                ret = ret?false:true;
+
+            return ret;
         },
         select: function(obj) {
             obj.position.y += 50;
@@ -309,10 +361,10 @@
       animate();
 
       function init() {
-        camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1300 );
+        camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1500 );
         //camera = new THREE.PerspectiveCamera( 70, 800/640, 1, 1000 );
         //camera.position.z = 900;
-        camera.position.set(0, 900, 300);
+        camera.position.set(0, 900, 600);
 
         scene = new THREE.Scene();
 
