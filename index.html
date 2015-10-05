@@ -226,7 +226,8 @@
                     this.move_stack_over(this.highlighted, this.selectedStack);
                     this.move.squares.push(this.highlighted);
 
-                    if(this.move.squares.length===2)
+                    console.log('dir '+this.move.dir);
+                    if(this.move.squares.length>1 && this.move.dir==='U')
                         this.setmovedir();
 
                     if(this.selectedStack.length === 0) {
@@ -282,6 +283,10 @@
                     obj = obj.onsquare;
 
                 if(this.selectedStack){
+                    var tp = this.top_of_stack(obj);
+                    if(tp && tp.isstanding && !this.selectedStack[0].iscapstone)
+                        return;
+
                     var prev = this.move.squares[this.move.squares.length-1];
 
                     var rel = this.sqrel(prev, obj);
@@ -302,6 +307,9 @@
         setmovedir: function() {
             var s1 = this.move.start;
             var s2 = this.move.squares[1];
+            if(s1.file === s2.file && s1.rank === s2.rank)
+                return;
+
             if(s1.file === s2.file) {
                 if(s2.rank>s1.rank)
                     this.move.dir='N';
