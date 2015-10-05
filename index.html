@@ -39,6 +39,7 @@
           sq:[],
           board_objects: [],
           piece_objects: [],
+          move: {start:null, end:null, dir:'U', squares:[]},
           highlighted:null,
           selected:null,
           selectedStack:null,
@@ -71,6 +72,7 @@
               this.highlighted = null;
               this.selected = null;
               this.selectedStack = null;
+              this.move = {start:null, end:null, dir:'U', squares:[]};
 
               this.addboard();
               this.addpieces();
@@ -184,6 +186,9 @@
         file: function(no) {
             return String.fromCharCode('A'.charCodeAt(0)+no);
         },
+        squarename: function(file, rank) {
+            return this.file(file)+(rank+1);
+        },
         leftclick: function() {
             if(this.highlighted && this.selected) {
                 st =  this.get_stack(this.highlighted);
@@ -195,7 +200,11 @@
                 //place on board
                 if(st.length===0){
                   this.push(hlt, sel);
-                  console.log("Place ",sel.iswhitepiece?'W':'B',this.file(hlt.file), hlt.rank);
+                  var stone = sel.iscapstone?'Cap':'Piece';
+                  if(sel.isstanding)
+                      stone = 'Wall';
+
+                  console.log("Place ",sel.iswhitepiece?'White':'Black',stone,this.squarename(hlt.file, hlt.rank));
                   this.movecount++;
                 }
                 return;
@@ -212,10 +221,14 @@
                     var obj = this.selectedStack.pop();
                     this.unselectStackElem(obj);
                     this.push(this.highlighted, obj);
+                    this.move.squares.push(this.highlighted);
+
                     if(this.selectedStack.length === 0) {
+                        this.move.end = this.highlighted;
                         this.selectedStack = null;
                         this.unhighlight_sq();
                         this.movecount++;
+                        this.generateMove();
                     }
                 }else{
                     this.unselectStack();
@@ -239,10 +252,38 @@
                     if(!obj.isboard)
                         sq = obj.onsquare;
                     var stk = this.get_stack(sq);
-                    if(stk.length>0)
+                    if(stk.length>0) {
                         this.selectStack(stk);
+                        this.move.start = sq;
+                    }
                 }
             }
+        },
+        generateMove: function() {
+            var st = this.squarename(this.move.start.file, this.move.start.rank);
+            var end  = this.squarename(this.move.end.file, this.move.end.rank);
+            var lst=[];
+            var prev=null;
+            console.log("sz", this.move.squares.length);
+
+            for(i=0,c=0;i<this.move.squares.length;i++){
+                var obj = this.move.squares[i];
+                console.log("sq ", this.squarename(obj.file, obj.rank));
+                if(obj === this.move.start)
+                    continue;
+
+                if(obj===prev)
+                    lst[c-1] = lst[c-1]+1;
+                else {
+                    prev = obj;
+                    console.log("cnt ",c);
+                    lst[c] = 1;
+                    c++;
+                }
+            }
+            
+            this.move = {start:null, end:null, dir:'U', squares:[]};
+            console.log("Move",st, end, lst);
         },
         push: function(sq, pc) {
             var st =  this.get_stack(sq);
@@ -334,7 +375,7 @@
             obj.position.y -= 50;
         },
         unselectStack: function() {
-            var stk = this.selectedStack;
+            var stk = this.selectedStack.reverse();
             for(i=0;i<stk.length;i++){
                 this.unselectStackElem(stk[i]);
                 this.push(stk[i].onsquare, stk[i]);
