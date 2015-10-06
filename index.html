@@ -34,6 +34,7 @@
                   <tr><td><textarea id="tarea"></textarea></td></tr>
                   <tr><td><input type="text" id="input"></td></tr>
                   <tr><td><button onclick="buttonclick()">Send</button></td></tr>
+                  <tr><td><button onclick="server.init()">Connect</button></td></tr>
               </table>
           </div>
         <div>
@@ -665,8 +666,6 @@
 
         canvas.addEventListener('mousedown', onDocumentMouseDown, false);
         canvas.addEventListener('mousemove', onDocumentMouseMove, false);
-
-        server.init();
       }
  
       function onWindowResize() {
