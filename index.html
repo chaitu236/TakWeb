@@ -72,6 +72,7 @@
           highlighted:null,
           selected:null,
           selectedStack:null,
+          ismymove:false,
           
           position:{x:0, y:0, endx:0, endz:0},
           
@@ -106,6 +107,7 @@
               this.selected = null;
               this.selectedStack = null;
               this.move = {start:null, end:null, dir:'U', squares:[]};
+              this.ismymove = this.checkifmymove();
 
               this.addboard();
               this.addpieces();
@@ -230,8 +232,12 @@
                 else
                     this.mycolor = "white";
             }
+            this.ismymove = this.checkifmymove();
         },
         leftclick: function() {
+            if(!this.ismymove)
+                return;
+
             if(this.highlighted && this.selected) {
                 st =  this.get_stack(this.highlighted);
                 hlt = this.highlighted;
@@ -307,15 +313,13 @@
             if(intersects.length > 0){
                 var obj = intersects[0].object;
                 if(!obj.isboard && !obj.onsquare) {
-                    if(this.mycolor === "white" && !obj.iswhitepiece)
-                        return;
-                    if(this.mycolor!=="white" && obj.iswhitepiece)
+                    if(obj.iswhitepiece !== this.is_white_piece_to_move())
                         return;
 
                     this.select(obj);
                 }
-                //select stack
-                else if(!this.selectedStack){
+                //select stack ... no stack selection on 1st moves
+                else if(!this.selectedStack && this.movecount/2!==0){
                     var sq = obj;
                     if(!obj.isboard)
                         sq = obj.onsquare;
@@ -329,6 +333,9 @@
             }
         },
         mousemove: function() {
+            if(!this.ismymove)
+                return;
+
             raycaster.setFromCamera(mouse, camera);
             if(!this.selected && !this.selectedStack)
               return;
@@ -465,7 +472,7 @@
             piece.isstanding = true;
         },
         rightclick: function() {
-            if(this.selected){
+            if(this.selected && this.movecount/2!==0){
                 this.rotate(this.selected);
             }
         },
@@ -496,16 +503,16 @@
             }
             return 'OUTSIDE';
         },
-        ismymove: function() {
-            var ret=false;
-            if(this.mycolor==="white" && this.movecount%2===0)
-                ret = true;
-            else if (this.mycolor!=="white" && this.movecount%2===1)
-                ret = true;
-            if(this.movecount/2 === 0)
-                ret = ret?false:true;
-
-            return ret;
+        checkifmymove: function() {
+            var tomove = (this.movecount%2===0)?"white":"black";
+            return tomove===this.mycolor;
+        },
+        is_white_piece_to_move: function() {
+            if(this.movecount===0)
+                return false;
+            if(this.movecount===1)
+                return true;
+            return this.movecount%2===0;
         },
         select: function(obj) {
             obj.position.y += 60;
@@ -633,7 +640,7 @@
 
         scene = new THREE.Scene();
 
-        board.init(4, "black", true);
+        board.init(4, "white", true);
 
         renderer = new THREE.WebGLRenderer({canvas: canvas});
         renderer.setPixelRatio( window.devicePixelRatio );
