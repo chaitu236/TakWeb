@@ -74,11 +74,15 @@
           selected:null,
           selectedStack:null,
           ismymove:false,
+          server: null,
+          gameno: 0,
+          boardside:"white",
           
           position:{x:0, y:0, endx:0, endz:0},
           
           init: function(sz, col, scr) {
-              this.size = sz;
+              this.size = sz
+
               if(sz===4) {
                   this.totpieces = 15;
                   this.totcaps = 0;
@@ -110,15 +114,18 @@
               this.move = {start:null, end:null, dir:'U', squares:[]};
               this.ismymove = this.checkifmymove();
 
-              this.addboard();
-              this.addpieces();
-
               for(i=0;i<this.size;i++){
                 this.sq[i] = [];
                 for(j=0;j<this.size;j++){
                   this.sq[i][j] = [];
                 }
               }
+
+              this.addboard();
+              this.addpieces();
+
+              if(this.mycolor!==this.boardside)
+                  this.reverseboard();
           },
 
           addboard: function() {
@@ -149,6 +156,7 @@
                 piece.isboard = true;
 
                 this.board_objects.push(piece);
+                this.sq[i][j].board_object = piece;
                 scene.add(piece);
               }
             }
@@ -225,6 +233,9 @@
         squarename: function(file, rank) {
             return this.file(file)+(rank+1);
         },
+        get_board_obj: function(file, rank) {
+            return this.sq[file][this.size-1 -rank].board_object;
+        },
         incmovecnt: function() {
             this.movecount++;
             if(this.scratch) {
@@ -256,6 +267,11 @@
                     console.log("Place ",this.movecount,
                       sel.iswhitepiece?'White':'Black',stone,
                       this.squarename(hlt.file, hlt.rank));
+
+                    var msg = "P "+this.squarename(hlt.file, hlt.rank);
+                    if(stone!=='Piece')
+                        msg += " "+stone.charAt(0);
+                    this.sendmove(msg);
 
                     var pcs;
                     if(this.mycolor==="white"){
@@ -379,6 +395,49 @@
               this.unhighlight_sq();
             }
         },
+        sendmove: function(e) {
+            if(!this.server)
+                return;
+            server.send("Game#"+this.gameno+" "+e);
+        },
+        getfromstack: function(cap){
+            //randomly get any piece
+            var col = this.is_white_piece_to_move();
+            for(i=0;i<this.piece_objects.length;i++){
+                var obj = this.piece_objects[i];
+                if(!obj.onsquare && (obj.iswhitepiece === col)){
+                    if(cap) {
+                        if(obj.iscapstone)
+                            return obj;
+                    } else {
+                        return obj;
+                    }
+                }
+            }
+            return null;
+        },
+        //move the server sends
+        serverPmove: function(file, rank, caporwall) {
+            var obj = this.getfromstack((caporwall==='C'));
+            console.log('got', file, rank, caporwall);
+            if(!obj){
+                console.log("something is wrong");
+                return;
+            }
+            if(caporwall==='W')
+                this.standup(obj);
+
+            //this.select(obj);
+            var hlt = this.get_board_obj(file.charCodeAt(0)-'A'.charCodeAt(0), rank-1);
+            //this.highlight_sq(hlt);
+            this.push(hlt, obj);
+
+            //this.unhighlight_sq();
+            //this.unselect();
+
+            this.incmovecnt();
+            console.log('moves', this.movecount);
+        },
         gameover: function() {
             console.log('gameover');
             this.scratch = true;
@@ -397,6 +456,7 @@
         },
         reverseboard: function() {
             camera.position.z = -camera.position.z;
+            this.boardside = (this.boardside==="white")?"black":"white";
         },
         setmovedir: function() {
             var s1 = this.move.start;
@@ -467,11 +527,15 @@
                 this.standup(piece);
         },
         flatten: function(piece) {
+            if(!piece.isstanding)
+                return;
             piece.position.y -= piece_size/2-piece_height/2;
             piece.rotateX(Math.PI/2);
             piece.isstanding = false;
         },
         standup: function(piece) {
+            if(piece.isstanding)
+                return;
             piece.position.y+=piece_size/2-piece_height/2;
             piece.rotateX(-Math.PI/2);
             piece.isstanding = true;
@@ -605,6 +669,7 @@
           connection:null,
           init: function() {
                 this.connection = new WebSocket('ws://localhost:2000', "binary");
+                board.server = this;
                 this.connection.onerror = function(e) {
                     this.output("Connection error: "+e);
                 };
@@ -619,7 +684,22 @@
           },
           msg: function(e) {
             output(e);
-            server.send("hii");
+            if(e.indexOf("Game Start") > -1){
+                //Game Start no. size player_white vs player_black yourcolor
+                var spl = e.split(" ");
+                board.newgame(Number(spl[3]), spl[7].trim());
+                board.gameno = Number(spl[2]);
+            } else if(e.indexOf("Game#") > -1) {
+                //Game#1 P A4 (C|W)
+                if(e.indexOf(" P ")>-1){
+                    var spl = e.split(" ");
+                    board.serverPmove(spl[2].charAt(0), Number(spl[2].charAt(1)), spl[3]);
+                }
+                //Game#1 M A2 A5 2 1
+                else if (e.indexOf(" M ")>-1){
+
+                }
+            }
           },
           send: function(e) {
               if(this.connection)
