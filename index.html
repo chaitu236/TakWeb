@@ -59,10 +59,10 @@
 
       var board = {
           size:0,
-          totpieces:0,
+          totcaps:0,
+          tottiles:0,
           whitepiecesleft:0,
           blackpiecesleft:0,
-          totcaps:0,
           mycolor:"white",
           movecount:0,
           scratch:true,
@@ -77,30 +77,30 @@
           server: null,
           gameno: 0,
           boardside:"white",
-          
+
           position:{x:0, y:0, endx:0, endz:0},
-          
+
           init: function(sz, col, scr) {
               this.size = sz
 
               if(sz===4) {
-                  this.totpieces = 15;
                   this.totcaps = 0;
+                  this.tottiles = 15;
               } else if (sz === 5){
-                  this.totpieces = 20;
-                  this.totcaps = 0;
-              } else if (sz === 6) {
-                  this.totpieces = 30;
                   this.totcaps = 1;
+                  this.tottiles = 20;
+              } else if (sz === 6) {
+                  this.totcaps = 1;
+                  this.tottiles = 30;
               } else if (sz === 7) {
-                  this.totpieces = 40;
                   this.totcaps = 2;
+                  this.tottiles = 40;
               } else {
-                  this.totpieces = 50;
                   this.totcaps = 2;
+                  this.tottiles = 50;
               }
-              this.whitepiecesleft = this.totpieces + this.totcaps;
-              this.blackpiecesleft = this.totpieces + this.totcaps;
+              this.whitepiecesleft = this.tottiles + this.totcaps;
+              this.blackpiecesleft = this.tottiles + this.totcaps;
 
               this.mycolor = col;
               this.sq = [];
@@ -171,7 +171,7 @@
             var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
             var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
 
-            for(i=0;i<this.totpieces;i++){
+            for(i=0;i<this.tottiles;i++){
               var stackno = Math.floor(i/10);
               var stackheight = i%10;
 
@@ -200,7 +200,7 @@
               scene.add(piece);
             }
             for(i=0;i<this.totcaps;i++){
-                var stackno = Math.floor(this.totpieces/10) + i;
+                var stackno = Math.floor(this.tottiles/10) + i;
                 var geometry = new THREE.CylinderGeometry(capstone_radius,
                                     capstone_radius, capstone_height, 30);
                 geometry.center();
@@ -247,8 +247,10 @@
             this.ismymove = this.checkifmymove();
         },
         leftclick: function() {
-            if(!this.ismymove)
+            if(!this.ismymove) {
+                console.log('not ur move');
                 return;
+            }
 
             if(this.highlighted && this.selected) {
                 st =  this.get_stack(this.highlighted);
@@ -260,9 +262,9 @@
                 //place on board
                 if(st.length===0){
                     this.push(hlt, sel);
-                    var stone = sel.iscapstone?'Cap':'Piece';
                     if(sel.isstanding)
-                        stone = 'Wall';
+                        var stone = 'Wall';
+                        stone = sel.iscapstone?'Cap':'Piece';
 
                     console.log("Place ",this.movecount,
                       sel.iswhitepiece?'White':'Black',stone,
@@ -334,13 +336,13 @@
                     if(obj.iswhitepiece !== this.is_white_piece_to_move())
                         return;
                     //no capstone move on 1st moves
-                    if(this.movecount/2===0 && obj.iscapstone)
+                    if(Math.floor(this.movecount/2)===0 && obj.iscapstone)
                         return;
 
                     this.select(obj);
                 }
                 //select stack ... no stack selection on 1st moves
-                else if(!this.selectedStack && this.movecount/2!==0){
+                else if(!this.selectedStack && Math.floor(this.movecount/2)!==0){
                     var sq = obj;
                     if(!obj.isboard)
                         sq = obj.onsquare;
@@ -424,8 +426,10 @@
                 console.log("something is wrong");
                 return;
             }
-            if(caporwall==='W')
+
+            if(caporwall==='W') {
                 this.standup(obj);
+            }
 
             //this.select(obj);
             var hlt = this.get_board_obj(file.charCodeAt(0)-'A'.charCodeAt(0), rank-1);
@@ -436,7 +440,7 @@
             //this.unselect();
 
             this.incmovecnt();
-            console.log('moves', this.movecount);
+            console.log('moves', this.movecount, this.ismymove);
         },
         gameover: function() {
             console.log('gameover');
@@ -541,7 +545,7 @@
             piece.isstanding = true;
         },
         rightclick: function() {
-            if(this.selected && this.movecount/2!==0){
+            if(this.selected && Math.floor(this.movecount/2)!==0){
                 this.rotate(this.selected);
             }
         },
@@ -574,6 +578,7 @@
         },
         checkifmymove: function() {
             var tomove = (this.movecount%2===0)?"white":"black";
+            console.log('tomove = ', tomove, this.mycolor, tomove===this.mycolor);
             return tomove===this.mycolor;
         },
         is_white_piece_to_move: function() {
@@ -683,11 +688,12 @@
                 };
           },
           msg: function(e) {
+            e = e.trim();
             output(e);
             if(e.indexOf("Game Start") > -1){
                 //Game Start no. size player_white vs player_black yourcolor
                 var spl = e.split(" ");
-                board.newgame(Number(spl[3]), spl[7].trim());
+                board.newgame(Number(spl[3]), spl[7]);
                 board.gameno = Number(spl[2]);
             } else if(e.indexOf("Game#") > -1) {
                 //Game#1 P A4 (C|W)
