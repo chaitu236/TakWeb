@@ -312,8 +312,12 @@
             //select piece
             if(intersects.length > 0){
                 var obj = intersects[0].object;
+
                 if(!obj.isboard && !obj.onsquare) {
                     if(obj.iswhitepiece !== this.is_white_piece_to_move())
+                        return;
+                    //no capstone move on 1st moves
+                    if(this.movecount/2===0 && obj.iscapstone)
                         return;
 
                     this.select(obj);
@@ -640,7 +644,7 @@
 
         scene = new THREE.Scene();
 
-        board.init(4, "white", true);
+        board.init(6, "white", true);
 
         renderer = new THREE.WebGLRenderer({canvas: canvas});
         renderer.setPixelRatio( window.devicePixelRatio );
