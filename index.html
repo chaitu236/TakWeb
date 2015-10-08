@@ -35,6 +35,15 @@
                   <tr><td><input type="text" id="input"></td></tr>
                   <tr><td><button onclick="buttonclick()">Send</button></td></tr>
                   <tr><td><button onclick="server.init()">Connect</button></td></tr>
+                  <tr><td>
+                          <select id="seek">
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                          </select></td>
+                      <td><button onclick="server.seek()">Seek</button></td></tr>
               </table>
           </div>
         <div>
@@ -401,7 +410,7 @@
             }
         },
         sendmove: function(e) {
-            if(!this.server)
+            if(!this.server || this.scratch)
                 return;
             server.send("Game#"+this.gameno+" "+e);
         },
@@ -424,7 +433,7 @@
         //move the server sends
         serverPmove: function(file, rank, caporwall) {
             var obj = this.getfromstack((caporwall==='C'));
-            console.log('got', file, rank, caporwall);
+            //console.log('got', file, rank, caporwall);
             if(!obj){
                 console.log("something is wrong");
                 return;
@@ -443,7 +452,7 @@
             //this.unselect();
 
             this.incmovecnt();
-            console.log('moves', this.movecount, this.ismymove);
+            //console.log('moves', this.movecount, this.ismymove);
         },
         //Move move the server sends
         serverMmove: function(f1, r1, f2, r2, nums) {
@@ -472,8 +481,10 @@
             this.incmovecnt();
         },
         gameover: function() {
-            console.log('gameover');
-            this.scratch = true;
+            if(this.gameno===0) {
+                console.log('gameover');
+                this.scratch = true;
+            }
         },
         newgame: function(sz, col) {
             this.clear();
@@ -611,7 +622,7 @@
         },
         checkifmymove: function() {
             var tomove = (this.movecount%2===0)?"white":"black";
-            console.log('tomove = ', tomove, this.mycolor, tomove===this.mycolor);
+            //console.log('tomove = ', tomove, this.mycolor, tomove===this.mycolor);
             return tomove===this.mycolor;
         },
         is_white_piece_to_move: function() {
@@ -721,8 +732,8 @@
                 };
           },
           msg: function(e) {
-            e = e.trim();
             output(e);
+            e = e.trim();
             if(e.indexOf("Game Start") > -1){
                 //Game Start no. size player_white vs player_black yourcolor
                 var spl = e.split(" ");
@@ -744,14 +755,37 @@
                                       spl[3].charAt(0), Number(spl[3].charAt(1)),
                                       nums);
                 }
+            } else if (e.indexOf("Game Over")>-1){
+                //Game Over 1
+                //var spl = e.slit(" ");
+                board.scratch = true;
+                window.alert("Game over");
+            } else if (e.indexOf("Name?")>-1){
+                var name;
+                if((name = window.prompt("Handle", "")))
+                    server.send("Name "+name);
+                else {
+                    this.connection.close();
+                    this.connection = null;
+                }
+            } else if (e.indexOf("Message")>-1){
+                var msg = e.split("Message ");
+                window.alert(msg[1]);
             }
           },
           send: function(e) {
               if(this.connection)
                 this.connection.send(e+"\n");
               else
-                output("Error: Not connected to server");
-          }
+                this.error("Error: Not connected to server");
+          },
+          error: function(e) {
+              window.alert(e);
+          },
+          seek: function(e) {
+              var input = document.getElementById("seek");
+              this.send("Seek "+4+input.selectedIndex);
+          },
       };
 
       init();
