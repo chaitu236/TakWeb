@@ -43,7 +43,21 @@
                               <option value="7">7</option>
                               <option value="8">8</option>
                           </select></td>
-                      <td><button onclick="server.seek()">Seek</button></td></tr>
+                      <td><button onclick="server.seek()">Seek</button></td>
+                  </tr>
+                  <tr><td>
+                          <select id="scratchsize">
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                          </select></td>
+                          <td><button id="scratchbutton" onclick="scratchbutton()">Scratch Board</td>
+                  </tr>
+                  <tr><td><button onclick="board.reverseboard()">Reverse Board</button>
+                      </td></tr>
+                  <tr><td><select size="10" name="Seeks" id="seeklist"></select></td></tr>
               </table>
           </div>
         <div>
@@ -717,7 +731,8 @@
       var server = {
           connection:null,
           init: function() {
-                this.connection = new WebSocket('ws://localhost:2000', "binary");
+                this.connection = new WebSocket('ws://'+window.location.host,
+                                        "binary");
                 board.server = this;
                 this.connection.onerror = function(e) {
                     this.output("Connection error: "+e);
@@ -739,6 +754,7 @@
                 var spl = e.split(" ");
                 board.newgame(Number(spl[3]), spl[7]);
                 board.gameno = Number(spl[2]);
+                document.getElementById("scratchbutton").disabled = true;
             } else if(e.indexOf("Game#") > -1) {
                 //Game#1 P A4 (C|W)
                 if(e.indexOf(" P ")>-1){
@@ -755,14 +771,21 @@
                                       spl[3].charAt(0), Number(spl[3].charAt(1)),
                                       nums);
                 }
-            } else if (e.indexOf("Game Over")>-1){
-                //Game Over 1
-                //var spl = e.slit(" ");
-                board.scratch = true;
-                window.alert("Game over");
+                //Over
+                else if (e.indexOf("Over")>-1){
+                    board.scratch = true;
+                    window.alert("Game over");
+                    document.getElementById("scratchbutton").disabled = false;
+                }
+                //Abandoned
+                else if (e.indexOf("Abandoned")>-1){
+                    board.scratch = true;
+                    window.alert("Game abandoned by your opponent");
+                    document.getElementById("scratchbutton").disabled = false;
+                }
             } else if (e.indexOf("Name?")>-1){
-                var name;
-                if((name = window.prompt("Handle", "")))
+                var name = window.prompt("Enter your name", "");
+                if(name)
                     server.send("Name "+name);
                 else {
                     this.connection.close();
@@ -771,6 +794,33 @@
             } else if (e.indexOf("Message")>-1){
                 var msg = e.split("Message ");
                 window.alert(msg[1]);
+            }
+            //new seek
+            else if (e.indexOf("Seek new")>-1){
+                //Seek new 1 chaitu 5
+                var spl = e.split("Seek new ");
+
+                var lst = document.getElementById("seeklist");
+                var entry = document.createElement('option');
+                entry.appendChild(document.createTextNode(spl[1]));
+                lst.appendChild(entry);
+            }
+            //remove seek
+            else if (e.indexOf("Seek remove")>-1){
+                //Seek remove 1 chaitu 5
+                var spl = e.split("Seek remove ");
+                var lst = document.getElementById("seeklist");
+                console.log('rm ', spl[1]);
+
+                for(i=0;i<lst.options.length;i++){
+                    var opt = lst.options[i];
+                    //console.log(opt.value);
+                    if(opt.value === spl[1]) {
+                        console.log('hr');
+                        lst.removeChild(opt);
+                        break;
+                    }
+                }
             }
           },
           send: function(e) {
@@ -784,7 +834,7 @@
           },
           seek: function(e) {
               var input = document.getElementById("seek");
-              this.send("Seek "+4+input.selectedIndex);
+              this.send("Seek "+(4+input.selectedIndex));
           },
       };
 
@@ -875,6 +925,14 @@
           var data = input.value;
           input.value = "";
           server.send(data);
+      }
+
+      function scratchbutton() {
+          var input = document.getElementById("scratchsize");
+          if(board.scratch){
+              board.clear();
+              board.init(4+input.selectedIndex, "white", true);
+          }
       }
 
     </script>
