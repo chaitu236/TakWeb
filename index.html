@@ -147,7 +147,7 @@
 
               this.addboard();
               this.addpieces();
-              turnindicator.position.set(-piece_size/2, 0, this.position.endz+10);
+              turnindicator.position.set(0, 0, this.position.endz+10);
 
               if(this.mycolor!==this.boardside)
                   this.reverseboard();
@@ -163,7 +163,7 @@
             var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
             var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
 
-            var startx=-(this.size*sq_size)/2.0;
+            var startx=-(this.size*sq_size)/2.0+sq_size/2;
             var startz=-(this.size*sq_size)/2.0;
 
             this.position.x = startx;
@@ -241,7 +241,7 @@
                 scene.add(piece);
 
                 piece = new THREE.Mesh(geometry, black_material);
-                piece.position.set(this.position.x-50-capstone_radius, capstone_height/2, this.position.z+stackno*(piece_size+15));
+                piece.position.set(this.position.x-50-piece_size, capstone_height/2, this.position.z+stackno*(piece_size+15));
                 piece.iswhitepiece = false;
                 piece.isstanding = true;
                 piece.onsquare = null;
@@ -848,7 +848,7 @@
           seek: function(e) {
               var input = document.getElementById("seek");
               this.send("Seek "+(4+input.selectedIndex));
-          },
+          }
       };
 
       init();
