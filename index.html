@@ -74,9 +74,10 @@
       var sq_height = 15;
       var capstone_height=90;
       var capstone_radius=20;
+      var stack_selection_height = 60;
 
       var raycaster = new THREE.Raycaster();
-      var highlighter;
+      var highlighter, turnindicator;
       var mouse = new THREE.Vector2();
       var offset = new THREE.Vector3();
 
@@ -146,6 +147,7 @@
 
               this.addboard();
               this.addpieces();
+              turnindicator.position.set(0, 0, this.position.endz+10);
 
               if(this.mycolor!==this.boardside)
                   this.reverseboard();
@@ -267,6 +269,9 @@
                 else
                     this.mycolor = "white";
             }
+            turnindicator.position.z = -turnindicator.position.z-80;
+            turnindicator.rotateX(Math.PI);
+
             this.ismymove = this.checkifmymove();
         },
         leftclick: function() {
@@ -328,7 +333,7 @@
                 //move
                 if(this.highlighted && this.selectedStack.length>0){
                     var obj = this.selectedStack.pop();
-                    this.unselectStackElem(obj);
+                    //this.unselectStackElem(obj);
                     this.push(this.highlighted, obj);
                     this.move_stack_over(this.highlighted, this.selectedStack);
                     this.move.squares.push(this.highlighted);
@@ -647,12 +652,12 @@
             return this.movecount%2===0;
         },
         select: function(obj) {
-            obj.position.y += 60;
+            obj.position.y += stack_selection_height;
             this.selected = obj;
         },
         unselect: function() {
             if(this.selected) {
-                this.selected.position.y-=60;
+                this.selected.position.y-=stack_selection_height;
                 this.selected = null;
             }
         },
@@ -661,12 +666,12 @@
             this.selectedStack=[];
             for(i=0;stk.length>0 && i<this.size;i++){
                 obj = stk.pop();
-                obj.position.y += 50;
+                obj.position.y += stack_selection_height;
                 this.selectedStack.push(obj);
             }
         },
         unselectStackElem: function(obj) {
-            obj.position.y -= 50;
+            obj.position.y -= stack_selection_height;
         },
         unselectStack: function() {
             var stk = this.selectedStack.reverse();
@@ -715,15 +720,23 @@
             return false;
         },
         move_stack_over: function(sq, stk) {
+            if(stk.length===0)
+                return;
             var top = this.top_of_stack(sq);
             if(!top)
                 top = sq;
 
+            var ts=stk[stk.length-1];
+            if(ts.onsquare === sq)
+                return;
+
+            var diffy = ts.position.y - top.position.y;
+
             for(i=0;i<stk.length;i++) {
-                this.selectedStack[i].position.x = sq.position.x;
-                this.selectedStack[i].position.z = sq.position.z;
-                this.selectedStack[i].position.y = top.position.y+60;
-                this.selectedStack[i].onsquare = sq;
+                stk[i].position.x = sq.position.x;
+                stk[i].position.z = sq.position.z;
+                stk[i].position.y += stack_selection_height-diffy;
+                stk[i].onsquare = sq;
             }
         }
       };
@@ -854,8 +867,6 @@
 
         scene = new THREE.Scene();
 
-        board.init(6, "white", true);
-
         renderer = new THREE.WebGLRenderer({canvas: canvas});
         renderer.setPixelRatio( window.devicePixelRatio );
         //renderer.setSize( window.innerWidth, window.innerHeight );
@@ -873,8 +884,15 @@
         highlighter = new THREE.Mesh(geometry, material);
         highlighter.rotateX(Math.PI/2);
 
+        var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
+        turnindicator = new THREE.Mesh(pyramid, material);
+        turnindicator.rotateX(-Math.PI/2);
+        scene.add(turnindicator);
+
         canvas.addEventListener('mousedown', onDocumentMouseDown, false);
         canvas.addEventListener('mousemove', onDocumentMouseMove, false);
+
+        board.init(6, "white", true);
       }
  
       function onWindowResize() {
