@@ -34,17 +34,6 @@
                   <tr><td><textarea id="tarea"></textarea></td></tr>
                   <tr><td><input type="text" id="input"></td></tr>
                   <tr><td><button onclick="buttonclick()">Send</button></td></tr>
-                  <tr><td><button onclick="server.init()">Connect</button></td></tr>
-                  <tr><td>
-                          <select id="seek">
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                          </select></td>
-                      <td><button onclick="server.seek()">Seek</button></td>
-                  </tr>
                   <tr><td>
                           <select id="scratchsize">
                               <option value="4">4</option>
@@ -55,8 +44,18 @@
                           </select></td>
                           <td><button id="scratchbutton" onclick="scratchbutton()">Scratch Board</td>
                   </tr>
-                  <tr><td><button onclick="board.reverseboard()">Reverse Board</button>
-                      </td></tr>
+                  <tr><td><button onclick="board.reverseboard()">Reverse Board</button></td></tr>
+                  <tr><td><button onclick="server.init()">Multiplayer</button></td></tr>
+                  <tr><td>
+                          <select id="seek">
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                          </select></td>
+                      <td><button onclick="server.seek()">Seek</button></td>
+                  </tr>
                   <tr><td><select size="10" name="Seeks" id="seeklist"></select></td>
                       <td>
                           <button onclick="server.acceptseek()">Accept Seek</button>
@@ -285,8 +284,7 @@
             this.ismymove = this.checkifmymove();
         },
         leftclick: function() {
-            if(!this.ismymove && !this.scratch) {
-                console.log('not ur move');
+            if(!this.ismymove) {
                 return;
             }
 
@@ -397,7 +395,7 @@
             }
         },
         mousemove: function() {
-            if(!this.ismymove && !this.scratch)
+            if(!this.ismymove)
                 return;
 
             raycaster.setFromCamera(mouse, camera);
@@ -850,7 +848,6 @@
                     }
                 }
             }
-            console.log('returning from msg');
           },
           send: function(e) {
               if(this.connection)
@@ -885,7 +882,7 @@
         canvas.width = window.innerWidth - sidebar.offsetWidth;
         canvas.height = window.innerHeight;
 
-        camera = new THREE.PerspectiveCamera( 70, canvas.width / canvas.height, 1, 1500 );
+        camera = new THREE.PerspectiveCamera( 70, canvas.width / canvas.height, 1, 2000 );
         camera.position.set(0, canvas.width/2, canvas.height/2);
         //camera.updateProjectionMatrix();
 
