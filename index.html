@@ -57,7 +57,11 @@
                   </tr>
                   <tr><td><button onclick="board.reverseboard()">Reverse Board</button>
                       </td></tr>
-                  <tr><td><select size="10" name="Seeks" id="seeklist"></select></td></tr>
+                  <tr><td><select size="10" name="Seeks" id="seeklist"></select></td>
+                      <td>
+                          <button onclick="server.acceptseek()">Accept Seek</button>
+                      </td>
+                  </tr>
               </table>
           </div>
         <div>
@@ -147,7 +151,13 @@
 
               this.addboard();
               this.addpieces();
+
+              var material = new THREE.LineBasicMaterial({color:0x0000f0});
+              var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
+              turnindicator = new THREE.Mesh(pyramid, material);
               turnindicator.position.set(0, 0, this.position.endz+10);
+              turnindicator.rotateX(-Math.PI/2);
+              scene.add(turnindicator);
 
               if(this.mycolor!==this.boardside)
                   this.reverseboard();
@@ -275,7 +285,7 @@
             this.ismymove = this.checkifmymove();
         },
         leftclick: function() {
-            if(!this.ismymove) {
+            if(!this.ismymove && !this.scratch) {
                 console.log('not ur move');
                 return;
             }
@@ -387,7 +397,7 @@
             }
         },
         mousemove: function() {
-            if(!this.ismymove)
+            if(!this.ismymove && !this.scratch)
                 return;
 
             raycaster.setFromCamera(mouse, camera);
@@ -617,6 +627,8 @@
                 scene.remove(this.board_objects[i]);
             for(i=0;i<this.piece_objects.length;i++)
                 scene.remove(this.piece_objects[i]);
+            scene.remove(turnindicator);
+            turnindicator = null;
         },
         sqrel: function(sq1, sq2){
             var f1=sq1.file;
@@ -744,6 +756,8 @@
       var server = {
           connection:null,
           init: function() {
+                if(this.connection)
+                    this.connection.close();
                 this.connection = new WebSocket('ws://'+window.location.host,
                                         "binary");
                 board.server = this;
@@ -754,7 +768,11 @@
                     var blob = e.data;
                     var reader = new FileReader();
                     reader.onload = function(event) {
-                        server.msg(reader.result);
+                        var res = reader.result.split("\n");
+                        var i;
+                        for(i=0;i<res.length-1;i++) {
+                            server.msg(res[i]);
+                        }
                     };
                     reader.readAsText(blob);
                 };
@@ -823,18 +841,16 @@
                 //Seek remove 1 chaitu 5
                 var spl = e.split("Seek remove ");
                 var lst = document.getElementById("seeklist");
-                console.log('rm ', spl[1]);
 
                 for(i=0;i<lst.options.length;i++){
                     var opt = lst.options[i];
-                    //console.log(opt.value);
                     if(opt.value === spl[1]) {
-                        console.log('hr');
                         lst.removeChild(opt);
                         break;
                     }
                 }
             }
+            console.log('returning from msg');
           },
           send: function(e) {
               if(this.connection)
@@ -848,6 +864,14 @@
           seek: function(e) {
               var input = document.getElementById("seek");
               this.send("Seek "+(4+input.selectedIndex));
+          },
+          acceptseek: function(e) {
+            var lst = document.getElementById("seeklist");
+            console.log('selected', lst.selectedIndex);
+            if(lst.selectedIndex===-1)
+                return;
+            var selected=lst[lst.selectedIndex];
+            this.send("Accept "+selected.value.split(" ")[0]);
           }
       };
 
@@ -884,10 +908,6 @@
         highlighter = new THREE.Mesh(geometry, material);
         highlighter.rotateX(Math.PI/2);
 
-        var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
-        turnindicator = new THREE.Mesh(pyramid, material);
-        turnindicator.rotateX(-Math.PI/2);
-        scene.add(turnindicator);
 
         canvas.addEventListener('mousedown', onDocumentMouseDown, false);
         canvas.addEventListener('mousemove', onDocumentMouseMove, false);
