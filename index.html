@@ -22,6 +22,21 @@
           top: 0px;
           z-index: 10;
       }
+      #status {
+          position: absolute;
+          bottom: 0px;
+          right: 0px;
+          z-index: 10;
+      }
+      #help {
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          z-index: 10;
+      }
+      ul {
+          list-style-type: none;
+      }
       li {
           margin: 2px 0;
       }
@@ -40,12 +55,6 @@
       .unselected {
           background: grey;
       }
-      #status {
-          position: absolute;
-          bottom: 0px;
-          right: 0px;
-          z-index: 10;
-      }
       #player1 {
           color: #F7F2E0;
           display: inline;
@@ -54,6 +63,10 @@
           color: #424242;
           display: inline;
       }
+      .show { display: none; }
+      .hide:focus + .show { display: inline; }
+      .hide:focus { display: none; }
+      .hide:focus ~ #helptext { display: none; }
     </style>
     <script src="js/three.min.js"></script>
     <script src="js/OrbitControls.js"></script>
@@ -93,10 +106,17 @@
       <div>
             <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
       </div>
+      <!--<div id="help">
+          <a href="#" class="hide"><img src="images/Blue_question_mark_icon.svg" height="30" width="30"/></a>
+          <a href="#" class="show"><img src="images/Blue_question_mark_icon.svg" height="30" width="30"/></a>
+          <ol id="helptext">
+              <li>Help!</li>
+          </ol>
+      </div>-->
 
       <script>
 
-      var camera, scene, renderer, light, canvas, sidebar;
+      var camera, scene, renderer, light, canvas;
 
       var piece_size = 88;
       var piece_height = 15;
@@ -925,10 +945,8 @@
       animate();
 
       function init() {
-        //sidebar = document.getElementById("sidebar");
-
         canvas = document.getElementById("gamecanvas");
-        canvas.width = window.innerWidth;// - sidebar.offsetWidth;
+        canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
         camera = new THREE.PerspectiveCamera( 70, canvas.width / canvas.height, 1, 2000 );
@@ -962,7 +980,7 @@
       }
  
       function onWindowResize() {
-        canvas.width = window.innerWidth-sidebar.offsetWidth;
+        canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
         camera.aspect = canvas.width / canvas.height;
