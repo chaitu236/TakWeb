@@ -379,10 +379,20 @@
                 return;
             }
 
-            //if already selected, return
+            //if already selected
             if(this.selected) {
-              this.unselect();
-              return;
+                raycaster.setFromCamera(mouse, camera);
+                var intersects = raycaster.intersectObjects(scene.children);
+                if(intersects.length > 0){
+                    var obj = intersects[0].object;
+                    //if already selected is same as clicked obj, rotate it
+                    if(this.selected === obj && Math.floor(this.movecount/2)!==0) {
+                        this.rotate(obj);
+                        return;
+                    }
+                }
+                this.unselect(obj);
+                return;
             }
             if(this.selectedStack) {
                 //move
