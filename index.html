@@ -34,8 +34,21 @@
           left: 5px;
           z-index: 10;
       }
-      ul {
-          list-style-type: none;
+      #helptext{
+          background-color: #593514;
+          color: #d8cdab;
+          padding-left: 0px;
+          padding-right: 10px;
+      }
+      #helptext>ul {
+          font-weight: bold;
+      }
+      #helptext>ul>li {
+          font-weight: normal;
+          margin-left: 15px;
+      }
+      a {
+          color: white;
       }
       li {
           margin: 2px 0;
@@ -56,17 +69,15 @@
           background: grey;
       }
       #player1 {
-          color: #F7F2E0;
+          color: #d8cdab;
           display: inline;
       }
       #player2 {
-          color: #424242;
+          color: #593514;
           display: inline;
       }
-      .show { display: none; }
-      .hide:focus + .show { display: inline; }
-      .hide:focus { display: none; }
-      .hide:focus ~ #helptext { display: none; }
+      .hide {display:none;}
+      .show {display:block;}
     </style>
     <script src="js/three.min.js"></script>
     <script src="js/OrbitControls.js"></script>
@@ -106,13 +117,40 @@
       <div>
             <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
       </div>
-      <!--<div id="help">
-          <a href="#" class="hide"><img src="images/Blue_question_mark_icon.svg" height="30" width="30"/></a>
-          <a href="#" class="show"><img src="images/Blue_question_mark_icon.svg" height="30" width="30"/></a>
-          <ol id="helptext">
-              <li>Help!</li>
-          </ol>
-      </div>-->
+      <div id="help">
+        <a href="#" onclick="cmenu()">
+            <img src="images/Blue_question_mark_icon.svg" height="30" width="30"/>
+        </a>
+        <ul id="helptext" class="hide">
+            <ul> Rules - the short version:
+                <li>White goes first</li>
+                <li>On first move, each player must place his opponent's tile</li>
+                <li>Create a path with flat stones and capstones from one end of the board to other</li>
+                <li>Complete rules can be found <a href="http://cheapass.com/sites/default/files/TakBetaRules9-22.pdf">here</a></li>
+            </ul>
+            <ul>Controls:
+                <li>Left click-drag (or touch-drag) to rotate board</li>
+                <li>Left click a piece to select it. Left click on it again (or right click anywhere) to rotate it</li>
+                <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
+                <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch</li>
+                <li>Click on "Reverse" to reverse the board view</li>
+                <li>If any of the above controls don't work, it means that control is invalid for current move</li>
+            </ul>
+            <ul>Play locally:
+                <li>Select board size to create a new empty board on which you can play locally</li>
+            </ul>
+            <ul>Play online:
+                <li>Connect to server by clicking "Multiplayer" button</li>
+                <li>Post your seek by selecting seek size or accept another player's seek by double clicking on it</li>
+            </ul>
+            <ul>About the game:
+                <li>Rules for TAK are made by <a href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
+                <li>This is an unofficial implementation by <a href="https://github.com/chaitu236">me</a></li>
+                <li>Front end code can be found <a href="https://github.com/chaitu236/TakWeb">here</a></li>
+                <li>Backend code can be found <a href="https://github.com/chaitu236/TakServer">here</a></li>
+            </ul>
+        </ul>
+      </div>
 
       <script>
 
@@ -1045,6 +1083,10 @@
               board.clear();
               board.init(4+input.selectedIndex, "white", true);
           }
+      }
+      function cmenu() {
+          var menu = document.getElementById("helptext");
+          menu.className = (menu.className==="show")?"hide":"show";
       }
 
     </script>
