@@ -72,7 +72,7 @@
                               <option value="8">Board 8</option>
                   </select>
               </li>
-              <li><button title="Connect/disconnect to server for multiplayer games" id="multiplayer" class="unselected" onclick="server.init()">Multiplayer</button></li>
+              <li><button title="Connect/disconnect to server to play online" id="multiplayer" class="unselected" onclick="server.init()">Multiplayer</button></li>
               <li>
                   <select disabled title="Post your seek on server" id="seek" onchange="server.seek()">
                               <option value="0">Seek</option>
@@ -84,8 +84,7 @@
                   </select>
               </li>
               <li><div id="player1">You</div> vs <div id="player2">You</div></li>
-              <li><select size="10" name="Seeks" id="seeklist"></select></li>
-              <li><button onclick="server.acceptseek()">Accept Seek</button></li>
+              <li><select title="Doubleclick a game here to start" ondblclick="server.acceptseek()" size="10" name="Seeks" id="seeklist"></select></li>
           </ul>
       </div>
       <div id="status">
@@ -876,7 +875,9 @@
 
                 var lst = document.getElementById("seeklist");
                 var entry = document.createElement('option');
-                entry.appendChild(document.createTextNode(spl[2]+":"+spl[3]+" "+spl[4]+"x"+spl[4]));
+
+                var node = document.createTextNode(spl[2]+":"+spl[3]+" "+spl[4]+"x"+spl[4]);
+                entry.appendChild(node);
                 lst.appendChild(entry);
             }
             //remove seek
