@@ -108,7 +108,7 @@
           position:{x:0, y:0, endx:0, endz:0},
 
           init: function(sz, col, scr) {
-              this.size = sz
+              this.size = sz;
 
               if(sz===4) {
                   this.totcaps = 0;
@@ -196,8 +196,8 @@
             }
         },
         addpieces: function() {
-            var white_texture = THREE.ImageUtils.loadTexture( 'images/whitetile.png' );
-            var black_texture = THREE.ImageUtils.loadTexture( 'images/blacktile.png' );
+            var white_texture = THREE.ImageUtils.loadTexture( 'images/whitetile2.png' );
+            var black_texture = THREE.ImageUtils.loadTexture( 'images/blacktile2.png' );
 
             var geometry = new THREE.BoxGeometry( piece_size, piece_height, piece_size);
             geometry.center();
@@ -305,7 +305,7 @@
                     else if(sel.isstanding)
                         stone = 'Wall';
 
-                    console.log("Place ",this.movecount,
+                    console.log("Place "+this.movecount,
                       sel.iswhitepiece?'White':'Black',stone,
                       this.squarename(hlt.file, hlt.rank));
 
@@ -510,6 +510,7 @@
         gameover: function() {
             if(this.gameno===0) {
                 console.log('gameover');
+                window.alert("game over");
                 this.scratch = true;
             }
         },
