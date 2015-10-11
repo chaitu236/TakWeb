@@ -126,7 +126,7 @@
                 <li>White goes first</li>
                 <li>On first move, each player must place his opponent's tile</li>
                 <li>Create a path with flat stones and capstones from one end of the board to other</li>
-                <li>Complete rules can be found <a href="http://cheapass.com/sites/default/files/TakBetaRules9-22.pdf">here</a></li>
+                <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/sites/default/files/TakBetaRules9-22.pdf">here</a></li>
             </ul>
             <ul>Controls:
                 <li>Left click-drag (or touch-drag) to rotate board</li>
@@ -145,11 +145,11 @@
                 <li>Post your seek by selecting seek size or accept another player's seek by double clicking on it</li>
             </ul>
             <ul>About the game:
-                <li>Rules for TAK are made by <a href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
-                <li>This is an unofficial implementation by <a href="https://github.com/chaitu236">me</a></li>
-                <li>Front end code can be found <a href="https://github.com/chaitu236/TakWeb">here</a></li>
-                <li>Backend code can be found <a href="https://github.com/chaitu236/TakServer">here</a></li>
-                <li>Inspiration to make this came from <a href="https://www.reddit.com/r/KingkillerChronicle/">this awesome subreddit</a></li>
+                <li>Rules for TAK are made by <a target="_blank" href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a target="_blank" href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
+                <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">me</a></li>
+                <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a></li>
+                <li>Backend code can be found <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
+                <li>Inspiration to make this came from <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">this awesome subreddit</a></li>
             </ul>
         </ul>
       </div>
@@ -927,7 +927,7 @@
                     document.getElementById("scratchsize").disabled = false;
                 }
             } else if (e.indexOf("Name?")>-1){
-                var name = window.prompt("Enter your name", "");
+                var name = window.prompt("Enter your name (minimum 4 chars) and only a-z", "");
                 if(name)
                     server.send("Name "+name);
                 else {
