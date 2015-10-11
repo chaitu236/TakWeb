@@ -68,6 +68,10 @@
       .unselected {
           background: grey;
       }
+      .selectplayer {
+          border-radius: 2px;
+          border: 2px solid red;
+      }
       #player1 {
           color: #d8cdab;
           display: inline;
@@ -126,7 +130,7 @@
             <ul> Rules - the short version:
                 <li>White goes first</li>
                 <li>On first move, each player must place his opponent's tile</li>
-                <li>Create a path with flat stones and capstones from one end of the board to other</li>
+                <li>Create a path with flat stones and capstones between any two opposite ends of the board</li>
                 <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/sites/default/files/TakBetaRules9-22.pdf">here</a></li>
             </ul>
             <ul>Controls:
@@ -168,7 +172,7 @@
       var stack_selection_height = 60;
 
       var raycaster = new THREE.Raycaster();
-      var highlighter, turnindicator;
+      var highlighter;
       var mouse = new THREE.Vector2();
       var offset = new THREE.Vector3();
 
@@ -241,10 +245,9 @@
 
               var material = new THREE.LineBasicMaterial({color:0x0000f0});
               var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
-              turnindicator = new THREE.Mesh(pyramid, material);
-              turnindicator.position.set(0, 0, this.position.endz+10);
-              turnindicator.rotateX(-Math.PI/2);
-              scene.add(turnindicator);
+
+              document.getElementById("player1").className="selectplayer";
+              document.getElementById("player2").className="";
 
               if(this.mycolor!==this.boardside)
                   this.reverseboard();
@@ -360,14 +363,18 @@
         },
         incmovecnt: function() {
             this.movecount++;
+
+            v1 = document.getElementById("player1");
+            v1.className = (v1.className==="")?"selectplayer":"";
+            v2 = document.getElementById("player2");
+            v2.className = (v2.className==="")?"selectplayer":"";
+
             if(this.scratch) {
                 if(this.mycolor === "white")
                     this.mycolor = "black";
                 else
                     this.mycolor = "white";
             }
-            turnindicator.position.z = -turnindicator.position.z-80;
-            turnindicator.rotateX(Math.PI);
 
             this.ismymove = this.checkifmymove();
         },
@@ -724,8 +731,6 @@
                 scene.remove(this.board_objects[i]);
             for(i=0;i<this.piece_objects.length;i++)
                 scene.remove(this.piece_objects[i]);
-            scene.remove(turnindicator);
-            turnindicator = null;
         },
         sqrel: function(sq1, sq2){
             var f1=sq1.file;
@@ -857,6 +862,7 @@
                     this.connection.close();
                     document.getElementById("multiplayer").className = "unselected";
                     document.getElementById("seek").disabled = true;
+                    this.connection = null;
                     return;
                 }
                 this.connection = new WebSocket('ws://'+window.location.host,
@@ -1062,6 +1068,9 @@
       
       function onDocumentMouseDown(e) {
         e.preventDefault();
+
+        document.getElementById("helptext").className = "hide";
+
         var x = e.clientX - canvas.offsetLeft;
         var y = e.clientY - canvas.offsetTop;
         mouse.x = (x / canvas.width)*2 - 1;
