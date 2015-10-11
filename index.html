@@ -47,6 +47,14 @@
           font-weight: normal;
           margin-left: 15px;
       }
+      #pindicator {
+          position: absolute;
+          top: 10px;
+          left: 50%;
+          transform: translate(-50%, 0);
+          font-size: 200%;
+          z-index: 10;
+      }
       a {
           color: white;
       }
@@ -88,6 +96,7 @@
 
   </head>
   <body style="border:1px solid #000000;">
+      <div id="pindicator"><div id="player1">You</div> vs <div id="player2">You</div></div>
       <div align="right" id="floating">
           <ul style="list-style-type:none">
               <li><button title="Reverse the board" onclick="board.reverseboard()">Reverse View</button></li>
@@ -111,7 +120,6 @@
                               <option value="8">Seek 8</option>
                   </select>
               </li>
-              <li><div id="player1">You</div> vs <div id="player2">You</div></li>
               <li><select title="Doubleclick a game here to start" ondblclick="server.acceptseek()" size="10" name="Seeks" id="seeklist"></select></li>
               <li><button title="Accept selected game" onclick="server.acceptseek()">Accept</button></li>
           </ul>
