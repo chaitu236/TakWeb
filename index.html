@@ -919,12 +919,14 @@
                     board.scratch = true;
                     window.alert("Game over");
                     document.getElementById("scratchsize").disabled = false;
+                    document.getElementById("seek").disabled = false;
                 }
                 //Abandoned
                 else if (e.indexOf("Abandoned")>-1){
                     board.scratch = true;
                     window.alert("Game abandoned by your opponent");
                     document.getElementById("scratchsize").disabled = false;
+                    document.getElementById("seek").disabled = false;
                 }
             } else if (e.indexOf("Name?")>-1){
                 var name = window.prompt("Enter your name (minimum 4 chars) and only a-z", "");
