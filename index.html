@@ -21,6 +21,9 @@
           right: 2px;
           top: 0px;
           z-index: 10;
+          border-style: solid;
+          border-width: 2px;
+          border-color: black;
       }
       #status {
           position: absolute;
@@ -197,7 +200,8 @@
                 <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">me</a></li>
                 <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a></li>
                 <li>Backend code can be found <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
-                <li>Inspiration to make this came from <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">this awesome subreddit</a></li>
+                <li>Check out <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">these </a>
+                                <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
             </ul>
         </ul>
       </div>
@@ -772,17 +776,11 @@
                     this.move.dir = 'W';
             }
         },
-        notatePmove: function(sqname, pos) {
-            if(pos==='W')
-                pos = 'S';
-            else if (pos==='C')
-                pos='C';
-            else
-                pos='';
+        notate: function(txt) {
             if(this.movecount!==0 && this.movecount%2===1) {
                 var om = document.getElementById("moveslist");
                 var col = om.rows[om.rows.length-1].cells[2];
-                col.innerHTML = pos+sqname.toLowerCase();
+                col.innerHTML = txt;
             } else {
                 var ol = document.getElementById("moveslist");
                 var row = ol.insertRow();
@@ -790,8 +788,17 @@
                 cell0.innerHTML = Math.floor(this.movecount/2 + 1)+'.';
                 var cell1 = row.insertCell(1);
                 row.insertCell(2);
-                cell1.innerHTML = pos+sqname.toLowerCase();
+                cell1.innerHTML = txt;
             }
+        },
+        notatePmove: function(sqname, pos) {
+            if(pos==='W')
+                pos = 'S';
+            else if (pos==='C')
+                pos='C';
+            else
+                pos='';
+            this.notate(pos+sqname.toLowerCase());
         },
         //all params are nums
         notateMmove: function(stf, str, endf, endr, nos) {
@@ -808,19 +815,7 @@
             }
             var move=(tot===1?'':''+tot)+this.squarename(stf, str).toLowerCase()
                             +dir+(tot===1?'':''+lst);
-
-            var table = document.getElementById("moveslist");
-            if(this.movecount!==0 && this.movecount%2===1) {
-                var cell = table.rows[table.rows.length-1].cells[2];
-                cell.innerHTML = move;
-            } else {
-                var row = table.insertRow();
-                var cell0 = row.insertCell(0);
-                cell0.innerHTML = Math.floor(this.movecount/2 + 1)+'.';
-                var cell1 = row.insertCell(1);
-                row.insertCell(2);
-                cell1.innerHTML = move;
-            }
+            this.notate(move);
         },
         generateMove: function() {
             var st = this.squarename(this.move.start.file, this.move.start.rank);
@@ -901,6 +896,9 @@
             for( var i=scene.children.length-1;i>=0;i--) {
                 scene.remove(scene.children[i]);
             }
+            var tbl = document.getElementById("moveslist");
+            while(tbl.rows.length>0)
+                tbl.deleteRow(0);
         },
         sqrel: function(sq1, sq2){
             var f1=sq1.file;
@@ -1091,10 +1089,12 @@
                                       spl[3].charAt(0), Number(spl[3].charAt(1)),
                                       nums);
                 }
-                //Over
+                //Game#1 Over result
                 else if (e.indexOf("Over")>-1){
+                    var spl = e.split(" ");
                     board.scratch = true;
-                    window.alert("Game over");
+                    board.notate(spl[2]);
+                    window.alert("Game over "+spl[2]);
                     document.getElementById("scratchsize").disabled = false;
                     document.getElementById("seek").disabled = false;
                 }
