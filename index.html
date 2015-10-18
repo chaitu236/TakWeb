@@ -467,6 +467,7 @@
         file: function(no) {
             return String.fromCharCode('A'.charCodeAt(0)+no);
         },
+        //file is no. rank is no.
         squarename: function(file, rank) {
             return this.file(file)+(rank+1);
         },
@@ -521,7 +522,8 @@
                     if(stone!=='Piece')
                         msg += " "+stone.charAt(0);
                     this.sendmove(msg);
-                    this.notatePmove(sqname, stone.charAt(0));
+                    if(!this.server || !this.scratch)
+                        this.notatePmove(sqname, stone.charAt(0));
 
                     var pcs;
                     if(this.mycolor==="white"){
@@ -696,7 +698,7 @@
 
             //this.unhighlight_sq();
             //this.unselect();
-
+            this.notatePmove(file+rank, caporwall);
             this.incmovecnt();
             //console.log('moves', this.movecount, this.ismymove);
         },
@@ -724,6 +726,9 @@
                 for(j=0;j<nums[i];j++)
                     this.push(sq, tstk.pop());
             }
+            console.log('mm', f1, r1, f2, r2);
+            this.notateMmove(f1.charCodeAt(0)-'A'.charCodeAt(0), Number(r1)-1,
+                                f2.charCodeAt(0)-'A'.charCodeAt(0), Number(r2)-1, nums);
             this.incmovecnt();
         },
         gameover: function() {
@@ -770,7 +775,9 @@
         notatePmove: function(sqname, pos) {
             if(pos==='W')
                 pos = 'S';
-            else if (pos==='P')
+            else if (pos==='C')
+                pos='C';
+            else
                 pos='';
             if(this.movecount!==0 && this.movecount%2===1) {
                 var om = document.getElementById("moveslist");
@@ -786,6 +793,7 @@
                 cell1.innerHTML = pos+sqname.toLowerCase();
             }
         },
+        //all params are nums
         notateMmove: function(stf, str, endf, endr, nos) {
             var dir='';
             if(stf===endf)
@@ -796,7 +804,7 @@
             var lst='';
             for(var i=0;i<nos.length;i++) {
                 tot+=Number(nos[i]);
-                lst=lst+nos[i].trim();
+                lst=lst+(nos[i]+'').trim();
             }
             var move=(tot===1?'':''+tot)+this.squarename(stf, str).toLowerCase()
                             +dir+(tot===1?'':''+lst);
