@@ -93,6 +93,7 @@
     </style>
     <script src="js/three.min.js"></script>
     <script src="js/OrbitControls.js"></script>
+    <script src="js/helvetiker_regular.typeface.js"></script>
 
   </head>
   <body style="border:1px solid #000000;">
@@ -178,6 +179,8 @@
       var capstone_height=90;
       var capstone_radius=20;
       var stack_selection_height = 60;
+      var border_size = 30;
+      var letter_size = 12;
 
       var raycaster = new THREE.Raycaster();
       var highlighter;
@@ -293,6 +296,73 @@
                 scene.add(piece);
               }
             }
+            
+            var border_material = new THREE.MeshBasicMaterial({color: 0x6f4734});
+            geometry = new THREE.BoxGeometry(this.size*sq_size+2*border_size, piece_height, border_size);
+            
+            var border = new THREE.Mesh(geometry, border_material);
+            border.position.set(0, 0, startz-sq_size/2-border_size/2);
+            scene.add(border);
+            
+            border = new THREE.Mesh(geometry, border_material);
+            border.rotateY(Math.PI);
+            border.position.set(0, 0, this.position.endz-sq_size/2+border_size/2);
+            scene.add(border);
+            
+            geometry = new THREE.BoxGeometry(this.size*sq_size, piece_height, border_size);
+            border = new THREE.Mesh(geometry, border_material);
+            border.rotateY(Math.PI/2);
+            border.position.set(this.position.x-sq_size/2-border_size/2, 0, -sq_size/2);
+            scene.add(border);
+            
+            border = new THREE.Mesh(geometry, border_material);
+            border.rotateY(-Math.PI/2);
+            border.position.set(this.position.endx-border_size, 0, -sq_size/2);
+            scene.add(border);
+            
+            var material = new THREE.MeshBasicMaterial({color: 0xFFF5B5});
+            for(var i=0;i<this.size;i++) {
+                geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0)+i),
+                            {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+
+                var letter = new THREE.Mesh(geometry, material);
+                letter.rotateX(-Math.PI/2);
+                letter.position.set(this.position.x-letter_size/2+i*sq_size, sq_height/2,
+                                            this.position.endz-border_size/2-letter_size);
+                scene.add(letter);
+                
+                geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0)+i),
+                            {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+                letter = new THREE.Mesh(geometry, material);
+                letter.rotateX(-Math.PI/2);
+                letter.position.set(this.position.x-sq_size/2-border_size/2-letter_size/2, sq_height/2,
+                                            this.position.endz -border_size - sq_size/2 - i*sq_size);
+                scene.add(letter);
+            }
+            for(var i=this.size-1;i>=0;i--) {
+                geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0)+i),
+                            {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+                var letter = new THREE.Mesh(geometry, material);
+                letter.rotateX(Math.PI/2);
+                letter.rotateY(Math.PI);
+                letter.position.set(this.position.x-letter_size/2+i*sq_size, sq_height/2,
+                                            this.position.z-sq_size/2-border_size/2-letter_size/2);
+                scene.add(letter);
+                
+                geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0)+i),
+                            {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+                letter = new THREE.Mesh(geometry, material);
+                letter.rotateX(-Math.PI/2);
+                letter.rotateZ(Math.PI);
+                letter.position.set(this.position.endx-sq_size/2+border_size/2+letter_size/2, sq_height/2,
+                                        this.position.endz -border_size - sq_size/2 -letter_size - i*sq_size);
+                scene.add(letter);
+            }
+            this.position.x -= border_size;
+            this.position.z -= border_size;
+            this.position.endx += border_size;
+            this.position.endz += border_size;
+            
         },
         addpieces: function() {
             var white_texture = THREE.ImageUtils.loadTexture( 'images/whitetile2.png' );
@@ -735,10 +805,9 @@
             }
         },
         clear: function() {
-            for(i=0;i<this.board_objects.length;i++)
-                scene.remove(this.board_objects[i]);
-            for(i=0;i<this.piece_objects.length;i++)
-                scene.remove(this.piece_objects[i]);
+            for( var i=scene.children.length-1;i>=0;i--) {
+                scene.remove(scene.children[i]);
+            }
         },
         sqrel: function(sq1, sq2){
             var f1=sq1.file;
