@@ -21,9 +21,6 @@
           right: 2px;
           top: 0px;
           z-index: 10;
-          border-style: solid;
-          border-width: 2px;
-          border-color: black;
       }
       #status {
           position: absolute;
@@ -59,9 +56,16 @@
           z-index: 10;
       }
       #notationbar {
-          background-color: #593514;
-          color: #d8cdab;
+          color: black;
           text-align: center;
+          border-style: solid;
+          border-width: 2px;
+          border-color: black;
+      }
+      #rmenu {
+          border-style: solid;
+          border-width: 2px;
+          border-color: black;
       }
       #moveslist {
           display: table;
@@ -129,9 +133,15 @@
   </head>
   <body style="border:1px solid #000000;">
       <div id="pindicator"><div id="player1">You</div> vs <div id="player2">You</div></div>
+
       <div align="right" id="floating">
-          <ul style="list-style-type:none">
-              <li><button title="Reverse the board" onclick="board.reverseboard()">Reverse View</button></li>
+        <a title="Click to show/hide menu" href="#" onclick="rmenu()">
+            <img src="images/ic_menu_black_24px.svg" height="40" width="40"/>
+        </a>
+          <ul id="rmenu" style="list-style-type:none">
+              <li><a title="Reverse view" href="# "onclick="board.reverseboard()">
+                      <img src="images/ic_screen_rotation_black_24px.svg" width="30" height="30"/>
+                  </a></li>
               <li>
                   <select title="Create a new empty board to play locally" id="scratchsize" onchange="scratchbutton()">
                               <option value="4">Board 4</option>
@@ -154,23 +164,25 @@
               </li>
               <li><select title="Doubleclick a game here to start" ondblclick="server.acceptseek()" size="10" name="Seeks" id="seeklist"></select></li>
               <li><button title="Accept selected game" onclick="server.acceptseek()">Accept</button></li>
-              <li><div id="notationbar">
-                      Move notation
+              <li><div title="Notation for current game appears here" id="notationbar">
+                      Game notation
                       <table id="moveslist">
                       </table>
                   </div>
               </li>
           </ul>
       </div>
+
       <div id="status">
           Status:<input type="text" id="tarea">
       </div>
+
       <div>
             <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
       </div>
       <div id="help">
         <a href="#" onclick="cmenu()">
-            <img src="images/Blue_question_mark_icon.svg" height="30" width="30"/>
+            <img src="images/ic_help_black_24px.svg" height="40" width="40"/>
         </a>
         <ul id="helptext" class="hide">
             <ul> Rules - the short version:
@@ -744,6 +756,7 @@
         gameover: function() {
             if(this.gameno===0) {
                 console.log('gameover '+this.result);
+                this.notate(this.result);
                 window.alert("game over "+this.result);
                 this.scratch = true;
             }
@@ -776,7 +789,17 @@
                 this.result = "0-F";
         },
         checkroadwin: function() {
-
+            function Graph() {
+                this.lf = 1000;
+                this.rf = 1000;
+                this.tr = 1000;
+                this.br = 1000;
+            }
+            Graph.prototype.add = function() {
+            };
+            var graphs = [];
+            for(var i=0;i<this.size*this.size;i++)
+                graphs[i] = new Graph;
         },
         checksquaresover: function() {
             for(i=0;i<this.size;i++)
@@ -1307,6 +1330,10 @@
       }
       function cmenu() {
           var menu = document.getElementById("helptext");
+          menu.className = (menu.className==="show")?"hide":"show";
+      }
+      function rmenu() {
+          var menu = document.getElementById("rmenu");
           menu.className = (menu.className==="show")?"hide":"show";
       }
 
