@@ -55,6 +55,34 @@
           font-size: 200%;
           z-index: 10;
       }
+      #notationbar {
+          background-color: #593514;
+          color: #d8cdab;
+          text-align: center;
+      }
+      #moveslist {
+          display: table;
+          width: 150px;
+      }
+      #moveslist thead, #moveslist tbody{
+          float: left;
+          width: 100%;
+      }
+      #moveslist tbody {
+          overflow: auto;
+          height: 150px;
+      }
+      #moveslist tr {
+          width: 100%;
+          display: table;
+          text-align: left;
+      }
+      #moveslist>tr>td {
+          text-align: left;
+      }
+      #moveslist>tr>td:last-child {
+          text-align: right;
+      }
       a {
           color: white;
       }
@@ -123,6 +151,12 @@
               </li>
               <li><select title="Doubleclick a game here to start" ondblclick="server.acceptseek()" size="10" name="Seeks" id="seeklist"></select></li>
               <li><button title="Accept selected game" onclick="server.acceptseek()">Accept</button></li>
+              <li><div id="notationbar">
+                      Move notation
+                      <table id="moveslist">
+                      </table>
+                  </div>
+              </li>
           </ul>
       </div>
       <div id="status">
@@ -482,10 +516,12 @@
                       sel.iswhitepiece?'White':'Black',stone,
                       this.squarename(hlt.file, hlt.rank));
 
-                    var msg = "P "+this.squarename(hlt.file, hlt.rank);
+                    var sqname = this.squarename(hlt.file, hlt.rank);
+                    var msg = "P "+sqname;
                     if(stone!=='Piece')
                         msg += " "+stone.charAt(0);
                     this.sendmove(msg);
+                    this.notatePmove(sqname, stone.charAt(0));
 
                     var pcs;
                     if(this.mycolor==="white"){
@@ -731,6 +767,53 @@
                     this.move.dir = 'W';
             }
         },
+        notatePmove: function(sqname, pos) {
+            if(pos==='W')
+                pos = 'S';
+            else if (pos==='P')
+                pos='';
+            if(this.movecount!==0 && this.movecount%2===1) {
+                var om = document.getElementById("moveslist");
+                var col = om.rows[om.rows.length-1].cells[2];
+                col.innerHTML = pos+sqname.toLowerCase();
+            } else {
+                var ol = document.getElementById("moveslist");
+                var row = ol.insertRow();
+                var cell0 = row.insertCell(0);
+                cell0.innerHTML = Math.floor(this.movecount/2 + 1)+'.';
+                var cell1 = row.insertCell(1);
+                row.insertCell(2);
+                cell1.innerHTML = pos+sqname.toLowerCase();
+            }
+        },
+        notateMmove: function(stf, str, endf, endr, nos) {
+            var dir='';
+            if(stf===endf)
+                dir=(endr<str)?'-':'+';
+            else
+                dir=(endf<stf)?'<':'>';
+            var tot=0;
+            var lst='';
+            for(var i=0;i<nos.length;i++) {
+                tot+=Number(nos[i]);
+                lst=lst+nos[i].trim();
+            }
+            var move=(tot===1?'':''+tot)+this.squarename(stf, str).toLowerCase()
+                            +dir+(tot===1?'':''+lst);
+
+            var table = document.getElementById("moveslist");
+            if(this.movecount!==0 && this.movecount%2===1) {
+                var cell = table.rows[table.rows.length-1].cells[2];
+                cell.innerHTML = move;
+            } else {
+                var row = table.insertRow();
+                var cell0 = row.insertCell(0);
+                cell0.innerHTML = Math.floor(this.movecount/2 + 1)+'.';
+                var cell1 = row.insertCell(1);
+                row.insertCell(2);
+                cell1.innerHTML = move;
+            }
+        },
         generateMove: function() {
             var st = this.squarename(this.move.start.file, this.move.start.rank);
             var end  = this.squarename(this.move.end.file, this.move.end.rank);
@@ -756,6 +839,8 @@
                 for(i=0;i<lst.length;i++)
                     nos += lst[i]+" ";
                 this.sendmove("M "+st+" "+end+" "+nos.trim());
+                this.notateMmove(this.move.start.file, this.move.start.rank,
+                        this.move.end.file, this.move.end.rank, nos);
                 this.incmovecnt();
             }
             this.move = {start:null, end:null, dir:'U', squares:[]};
