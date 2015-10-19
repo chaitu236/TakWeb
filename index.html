@@ -40,6 +40,9 @@
           padding-left: 0px;
           padding-right: 10px;
       }
+      #helptext a {
+          color: white;
+      }
       #helptext>ul {
           font-weight: bold;
       }
@@ -90,9 +93,6 @@
       #moveslist>tr>td:last-child {
           text-align: right;
       }
-      a {
-          color: white;
-      }
       li {
           margin: 2px 0;
       }
@@ -125,6 +125,36 @@
       }
       .hide {display:none;}
       .show {display:block;}
+      //css display popup code taken from
+      //http://stackoverflow.com/questions/19064987/html-css-popup-div-on-text-click
+      .black_overlay{
+        display: none;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index:1001;
+        -moz-opacity: 0.8;
+        opacity:.80;
+        filter: alpha(opacity=80);
+    }
+    .white_content {
+        display: none;
+        position: absolute;
+        text-align: center;
+        top: 40%;
+        left: 35%;
+        width: 30%;
+        height: 20%;
+        padding: 16px;
+        border: 16px solid black;
+        background-color: white;
+        color: black;
+        z-index:1002;
+        overflow: auto;
+    }
     </style>
     <script src="js/three.min.js"></script>
     <script src="js/OrbitControls.js"></script>
@@ -219,8 +249,19 @@
         </ul>
       </div>
 
+    <div id="light" class="white_content"><div id="onscreenmsg"></div>
+        <a href = "javascript:void(0)" onclick = "
+            document.getElementById('light').style.display='none';
+            document.getElementById('fade').style.display='none'">Close</a></div>
+    <div id="fade" class="black_overlay"></div>
+
       <script>
 
+      function alert(msg) {
+          document.getElementById('onscreenmsg').innerHTML=msg;
+          document.getElementById('light').style.display='block';
+          document.getElementById('fade').style.display='block';
+      }
       var camera, scene, renderer, light, canvas;
 
       var piece_size = 88;
@@ -666,8 +707,6 @@
                     var prev = this.move.squares[this.move.squares.length-1];
 
                     var rel = this.sqrel(prev, obj);
-                    //console.log("rel=",rel,"obj",this.squarename(obj));
-                    //console.log(this.move.dir);
 
                     if(this.move.dir==='U' && rel!=='OUTSIDE')
                         this.highlight_sq(obj);
@@ -704,7 +743,7 @@
         //move the server sends
         serverPmove: function(file, rank, caporwall) {
             var obj = this.getfromstack((caporwall==='C'));
-            //console.log('got', file, rank, caporwall);
+
             if(!obj){
                 console.log("something is wrong");
                 return;
@@ -714,16 +753,11 @@
                 this.standup(obj);
             }
 
-            //this.select(obj);
             var hlt = this.get_board_obj(file.charCodeAt(0)-'A'.charCodeAt(0), rank-1);
-            //this.highlight_sq(hlt);
             this.push(hlt, obj);
 
-            //this.unhighlight_sq();
-            //this.unselect();
             this.notatePmove(file+rank, caporwall);
             this.incmovecnt();
-            //console.log('moves', this.movecount, this.ismymove);
         },
         //Move move the server sends
         serverMmove: function(f1, r1, f2, r2, nums) {
@@ -749,7 +783,6 @@
                 for(j=0;j<nums[i];j++)
                     this.push(sq, tstk.pop());
             }
-            console.log('mm', f1, r1, f2, r2);
             this.notateMmove(f1.charCodeAt(0)-'A'.charCodeAt(0), Number(r1)-1,
                                 f2.charCodeAt(0)-'A'.charCodeAt(0), Number(r2)-1, nums);
             this.incmovecnt();
@@ -758,7 +791,7 @@
             if(this.gameno===0) {
                 console.log('gameover '+this.result);
                 this.notate(this.result);
-                window.alert("game over "+this.result);
+                alert("Game over!! "+this.result);
                 this.scratch = true;
             }
         },
@@ -1237,14 +1270,14 @@
                     var spl = e.split(" ");
                     board.scratch = true;
                     board.notate(spl[2]);
-                    window.alert("Game over "+spl[2]);
+                    alert("Game over "+spl[2]);
                     document.getElementById("scratchsize").disabled = false;
                     document.getElementById("seek").disabled = false;
                 }
                 //Abandoned
                 else if (e.indexOf("Abandoned")>-1){
                     board.scratch = true;
-                    window.alert("Game abandoned by your opponent");
+                    alert("Game abandoned by your opponent");
                     document.getElementById("scratchsize").disabled = false;
                     document.getElementById("seek").disabled = false;
                 }
@@ -1258,7 +1291,7 @@
                 }
             } else if (e.indexOf("Message")>-1){
                 var msg = e.split("Message ");
-                window.alert(msg[1]);
+                alert(msg[1]);
             }
             //new seek
             else if (e.indexOf("Seek new")>-1){
@@ -1295,7 +1328,7 @@
                 this.error("Error: Not connected to server");
           },
           error: function(e) {
-              window.alert(e);
+              alert(e);
           },
           seek: function(e) {
               var input = document.getElementById("seek");
