@@ -790,17 +790,95 @@
                 this.result = "0-F";
         },
         checkroadwin: function() {
-            function Graph() {
-                this.lf = 1000;
-                this.rf = 1000;
-                this.tr = 1000;
-                this.br = 1000;
+            for(var i=0;i<this.size;i++){
+                for(var j=0;j<this.size;j++){
+                    var cur_st = this.sq[i][j];
+                    cur_st.graph = -1;
+                    if(cur_st.length===0)
+                        continue;
+
+                    var ctop = cur_st[cur_st.length-1];
+                    cur_st.graph = (i+j*this.size).toString();
+                    if(ctop.isstanding && !ctop.iscapstone)
+                        continue;
+
+                    if(i-1>=0){
+                        var left_st = this.sq[i-1][j];
+                        if(left_st.length!==0){
+                            var ltop = left_st[left_st.length-1];
+                            if(!(ltop.isstanding && !ltop.iscapstone)){
+                                if(ctop.iswhitepiece === ltop.iswhitepiece){
+                                    for(var r=0;r<this.size;r++){
+                                        for(var c=0;c<this.size;c++){
+                                            if(this.sq[r][c].graph === cur_st.graph){
+                                                this.sq[r][c].graph = left_st.graph;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(j-1>=0) {
+                        var top_st = this.sq[i][j-1];
+                        if(top_st.length!==0){
+                            var ttop = top_st[top_st.length-1];
+                            if(!(ttop.isstanding && !ttop.iscapstone)){
+                                if(ctop.iswhitepiece === ttop.iswhitepiece){
+                                    for(var r=0;r<this.size;r++){
+                                        for(var c=0;c<this.size;c++){
+                                            if(this.sq[r][c].graph === cur_st.graph){
+                                                this.sq[r][c].graph = top_st.graph;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            Graph.prototype.add = function() {
-            };
-            var graphs = [];
-            for(var i=0;i<this.size*this.size;i++)
-                graphs[i] = new Graph;
+            var whitewin=false;
+            var blackwin=false;
+            for(var tr=0;tr<this.size;tr++){
+                var tsq = this.sq[tr][0];
+                var no = tsq.graph;
+                if(no===-1)
+                    continue;
+                for(var br=0;br<this.size;br++){
+                    var brno = this.sq[br][this.size-1].graph;
+                    if(no===brno){
+                        if(tsq[tsq.length-1].iswhitepiece)
+                            whitewin = true;
+                        else
+                            blackwin = true;
+                    }
+                }
+            }
+            for(var tr=0;tr<this.size;tr++){
+                var tsq = this.sq[0][tr];
+                var no = tsq.graph;
+                if(no===-1)
+                    continue;
+                for(var br=0;br<this.size;br++){
+                    var brno = this.sq[this.size-1][br].graph;
+                    if(no===brno){
+                        if(tsq[tsq.length-1].iswhitepiece)
+                            whitewin = true;
+                        else
+                            blackwin = true;
+                    }
+                }
+            }
+            if(whitewin && blackwin)
+                this.result = "1/2-1/2";
+            else if(whitewin)
+                this.result = "R-0";
+            else if(blackwin)
+                this.result = "0-R";
+
+            if(whitewin||blackwin)
+                this.gameover();
         },
         checksquaresover: function() {
             for(i=0;i<this.size;i++)
