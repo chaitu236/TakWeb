@@ -1116,6 +1116,10 @@
                     document.getElementById("multiplayer").className = "selected";
                     document.getElementById("seek").disabled = false;
                 };
+                this.connection.onclose = function(e) {
+                    document.getElementById("multiplayer").className = "unselected";
+                    document.getElementById("seek").disabled = true;
+                };
           },
           msg: function(e) {
             output(e);
