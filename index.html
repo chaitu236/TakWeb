@@ -1212,6 +1212,7 @@
                     this.connection.close();
                     document.getElementById("multiplayer").className = "unselected";
                     document.getElementById("seek").disabled = true;
+                    alert("You're disconnected from server");
                     this.connection = null;
                     return;
                 }
@@ -1292,16 +1293,14 @@
                     document.getElementById("seek").disabled = false;
                 }
             } else if (e.indexOf("Name?")>-1){
-                var name = window.prompt("Enter your name (minimum 4 chars) and only a-z", "");
-                if(name)
-                    server.send("Name "+name);
-                else {
-                    this.connection.close();
-                    this.connection = null;
-                }
+                var spl = e.split("Name?");
+                var name = window.prompt(spl[1], "");
+                if(!name)
+                    name = "";
+                server.send("Name "+name);
             } else if (e.indexOf("Message")>-1){
                 var msg = e.split("Message ");
-                alert(msg[1]);
+                alert("Server says: "+msg[1]);
             }
             //new seek
             else if (e.indexOf("Seek new")>-1){
@@ -1380,6 +1379,11 @@
 
         window.addEventListener( 'resize', onWindowResize, false );
         controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.minDistance = 2;
+        controls.maxDistance = 1500;
+        var ua = navigator.userAgent.toLowerCase();
+        if(ua.indexOf("android")>-1 || ua.indexOf("iphone")>-1 || ua.indexOf("ipod")>-1)
+            controls.zoomSpeed = 0.2;
 
         var material = new THREE.LineBasicMaterial({color:0x0000f0});
         var geometry = new THREE.TorusGeometry(sq_size/2+5, 3, 16, 100);
