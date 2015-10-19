@@ -75,6 +75,12 @@
           border-width: 2px;
           border-color: black;
       }
+      #zoomcontrols {
+          position: absolute;
+          bottom: 5px;
+          left: 5px;
+          z-index: 10;
+      }
       #rmenu {
           border-style: solid;
           border-width: 2px;
@@ -265,6 +271,15 @@
             document.getElementById('fade').style.display='none'">Close</a></div>
     <div id="fade" class="black_overlay"></div>
 
+    <div id="zoomcontrols">
+        <a href="#" onclick="zoom(true)">
+            <img src="images/ic_zoom_out_black_24px.svg" height="40" width="40"/>
+        </a>
+        <a href="#" onclick="zoom(false)">
+            <img src="images/ic_zoom_in_black_24px.svg" height="40" width="40"/>
+        </a>
+    </div>
+
       <script>
 
       function alert(msg) {
@@ -272,7 +287,7 @@
           document.getElementById('light').style.display='block';
           document.getElementById('fade').style.display='block';
       }
-      var camera, scene, renderer, light, canvas;
+      var camera, scene, renderer, light, canvas, controls=null;
 
       var piece_size = 88;
       var piece_height = 15;
@@ -1465,6 +1480,13 @@
       function rmenu() {
           var menu = document.getElementById("rmenu");
           menu.className = (menu.className==="show")?"hide":"show";
+      }
+      function zoom(out){
+          console.log('zoom', out, controls);
+          if(out)
+              controls.constraint.dollyOut(1.5);
+          else
+              controls.constraint.dollyIn(1.5);
       }
 
     </script>
