@@ -1397,7 +1397,8 @@
         controls.minDistance = 200;
         controls.maxDistance = 1500;
         var ua = navigator.userAgent.toLowerCase();
-        if(ua.indexOf("android")>-1 || ua.indexOf("iphone")>-1 || ua.indexOf("ipod")>-1)
+        if(ua.indexOf("android")>-1 || ua.indexOf("iphone")>-1 ||
+                ua.indexOf("ipod")>-1 || ua.indexOf("ipad")>-1)
             controls.zoomSpeed = 0.5;
 
         var material = new THREE.LineBasicMaterial({color:0x0000f0});
