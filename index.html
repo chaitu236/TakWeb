@@ -241,7 +241,7 @@
                 <li>Left click-drag (or touch-drag) to rotate board</li>
                 <li>Left click a piece to select it. Left click on it again (or right click anywhere) to rotate it</li>
                 <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
-                <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch</li>
+                <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch. Or use zoom buttons on bottom right.</li>
                 <li>Menu on the right side can be shown/hidden by clicking on the menu icon</li>
                 <li>Click on the "Reverse" icon in menu to reverse the board view</li>
                 <li>Current player is indicated by highlighting their name with red border</li>
@@ -1398,7 +1398,7 @@
         controls.maxDistance = 1500;
         var ua = navigator.userAgent.toLowerCase();
         if(ua.indexOf("android")>-1 || ua.indexOf("iphone")>-1 || ua.indexOf("ipod")>-1)
-            controls.zoomSpeed = 0.6;
+            controls.zoomSpeed = 0.5;
 
         var material = new THREE.LineBasicMaterial({color:0x0000f0});
         var geometry = new THREE.TorusGeometry(sq_size/2+5, 3, 16, 100);
