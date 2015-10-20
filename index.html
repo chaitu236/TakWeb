@@ -607,8 +607,7 @@
                     if(stone!=='Piece')
                         msg += " "+stone.charAt(0);
                     this.sendmove(msg);
-                    if(!this.server || !this.scratch)
-                        this.notatePmove(sqname, stone.charAt(0));
+                    this.notatePmove(sqname, stone.charAt(0));
 
                     var pcs;
                     if(this.mycolor==="white"){
@@ -618,14 +617,14 @@
                         this.blackpiecesleft--;
                         pcs = this.blackpiecesleft;
                     }
-                    if(pcs<=0) {
-                        this.findwhowon();
-                        this.gameover();
-                        return;
-                    }
-                    if(!this.server || !this.scratch) {
+                    if(this.scratch) {
                         this.checkroadwin();
                         this.checksquaresover();
+                        if(pcs<=0) {
+                            this.findwhowon();
+                            this.gameover();
+                            return;
+                        }
                     }
                     this.incmovecnt();
                 }
@@ -813,12 +812,10 @@
             this.incmovecnt();
         },
         gameover: function() {
-            if(this.gameno===0) {
-                console.log('gameover '+this.result);
-                this.notate(this.result);
-                alert("Game over!! "+this.result);
-                this.scratch = true;
-            }
+            console.log('gameover '+this.result);
+            this.notate(this.result);
+            alert("Game over!! "+this.result);
+            this.scratch = true;
         },
         newgame: function(sz, col) {
             this.clear();
@@ -1045,9 +1042,9 @@
                 for(i=0;i<lst.length;i++)
                     nos += lst[i]+" ";
                 this.sendmove("M "+st+" "+end+" "+nos.trim());
-                if(!this.server || !this.scratch){
-                    this.notateMmove(this.move.start.file, this.move.start.rank,
-                        this.move.end.file, this.move.end.rank, nos);
+                this.notateMmove(this.move.start.file, this.move.start.rank,
+                    this.move.end.file, this.move.end.rank, nos);
+                if(this.scratch){
                     this.checkroadwin();
                     this.checksquaresover();
                 }
