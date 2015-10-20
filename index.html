@@ -208,6 +208,9 @@
                               <option value="8">Seek 8</option>
                   </select>
               </li>
+              <li><a title="Load TPN" href="# "onclick="loadtpn()">
+                      <img src="images/loadtpn.svg" width="30" height="30"/>
+                  </a></li>
               <li><select title="Doubleclick a game here to start" ondblclick="server.acceptseek()" size="10" name="Seeks" id="seeklist"></select></li>
               <li><button title="Accept selected game" onclick="server.acceptseek()">Accept</button></li>
               <li><div title="Notation for current game appears here" id="notationbar">
@@ -748,12 +751,11 @@
                 return;
             server.send("Game#"+this.gameno+" "+e);
         },
-        getfromstack: function(cap){
+        getfromstack: function(cap, iswhite){
             //randomly get any piece
-            var col = this.is_white_piece_to_move();
             for(i=0;i<this.piece_objects.length;i++){
                 var obj = this.piece_objects[i];
-                if(!obj.onsquare && (obj.iswhitepiece === col)){
+                if(!obj.onsquare && (obj.iswhitepiece === iswhite)){
                     if(cap) {
                         if(obj.iscapstone)
                             return obj;
@@ -766,7 +768,7 @@
         },
         //move the server sends
         serverPmove: function(file, rank, caporwall) {
-            var obj = this.getfromstack((caporwall==='C'));
+            var obj = this.getfromstack((caporwall==='C'), this.is_white_piece_to_move());
 
             if(!obj){
                 console.log("something is wrong");
@@ -1224,6 +1226,57 @@
                 stk[i].position.y += stack_selection_height-diffy;
                 stk[i].onsquare = sq;
             }
+        },
+        loadtpn: function(tpn) {
+            if(!this.scratch) {
+                alert('TPN won\'t be displayed in the middle of an online game');
+                return;
+            }
+            tpn = tpn.trim().split("[")[1].split("]")[0].trim();
+            var tt = tpn.split(" ");
+            var ptomove = tt[1];//string
+
+            var rows=tt[0].split("/");
+            this.clear();
+            this.init(rows.length, "white", true);
+            for(var i=0;i<rows.length;i++){
+                var cells=rows[i].split(",");
+                var cols=0;
+                for(var j=0;j<cells.length;j++, cols++){
+                    var cell=cells[j];
+                    if(cell.charAt(0)==='x'){
+                        if(cell.length===1) //lone x
+                            continue;
+                        cols+=Number(cell.charAt(1))-1;//x5
+                        continue;
+                    }
+                    var sq=this.get_board_obj(cols, rows.length-1-i);
+
+                    for(var k=0;k<cell.length;k++){
+                        var ch = cell[k];
+                        //console.log('ch', ch);
+                        if(ch==='S'||ch==='C')
+                            continue;
+                        var piece='';
+                        if(k+1===cell.length-1){
+                            if(cell[k+1]==='C')
+                                piece='C';
+                            else if(cell[k+1]==='S')
+                                piece='W';
+                        }
+
+                        var pc = this.getfromstack(piece==='C', ch==='1');
+                        if(pc===null || typeof pc==='undefined'){
+                            alert('Out of pieces. Wrong TPS!');
+                            return;
+                        }
+                        if(piece==='W'){
+                            this.standup(pc);
+                        }
+                        this.push(sq, pc);
+                    }
+                }
+            }
         }
       };
 
@@ -1496,7 +1549,12 @@
           else
               controls.constraint.dollyIn(1.5);
       }
-
+      function loadtpn() {
+        var tpn = window.prompt("Paste TPN here", "");
+        if(!tpn)
+            return;
+        board.loadtpn(tpn);
+      }
     </script>
 
   </body>
