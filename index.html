@@ -1325,7 +1325,6 @@
                     this.connection.close();
                     document.getElementById("multiplayer").className = "unselected";
                     document.getElementById("seek").disabled = true;
-                    alert("You're disconnected from server");
                     this.connection = null;
                     return;
                 }
@@ -1354,6 +1353,8 @@
                 this.connection.onclose = function(e) {
                     document.getElementById("multiplayer").className = "unselected";
                     document.getElementById("seek").disabled = true;
+                    alert("You're disconnected from server");
+                    this.connection = null;
                 };
           },
           msg: function(e) {
