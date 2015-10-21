@@ -118,9 +118,6 @@
           color: white;
           min-height: 40px;
       }
-      body {
-          color: white;
-      }
       .selected {
           background: red;
       }
@@ -198,6 +195,7 @@
                   </select>
               </li>
               <li><button title="Connect/disconnect to server to play online" id="multiplayer" class="unselected" onclick="server.init()">Multiplayer</button></li>
+              <li id="onlineplayers"></li>
               <li>
                   <select disabled title="Post your seek on server" id="seek" onchange="server.seek()">
                               <option value="0">Seek</option>
@@ -220,10 +218,6 @@
                   </div>
               </li>
           </ul>
-      </div>
-
-      <div id="status">
-          Status:<input type="text" id="tarea">
       </div>
 
       <div>
@@ -1357,6 +1351,7 @@
                 this.connection.onclose = function(e) {
                     document.getElementById("multiplayer").className = "unselected";
                     document.getElementById("seek").disabled = true;
+                    document.getElementById("onlineplayers").innerHTML="";
                     alert("You're disconnected from server");
                     this.connection = null;
                 };
@@ -1446,6 +1441,11 @@
                         break;
                     }
                 }
+            }
+            //Online players
+            else if (e.indexOf("Online ")>-1){
+                var op = document.getElementById("onlineplayers");
+                op.innerHTML=Number(e.split("Online ")[1])+" players on server";
             }
           },
           send: function(e) {
@@ -1565,7 +1565,7 @@
             board.rightup();
       }
       function output(e) {
-          document.getElementById("tarea").value += e;
+          console.log("output:"+e);
       }
 
       function buttonclick() {
