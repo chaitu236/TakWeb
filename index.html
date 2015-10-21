@@ -243,6 +243,8 @@
             <ul>Controls:
                 <li>Left click-drag (or touch-drag) to rotate board</li>
                 <li>Left click a piece to select it. Left click on it again (or right click anywhere) to rotate it</li>
+                <li>Left click on a square to place selected piece or to pick up stack</li>
+                <li>Right click and hold on a stack to hide pieces on all other squares (to see stack clearly)</li>
                 <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
                 <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch. Or use zoom buttons on bottom right.</li>
                 <li>Menu on the right side can be shown/hidden by clicking on the menu icon</li>
@@ -322,6 +324,7 @@
           piece_objects: [],
           move: {start:null, end:null, dir:'U', squares:[]},
           highlighted:null,
+          totalhighlighted:null,
           selected:null,
           selectedStack:null,
           ismymove:false,
@@ -1097,6 +1100,40 @@
         rightclick: function() {
             if(this.selected && Math.floor(this.movecount/2)!==0){
                 this.rotate(this.selected);
+            } else {
+                raycaster.setFromCamera(mouse, camera);
+                var intersects = raycaster.intersectObjects(scene.children);
+                if(intersects.length > 0){
+                    var obj = intersects[0].object;
+                    var sq = obj;
+                    if(!obj.isboard)
+                        sq = obj.onsquare;
+                    var stk = this.get_stack(sq);
+                    if(stk.length===0)
+                        return;
+                    for(var i=0;i<scene.children.length;i++){
+                        var obj = scene.children[i];
+                        if(obj.isboard || !obj.onsquare)
+                            continue;
+                        obj.visible = false;
+                    }
+                    for(var i=0;i<stk.length;i++) {
+                        stk[i].visible = true;
+                    }
+                    this.totalhighlighted = sq;
+                }
+            }
+        },
+        rightup: function() {
+            console.log('right up');
+            if(this.totalhighlighted!==null){
+                for(var i=0;i<scene.children.length;i++){
+                    var obj = scene.children[i];
+                    if(obj.isboard || !obj.onsquare)
+                        continue;
+                    obj.visible = true;
+                }
+                this.totalhighlighted = null;
             }
         },
         clear: function() {
@@ -1470,6 +1507,7 @@
 
 
         canvas.addEventListener('mousedown', onDocumentMouseDown, false);
+        canvas.addEventListener('mouseup', onDocumentMouseUp, false);
         canvas.addEventListener('mousemove', onDocumentMouseMove, false);
 
         board.init(5, "white", true);
@@ -1516,6 +1554,10 @@
             board.rightclick();
         else
             board.leftclick();
+      }
+      function onDocumentMouseUp(e) {
+        if(e.button === 2)
+            board.rightup();
       }
       function output(e) {
           document.getElementById("tarea").value += e;
