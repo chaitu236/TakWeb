@@ -1319,11 +1319,15 @@
       var server = {
           connection:null,
           init: function() {
+                if(this.connection && this.connection.readyState===2)//closing connection
+                    return;
+                if(this.connection && this.connection.readyState===3)//closed
+                    this.connection = null;
                 if(this.connection) {
                     this.connection.close();
                     document.getElementById("multiplayer").className = "unselected";
                     document.getElementById("seek").disabled = true;
-                    this.connection = null;
+                    alert("Disconnnecting from server....");
                     return;
                 }
                 this.connection = new WebSocket('ws://'+window.location.host,
@@ -1352,8 +1356,13 @@
                     document.getElementById("multiplayer").className = "unselected";
                     document.getElementById("seek").disabled = true;
                     document.getElementById("onlineplayers").innerHTML="";
+                    document.title = "Tak";
+                    var lst = document.getElementById("seeklist");
+                    for(i=0;i<lst.options.length;i++){
+                        var opt = lst.options[i];
+                        lst.removeChild(opt);
+                    }
                     alert("You're disconnected from server");
-                    this.connection = null;
                 };
           },
           msg: function(e) {
@@ -1368,6 +1377,7 @@
                 document.getElementById("seek").disabled = true;
                 document.getElementById("player1").innerHTML = spl[4];
                 document.getElementById("player2").innerHTML = spl[6];
+                document.title = "Tak: "+spl[4]+" vs "+spl[6];
 
                 if(spl[7]==="white")
                     document.getElementById("player1").innerHTML = "You";
@@ -1391,6 +1401,7 @@
                 }
                 //Game#1 Over result
                 else if (e.indexOf("Over")>-1){
+                    document.title = "Tak";
                     var spl = e.split(" ");
                     board.scratch = true;
                     board.notate(spl[2]);
@@ -1400,12 +1411,14 @@
                 }
                 //Abandoned
                 else if (e.indexOf("Abandoned")>-1){
+                    document.title = "Tak";
                     board.scratch = true;
                     alert("Game abandoned by your opponent");
                     document.getElementById("scratchsize").disabled = false;
                     document.getElementById("seek").disabled = false;
                 }
             } else if (e.indexOf("Name?")>-1){
+                server.send("Client "+"TakWeb-15.10.21");
                 var spl = e.split("Name?");
                 var name = window.prompt(spl[1], "");
                 if(!name)
