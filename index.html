@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+<!D/* global game */
+
+/* global game */
+
+/* global game */
+
+OCTYPE html>
 <html lang="en">
   <head>
     <title>Tak</title>
@@ -217,6 +223,9 @@
                       </table>
                   </div>
               </li>
+              <li><select title="Doubleclick a game here to observe" ondblclick="server.observegame()" size="10" name="Games" id="gamelist"></select></li>
+              <li><button title="Observe selected game" onclick="server.observegame()">Observe</button></li>
+
           </ul>
       </div>
 
@@ -253,6 +262,10 @@
             <ul>Play online:
                 <li>Connect to server by clicking "Multiplayer" button</li>
                 <li>Post your seek by selecting seek size or accept another player's seek by double clicking on it</li>
+            </ul>
+            <ul>Observe/Spectate another game:
+                <li>Double click on one of the ongoing games or select and click Observe</li>
+                <li>You can't observe a game while playing an online game</li>
             </ul>
             <ul>About the game:
                 <li>Rules for TAK are made by <a target="_blank" href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a target="_blank" href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
@@ -326,10 +339,11 @@
           gameno: 0,
           boardside:"white",
           result:"none",
+          observing: false,
 
           position:{x:0, y:0, endx:0, endz:0},
 
-          init: function(sz, col, scr) {
+          init: function(sz, col, scr, obs) {
               this.size = sz;
 
               if(sz===4) {
@@ -360,9 +374,11 @@
               this.highlighted = null;
               this.selected = null;
               this.selectedStack = null;
+              this.gameno = 0;
               this.move = {start:null, end:null, dir:'U', squares:[]};
-              this.ismymove = this.checkifmymove();
               this.result = "none";
+              this.observing = typeof obs!== 'undefined'?obs:false;
+              this.ismymove = this.checkifmymove();
 
               for(i=0;i<this.size;i++){
                 this.sq[i] = [];
@@ -694,8 +710,11 @@
                 //select stack ... no stack selection on 1st moves
                 else if(!this.selectedStack && Math.floor(this.movecount/2)!==0){
                     var sq = obj;
-                    if(!obj.isboard)
+                    if(!obj.isboard) {
+                        if(!obj.onsquare)
+                            return;
                         sq = obj.onsquare;
+                    }
                     var stk = this.get_stack(sq);
                     if(this.is_top_mine(sq) && stk.length>0) {
                         this.selectStack(stk);
@@ -1164,6 +1183,8 @@
             return 'OUTSIDE';
         },
         checkifmymove: function() {
+            if(this.observing)
+                return false;
             var tomove = (this.movecount%2===0)?"white":"black";
             //console.log('tomove = ', tomove, this.mycolor, tomove===this.mycolor);
             return tomove===this.mycolor;
@@ -1356,8 +1377,16 @@
                     document.getElementById("multiplayer").className = "unselected";
                     document.getElementById("seek").disabled = true;
                     document.getElementById("onlineplayers").innerHTML="";
+                    document.getElementById("scratchsize").disabled = false;
+                    board.scratch = true;
+                    board.gameno = 0;
                     document.title = "Tak";
                     var lst = document.getElementById("seeklist");
+                    for(i=0;i<lst.options.length;i++){
+                        var opt = lst.options[i];
+                        lst.removeChild(opt);
+                    }
+                    lst = document.getElementById("gamelist");
                     for(i=0;i<lst.options.length;i++){
                         var opt = lst.options[i];
                         lst.removeChild(opt);
@@ -1383,7 +1412,45 @@
                     document.getElementById("player1").innerHTML = "You";
                 else
                     document.getElementById("player2").innerHTML = "You";
-            } else if(e.indexOf("Game#") > -1) {
+            }
+            else if(e.indexOf("Observe Game#")>-1) {
+                //Observe Game#1 player1 vs player2, 4x4,7 half-moves played, player2 to move
+                var spl = e.split(" ");
+                board.clear();
+                board.init(Number(spl[5].split("x")[0]), "white", false, true);
+                board.gameno = Number(spl[1].split("Game#")[1]);
+                document.getElementById("player1").innerHTML = spl[2];
+                document.getElementById("player2").innerHTML = spl[4].split(",")[0];
+                document.title = "Tak: "+spl[2]+" vs "+spl[4];
+            }
+            else if(e.indexOf("GameList Add Game#")>-1) {
+                //GameList Add Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
+                var spl = e.split(" ");
+
+                var lst = document.getElementById("gamelist");
+                var entry = document.createElement('option');
+
+                var node = document.createTextNode(spl[2].split("Game#")[1]+" "+spl[3]
+                        +" vs "+spl[5].split(",")[0]+" "+spl[6]);
+                entry.appendChild(node);
+                lst.appendChild(entry);
+            }
+            else if(e.indexOf("GameList Remove Game#")>-1){
+                //GameList Remove Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
+                var spl = e.split(" ");
+                var lst = document.getElementById("gamelist");
+                var val = spl[2].split("Game#")[1]+" "+spl[3]
+                        +" vs "+spl[5].split(",")[0]+" "+spl[6];
+
+                for(i=0;i<lst.options.length;i++){
+                    var opt = lst.options[i];
+                    if(opt.value === val) {
+                        lst.removeChild(opt);
+                        break;
+                    }
+                }
+            }
+            else if(e.indexOf("Game#") > -1) {
                 //Game#1 P A4 (C|W)
                 if(e.indexOf(" P ")>-1){
                     var spl = e.split(" ");
@@ -1411,14 +1478,16 @@
                 }
                 //Abandoned
                 else if (e.indexOf("Abandoned")>-1){
+                    //Game#1 Abandoned. name quit
+                    var spl = e.split(" ");
                     document.title = "Tak";
                     board.scratch = true;
-                    alert("Game abandoned by your opponent");
+                    alert("Game abandoned by "+spl[2]);
                     document.getElementById("scratchsize").disabled = false;
                     document.getElementById("seek").disabled = false;
                 }
             } else if (e.indexOf("Name?")>-1){
-                server.send("Client "+"TakWeb-15.10.21");
+                server.send("Client "+"TakWeb-15.10.22");
                 var spl = e.split("Name?");
                 var name = window.prompt(spl[1], "");
                 if(!name)
@@ -1483,6 +1552,20 @@
                 return;
             var selected=lst[lst.selectedIndex];
             this.send("Accept "+selected.value.split(" ")[0]);
+          },
+          observegame: function(e) {
+            if(board.observing === false && board.scratch===false) //don't observe game while playing another
+                    return;
+            var lst = document.getElementById("gamelist");
+            if(lst.selectedIndex===-1)
+                return;
+            var selected=lst[lst.selectedIndex];
+            var no = Number(selected.value.split(" ")[0]);
+            if(no===board.gameno)
+                return;
+            else
+                this.send("Unobserve "+board.gameno);
+            this.send("Observe "+selected.value.split(" ")[0]);
           }
       };
 
@@ -1522,7 +1605,6 @@
         //geometry.vertices.shift();
         highlighter = new THREE.Mesh(geometry, material);
         highlighter.rotateX(Math.PI/2);
-
 
         canvas.addEventListener('mousedown', onDocumentMouseDown, false);
         canvas.addEventListener('mouseup', onDocumentMouseUp, false);
@@ -1590,7 +1672,9 @@
 
       function scratchbutton() {
           var input = document.getElementById("scratchsize");
-          if(board.scratch){
+          if(board.observing)
+              server.send("Unobserve "+board.gameno);
+          if(board.scratch || board.observing){
               board.clear();
               board.init(4+input.selectedIndex, "white", true);
           }
