@@ -1490,8 +1490,10 @@ OCTYPE html>
                 server.send("Client "+"TakWeb-15.10.22");
                 var spl = e.split("Name?");
                 var name = window.prompt(spl[1], "");
-                if(!name)
-                    name = "";
+                if(!name) {
+                    this.connection.close();
+                    return;
+                }
                 server.send("Name "+name);
             } else if (e.indexOf("Message")>-1){
                 var msg = e.split("Message ");
