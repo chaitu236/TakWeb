@@ -1351,8 +1351,10 @@ OCTYPE html>
                     alert("Disconnnecting from server....");
                     return;
                 }
-                this.connection = new WebSocket('ws://'+window.location.host,
-                                        "binary");
+                var url=window.location.host;
+                if(url.indexOf("playtak")>-1)
+                    url = 'playtak.com:3000';
+                this.connection = new WebSocket('ws://'+url, "binary");
                 board.server = this;
                 this.connection.onerror = function(e) {
                     this.output("Connection error: "+e);
