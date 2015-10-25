@@ -1,10 +1,4 @@
-<!D/* global game */
-
-/* global game */
-
-/* global game */
-
-OCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>Tak</title>
@@ -1033,8 +1027,17 @@ OCTYPE html>
                 tot+=Number(nos[i]);
                 lst=lst+(nos[i]+'').trim();
             }
-            var move=(tot===1?'':''+tot)+this.squarename(stf, str).toLowerCase()
-                            +dir+(tot===1?'':''+lst);
+            if(tot===1) {
+                var s1 = this.get_board_obj(stf, str);
+                if(this.get_stack(s1).length===0) {
+                    tot = '';
+                    lst='';
+                } else if(tot===Number(lst))
+                    lst='';
+            } else if(tot===Number(lst))
+                    lst='';
+            var move=tot+this.squarename(stf, str).toLowerCase()
+                            +dir+''+lst;
             this.notate(move);
         },
         generateMove: function() {
