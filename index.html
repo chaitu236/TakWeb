@@ -1,887 +1,992 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Tak</title>
-    <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Tak</title>
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-  ga('create', 'UA-68947366-1', 'auto');
-  ga('send', 'pageview');
+            ga('create', 'UA-68947366-1', 'auto');
+            ga('send', 'pageview');
 
-</script>
-    <meta charset="utf-8">
-    <style>
-      body {
-        margin: 0px;
-        padding:0px;
-        background-color: #ffffff;
-        overflow: hidden;
-      }
-      #gamecanvas{
-          display: block;
-          position: absolute;
-          left: 0px;
-          top: 0px;
-      }
-      #floating {
-          position: absolute;
-          right: 5px;
-          top: 5px;
-          z-index: 10;
-      }
-      #status {
-          position: absolute;
-          bottom: 0px;
-          right: 0px;
-          z-index: 10;
-      }
-      #help {
-          position: absolute;
-          top: 5px;
-          left: 5px;
-          z-index: 10;
-      }
-      #helptext{
-          background-color: #593514;
-          color: #d8cdab;
-          padding-left: 0px;
-          padding-right: 10px;
-      }
-      #helptext a {
-          color: white;
-      }
-      #helptext>ul {
-          font-weight: bold;
-      }
-      #helptext>ul>li {
-          font-weight: normal;
-          margin-left: 15px;
-      }
-      #pindicator {
-          position: absolute;
-          top: 10px;
-          left: 50%;
-          transform: translate(-50%, 0);
-          font-size: 200%;
-          z-index: 10;
-      }
-      #notationbar {
-          color: black;
-          text-align: center;
-          border-style: solid;
-          border-width: 2px;
-          border-color: black;
-      }
-      #zoomcontrols {
-          position: absolute;
-          bottom: 5px;
-          left: 5px;
-          z-index: 10;
-      }
-      #rmenu {
-          border-style: solid;
-          border-width: 2px;
-          border-color: black;
-      }
-      #moveslist {
-          display: table;
-          width: 150px;
-      }
-      #moveslist thead, #moveslist tbody{
-          float: left;
-          width: 100%;
-      }
-      #moveslist tbody {
-          overflow: auto;
-          height: 150px;
-      }
-      #moveslist tr {
-          width: 100%;
-          display: table;
-          text-align: left;
-      }
-      #moveslist>tr>td {
-          text-align: left;
-      }
-      #moveslist>tr>td:last-child {
-          text-align: right;
-      }
-      li {
-          margin: 2px 0;
-      }
-      button {
-          border: none;
-          background: #81BEF7;
-          color: white;
-          min-height: 40px;
-      }
-      .selected {
-          background: red;
-      }
-      .unselected {
-          background: grey;
-      }
-      .selectplayer {
-          border-radius: 2px;
-          border: 2px solid red;
-      }
-      #player1 {
-          color: #d8cdab;
-          display: inline;
-      }
-      #player2 {
-          color: #593514;
-          display: inline;
-      }
-      .hide {display:none;}
-      .show {display:block;}
-      //css display popup code taken from
-      //http://stackoverflow.com/questions/19064987/html-css-popup-div-on-text-click
-      .black_overlay{
-        display: none;
-        position: absolute;
-        top: 0%;
-        left: 0%;
-        width: 100%;
-        height: 100%;
-        background-color: black;
-        z-index:1001;
-        -moz-opacity: 0.8;
-        opacity:.80;
-        filter: alpha(opacity=80);
-    }
-    .white_content {
-        display: none;
-        position: absolute;
-        text-align: center;
-        top: 40%;
-        left: 35%;
-        width: 30%;
-        height: 20%;
-        padding: 16px;
-        border: 16px solid black;
-        background-color: white;
-        color: black;
-        z-index:1002;
-        overflow: auto;
-    }
-    </style>
-    <script src="js/three.min.js"></script>
-    <script src="js/OrbitControls.js"></script>
-    <script src="js/helvetiker_regular.typeface.js"></script>
+        </script>
+        <meta charset="utf-8">
+        <style>
+            body {
+                margin: 0px;
+                padding:0px;
+                background-color: #ffffff;
+                overflow: hidden;
+            }
+            #gamecanvas{
+                display: block;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+            }
+            #floating {
+                position: absolute;
+                right: 5px;
+                top: 5px;
+                z-index: 10;
+            }
+            #status {
+                position: absolute;
+                bottom: 0px;
+                right: 0px;
+                z-index: 10;
+            }
+            #help {
+                position: absolute;
+                top: 5px;
+                left: 5px;
+                z-index: 10;
+            }
+            #helptext{
+                background-color: #593514;
+                color: #d8cdab;
+                padding-left: 0px;
+                padding-right: 10px;
+            }
+            #helptext a {
+                color: white;
+            }
+            #helptext>ul {
+                font-weight: bold;
+            }
+            #helptext>ul>li {
+                font-weight: normal;
+                margin-left: 15px;
+            }
+            #pindicator {
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translate(-50%, 0);
+                font-size: 200%;
+                z-index: 10;
+            }
+            #notationbar {
+                color: black;
+                text-align: center;
+                border-style: solid;
+                border-width: 2px;
+                border-color: black;
+            }
+            #zoomcontrols {
+                position: absolute;
+                bottom: 5px;
+                left: 5px;
+                z-index: 10;
+            }
+            #rmenu {
+                border-style: solid;
+                border-width: 2px;
+                border-color: black;
+            }
+            #moveslist {
+                display: table;
+                width: 150px;
+            }
+            #moveslist thead, #moveslist tbody{
+                float: left;
+                width: 100%;
+            }
+            #moveslist tbody {
+                overflow: auto;
+                height: 150px;
+            }
+            #moveslist tr {
+                width: 100%;
+                display: table;
+                text-align: left;
+            }
+            #moveslist>tr>td {
+                text-align: left;
+            }
+            #moveslist>tr>td:last-child {
+                text-align: right;
+            }
+            li {
+                margin: 2px 0;
+            }
+            .selected {
+                background: red;
+            }
+            .unselected {
+                background: grey;
+            }
+            .selectplayer {
+                border-radius: 2px;
+                border: 2px solid red;
+            }
+            #player1 {
+                color: #d8cdab;
+                display: inline;
+            }
+            #player2 {
+                color: #593514;
+                display: inline;
+            }
+            //css display popup code taken from
+            //http://stackoverflow.com/questions/19064987/html-css-popup-div-on-text-click
+            .black_overlay{
+                display: none;
+                position: absolute;
+                top: 0%;
+                left: 0%;
+                width: 100%;
+                height: 100%;
+                background-color: black;
+                z-index:1001;
+                -moz-opacity: 0.8;
+                opacity:.80;
+                filter: alpha(opacity=80);
+            }
+            .white_content {
+                display: none;
+                position: absolute;
+                text-align: center;
+                top: 40%;
+                left: 35%;
+                width: 30%;
+                height: 20%;
+                padding: 16px;
+                border: 16px solid black;
+                background-color: white;
+                color: black;
+                z-index:1002;
+                overflow: auto;
+            }
+        </style>
+        <script src="js/three.min.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/helvetiker_regular.typeface.js"></script>
 
-  </head>
-  <body style="border:1px solid #000000;">
-      <div id="pindicator"><div id="player1">You</div> vs <div id="player2">You</div></div>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
-      <div align="right" id="floating">
-        <a title="Click to show/hide menu" href="#" onclick="rmenu()">
-            <img src="images/ic_menu_black_24px.svg" height="40" width="40"/>
-        </a>
-          <ul id="rmenu" style="list-style-type:none">
-              <li><a title="Reverse view" href="# "onclick="board.reverseboard()">
-                      <img src="images/ic_screen_rotation_black_24px.svg" width="30" height="30"/>
-                  </a></li>
-              <li>
-                  <select title="Create a new empty board to play locally" id="scratchsize" onchange="scratchbutton()">
-                              <option value="4">Board 4</option>
-                              <option selected="selected" value="5">Board 5</option>
-                              <option value="6">Board 6</option>
-                              <option value="7">Board 7</option>
-                              <option value="8">Board 8</option>
-                  </select>
-              </li>
-              <li><button title="Connect/disconnect to server to play online" id="multiplayer" class="unselected" onclick="server.init()">Multiplayer</button></li>
-              <li id="onlineplayers"></li>
-              <li>
-                  <select disabled title="Post your seek on server" id="seek" onchange="server.seek()">
-                              <option value="0">Seek</option>
-                              <option value="4">Seek 4</option>
-                              <option value="5">Seek 5</option>
-                              <option value="6">Seek 6</option>
-                              <option value="7">Seek 7</option>
-                              <option value="8">Seek 8</option>
-                  </select>
-              </li>
-              <li><a title="Load TPN" href="# "onclick="loadtpn()">
-                      <img src="images/loadtpn.svg" width="30" height="30"/>
-                  </a></li>
-              <li><select title="Doubleclick a game here to start" ondblclick="server.acceptseek()" size="10" name="Seeks" id="seeklist"></select></li>
-              <li><button title="Accept selected game" onclick="server.acceptseek()">Accept</button></li>
-              <li><div title="Notation for current game appears here" id="notationbar">
-                      Game notation
-                      <table id="moveslist">
-                      </table>
-                  </div>
-              </li>
-              <li><select title="Doubleclick a game here to observe" ondblclick="server.observegame()" size="10" name="Games" id="gamelist"></select></li>
-              <li><button title="Observe selected game" onclick="server.observegame()">Observe</button></li>
+    </head>
+    <body style="border:1px solid #000000;">
 
-          </ul>
-      </div>
+        <!-- Static navbar -->
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#" data-toggle="modal" data-target="#help-modal">Help</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                               title="Create a new empty board to play locally" aria-haspopup="true" aria-expanded="false"
+                               id="scratchsize"> New Board
+                                <span class="caret"></span></a>
 
-      <div>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" onclick="scratchbutton(4);">4x4</a></li>
+                                <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>
+                                <li><a href="#" onclick="scratchbutton(6);">6x6</a></li>
+                                <li><a href="#" onclick="scratchbutton(7);">7x7</a></li>
+                                <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
+                            </ul>
+                        </li>
+                        <li><a title="Reverse view" href="#" onclick="board.reverseboard()">Flip view</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                               title="Post your seek" aria-haspopup="true" aria-expanded="false" id="seek" > Create game
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" onclick="server.seek(4);">4x4</a></li>
+                                <li><a href="#" onclick="server.seek(5);">5x5</a></li>
+                                <li><a href="#" onclick="server.seek(6);">6x6</a></li>
+                                <li><a href="#" onclick="server.seek(7);">7x7</a></li>
+                                <li><a href="#" onclick="server.seek(8);">8x8</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#" onclick="server.seek(0);">Remove Seeks</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                               title="Accept a seek" aria-haspopup="true" aria-expanded="false" id="seek" > Join game
+                                <span class="caret"></span></a>
+                            <ul id="seeklist" class="dropdown-menu">
+                            </ul>
+                        </li>
+                        <li><a href="#" onclick="loadtpn()">Load TPS</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <button id="login-button" type="button" class="btn btn-default navbar-btn" onclick="server.init()">Sign up / Login</button>
+                        </li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+
+        <div id="pindicator"><div id="player1">You</div> vs <div id="player2">You</div></div>
+
+        <div align="right" id="floating">
+            <a title="Click to show/hide menu" href="#" onclick="rmenu()">
+                <img src="images/ic_menu_black_24px.svg" height="40" width="40"/>
+            </a>
+            <ul id="rmenu" style="list-style-type:none">
+
+
+                <li id="onlineplayers"></li>
+
+                <li><div title="Notation for current game appears here" id="notationbar">
+                        Game notation
+                        <table id="moveslist">
+                        </table>
+                    </div>
+                </li>
+                <li><select title="Doubleclick a game here to observe" ondblclick="server.observegame()" size="10" name="Games" id="gamelist"></select></li>
+                <li><button title="Observe selected game" onclick="server.observegame()">Observe</button></li>
+
+            </ul>
+        </div>
+
+        <div>
             <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
-      </div>
-      <div id="help">
-        <a href="#" onclick="cmenu()">
-            <img src="images/ic_help_black_24px.svg" height="40" width="40"/>
-        </a>
-        <ul id="helptext" class="hide">
-            <ul> Rules - the short version:
-                <li>White goes first</li>
-                <li>On first move, each player must place his opponent's tile</li>
-                <li>Create a path with flat stones and capstones between any two opposite ends of the board</li>
-                <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/sites/default/files/TakBetaRules9-22.pdf">here</a></li>
-            </ul>
-            <ul>Controls:
-                <li>Left click-drag (or touch-drag) to rotate board</li>
-                <li>Left click a piece to select it. Left click on it again (or right click anywhere) to rotate it</li>
-                <li>Left click on a square to place selected piece or to pick up stack</li>
-                <li>Right click and hold on a stack to hide pieces on all other squares (to see stack clearly)</li>
-                <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
-                <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch. Or use zoom buttons on bottom right.</li>
-                <li>Menu on the right side can be shown/hidden by clicking on the menu icon</li>
-                <li>Click on the "Reverse" icon in menu to reverse the board view</li>
-                <li>Current player is indicated by highlighting their name with red border</li>
-                <li>To load TPN notation, click on "load TPN" and paste the notation</li>
-                <li>If any of the above controls don't work, it means that control is invalid for current move</li>
-            </ul>
-            <ul>Play locally:
-                <li>Select board size to create a new empty board on which you can play locally</li>
-            </ul>
-            <ul>Play online:
-                <li>Connect to server by clicking "Multiplayer" button</li>
-                <li>Post your seek by selecting seek size or accept another player's seek by double clicking on it</li>
-            </ul>
-            <ul>Observe/Spectate another game:
-                <li>Double click on one of the ongoing games or select and click Observe</li>
-                <li>You can't observe a game while playing an online game</li>
-            </ul>
-            <ul>About the game:
-                <li>Rules for TAK are made by <a target="_blank" href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a target="_blank" href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
-                <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">me</a></li>
-                <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a></li>
-                <li>Backend code can be found <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
-                <li>Check out <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">these </a>
-                                <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
-            </ul>
-        </ul>
-      </div>
+        </div>
+        <div id="login" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <form role="form">
+                                    <div class="form-group">
+                                        <label for="usr">Username</label>
+                                        <input type="text" class="form-control" id="login-username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">Password:</label>
+                                        <input type="password" class="form-control" id="login-pwd">
+                                    </div>
+                                    <button type="submit" class="btn btn-default" onclick="server.login()">Login</button>
+                                </form>
+                            </div>
+                            <div class="col-sm-6">
+                                <form role="form">
+                                    <div class="form-group">
+                                        <label for="usr">Username</label>
+                                        <input type="text" class="form-control" id="register-username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email address:</label>
+                                        <input type="email" class="form-control" id="register-email">
+                                    </div>
+                                    <button type="submit" class="btn btn-default" onclick="server.register()">Sign up</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="server.init()">Close</button>
+                    </div>
+                </div>
 
-    <div id="light" class="white_content"><div id="onscreenmsg"></div>
-        <a href = "javascript:void(0)" onclick = "
-            document.getElementById('light').style.display='none';
-            document.getElementById('fade').style.display='none'">Close</a></div>
-    <div id="fade" class="black_overlay"></div>
+            </div>
+        </div>
+        <div id="help-modal" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Help</h4>
+                    </div>
+                    <div class="modal-body">
+                        <ul>
+                            <li><ul> Rules - the short version:
+                                    <li>White goes first</li>
+                                    <li>On first move, each player must place his opponent's tile</li>
+                                    <li>Create a path with flat stones and capstones between any two opposite ends of the board</li>
+                                    <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/sites/default/files/TakBetaRules9-22.pdf">here</a></li>
+                                </ul></li>
+                            <li><ul>Controls:
+                                    <li>Left click-drag (or touch-drag) to rotate board</li>
+                                    <li>Left click a piece to select it. Left click on it again (or right click anywhere) to rotate it</li>
+                                    <li>Left click on a square to place selected piece or to pick up stack</li>
+                                    <li>Right click and hold on a stack to hide pieces on all other squares (to see stack clearly)</li>
+                                    <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
+                                    <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch. Or use zoom buttons on bottom right.</li>
+                                    <li>Menu on the right side can be shown/hidden by clicking on the menu icon</li>
+                                    <li>Click on the "Reverse" icon in menu to reverse the board view</li>
+                                    <li>Current player is indicated by highlighting their name with red border</li>
+                                    <li>To load TPN notation, click on "load TPN" and paste the notation</li>
+                                    <li>If any of the above controls don't work, it means that control is invalid for current move</li>
+                                </ul></li>
+                            <li><ul>Play locally:
+                                    <li>Select board size to create a new empty board on which you can play locally</li>
+                                </ul></li>
+                            <li><ul>Play online:
+                                    <li>Connect to server by clicking "Multiplayer" button</li>
+                                    <li>Post your seek by selecting seek size or accept another player's seek by double clicking on it</li>
+                                </ul></li>
+                            <li><ul>Observe/Spectate another game:
+                                    <li>Double click on one of the ongoing games or select and click Observe</li>
+                                    <li>You can't observe a game while playing an online game</li>
+                                </ul></li>
+                            <li><ul>About the game:
+                                    <li>Rules for TAK are made by <a target="_blank" href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a target="_blank" href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
+                                    <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">me</a></li>
+                                    <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a></li>
+                                    <li>Backend code can be found <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
+                                    <li>Check out <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">these </a>
+                                        <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
+                                </ul></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div id="zoomcontrols">
-        <a href="#" onclick="zoom(true)">
-            <img src="images/ic_zoom_out_black_24px.svg" height="40" width="40"/>
-        </a>
-        <a href="#" onclick="zoom(false)">
-            <img src="images/ic_zoom_in_black_24px.svg" height="40" width="40"/>
-        </a>
-    </div>
+        <div id="light" class="white_content"><div id="onscreenmsg"></div>
+            <a href = "javascript:void(0)" onclick = "
+                    document.getElementById('light').style.display = 'none';
+                    document.getElementById('fade').style.display = 'none'">Close</a></div>
+        <div id="fade" class="black_overlay"></div>
 
-      <script>
+        <div id="zoomcontrols">
+            <a href="#" onclick="zoom(true)">
+                <img src="images/ic_zoom_out_black_24px.svg" height="40" width="40"/>
+            </a>
+            <a href="#" onclick="zoom(false)">
+                <img src="images/ic_zoom_in_black_24px.svg" height="40" width="40"/>
+            </a>
+        </div>
 
-      function alert(msg) {
-          document.getElementById('onscreenmsg').innerHTML=msg;
-          document.getElementById('light').style.display='block';
-          document.getElementById('fade').style.display='block';
-      }
-      var camera, scene, renderer, light, canvas, controls=null;
+        <script>
 
-      var piece_size = 88;
-      var piece_height = 15;
-      var sq_size = 90;
-      var sq_height = 15;
-      var capstone_height=90;
-      var capstone_radius=20;
-      var stack_selection_height = 60;
-      var border_size = 30;
-      var letter_size = 12;
-
-      var raycaster = new THREE.Raycaster();
-      var highlighter;
-      var mouse = new THREE.Vector2();
-      var offset = new THREE.Vector3();
-
-      var board = {
-          size:0,
-          totcaps:0,
-          tottiles:0,
-          whitepiecesleft:0,
-          blackpiecesleft:0,
-          mycolor:"white",
-          movecount:0,
-          scratch:true,
-          sq:[],
-          board_objects: [],
-          piece_objects: [],
-          move: {start:null, end:null, dir:'U', squares:[]},
-          highlighted:null,
-          totalhighlighted:null,
-          selected:null,
-          selectedStack:null,
-          ismymove:false,
-          server: null,
-          gameno: 0,
-          boardside:"white",
-          result:"none",
-          observing: false,
-
-          position:{x:0, y:0, endx:0, endz:0},
-
-          init: function(sz, col, scr, obs) {
-              this.size = sz;
-
-              if(sz===4) {
-                  this.totcaps = 0;
-                  this.tottiles = 15;
-              } else if (sz === 5){
-                  this.totcaps = 1;
-                  this.tottiles = 20;
-              } else if (sz === 6) {
-                  this.totcaps = 1;
-                  this.tottiles = 30;
-              } else if (sz === 7) {
-                  this.totcaps = 2;
-                  this.tottiles = 40;
-              } else {
-                  this.totcaps = 2;
-                  this.tottiles = 50;
-              }
-              this.whitepiecesleft = this.tottiles + this.totcaps;
-              this.blackpiecesleft = this.tottiles + this.totcaps;
-
-              this.mycolor = col;
-              this.sq = [];
-              this.movecount = 0;
-              this.scratch = scr;
-              this.board_objects = [];
-              this.piece_objects = [];
-              this.highlighted = null;
-              this.selected = null;
-              this.selectedStack = null;
-              this.gameno = 0;
-              this.move = {start:null, end:null, dir:'U', squares:[]};
-              this.result = "none";
-              this.observing = typeof obs!== 'undefined'?obs:false;
-              this.ismymove = this.checkifmymove();
-
-              for(i=0;i<this.size;i++){
-                this.sq[i] = [];
-                for(j=0;j<this.size;j++){
-                  this.sq[i][j] = [];
-                }
-              }
-
-              this.addboard();
-              this.addpieces();
-
-              var material = new THREE.LineBasicMaterial({color:0x0000f0});
-              var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
-
-              document.getElementById("player1").className="selectplayer";
-              document.getElementById("player2").className="";
-
-              if(this.mycolor!==this.boardside)
-                  this.reverseboard();
-          },
-
-          addboard: function() {
-            var white_texture = THREE.ImageUtils.loadTexture( 'images/whitesquare.png' );
-            var black_texture = THREE.ImageUtils.loadTexture( 'images/blacksquare.png' );
-
-            var geometry = new THREE.BoxGeometry( sq_size, sq_height, sq_size);
-            geometry.center();
-
-            var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
-            var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
-
-            var startx=-(this.size*sq_size)/2.0+sq_size/2;
-            var startz=-(this.size*sq_size)/2.0;
-
-            this.position.x = startx;
-            this.position.z = startz;
-            this.position.endx = startx+this.size*sq_size;
-            this.position.endz = startz+this.size*sq_size;
-
-            for(i=0;i<this.size;i++){
-              for(j=0;j<this.size;j++){
-                piece = new THREE.Mesh(geometry, ((i+j)%2)?white_material:black_material);
-                piece.position.set(startx+i*sq_size, 0, startz+j*sq_size);
-
-                piece.file = i;//String.fromCharCode('A'.charCodeAt(0)+i);
-                piece.rank = this.size-1-j;
-                piece.isboard = true;
-
-                this.board_objects.push(piece);
-                this.sq[i][j].board_object = piece;
-                scene.add(piece);
-              }
+            function alert(msg) {
+                document.getElementById('onscreenmsg').innerHTML = msg;
+                document.getElementById('light').style.display = 'block';
+                document.getElementById('fade').style.display = 'block';
             }
-            
-            var border_material = new THREE.MeshBasicMaterial({color: 0x6f4734});
-            geometry = new THREE.BoxGeometry(this.size*sq_size+2*border_size, piece_height, border_size);
-            
-            var border = new THREE.Mesh(geometry, border_material);
-            border.position.set(0, 0, startz-sq_size/2-border_size/2);
-            scene.add(border);
-            
-            border = new THREE.Mesh(geometry, border_material);
-            border.rotateY(Math.PI);
-            border.position.set(0, 0, this.position.endz-sq_size/2+border_size/2);
-            scene.add(border);
-            
-            geometry = new THREE.BoxGeometry(this.size*sq_size, piece_height, border_size);
-            border = new THREE.Mesh(geometry, border_material);
-            border.rotateY(Math.PI/2);
-            border.position.set(this.position.x-sq_size/2-border_size/2, 0, -sq_size/2);
-            scene.add(border);
-            
-            border = new THREE.Mesh(geometry, border_material);
-            border.rotateY(-Math.PI/2);
-            border.position.set(this.position.endx-border_size, 0, -sq_size/2);
-            scene.add(border);
-            
-            var material = new THREE.MeshBasicMaterial({color: 0xFFF5B5});
-            for(var i=0;i<this.size;i++) {
-                geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0)+i),
-                            {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+            var camera, scene, renderer, light, canvas, controls = null;
 
-                var letter = new THREE.Mesh(geometry, material);
-                letter.rotateX(-Math.PI/2);
-                letter.position.set(this.position.x-letter_size/2+i*sq_size, sq_height/2,
-                                            this.position.endz-border_size/2-letter_size);
-                scene.add(letter);
-                
-                geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0)+i),
-                            {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                letter = new THREE.Mesh(geometry, material);
-                letter.rotateX(-Math.PI/2);
-                letter.position.set(this.position.x-sq_size/2-border_size/2-letter_size/2, sq_height/2,
-                                            this.position.endz -border_size - sq_size/2 - i*sq_size);
-                scene.add(letter);
-            }
-            for(var i=this.size-1;i>=0;i--) {
-                geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0)+i),
-                            {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                var letter = new THREE.Mesh(geometry, material);
-                letter.rotateX(Math.PI/2);
-                letter.rotateY(Math.PI);
-                letter.position.set(this.position.x-letter_size/2+i*sq_size, sq_height/2,
-                                            this.position.z-sq_size/2-border_size/2-letter_size/2);
-                scene.add(letter);
-                
-                geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0)+i),
-                            {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                letter = new THREE.Mesh(geometry, material);
-                letter.rotateX(-Math.PI/2);
-                letter.rotateZ(Math.PI);
-                letter.position.set(this.position.endx-sq_size/2+border_size/2+letter_size/2, sq_height/2,
-                                        this.position.endz -border_size - sq_size/2 -letter_size - i*sq_size);
-                scene.add(letter);
-            }
-            this.position.x -= border_size;
-            this.position.z -= border_size;
-            this.position.endx += border_size;
-            this.position.endz += border_size;
-            
-        },
-        addpieces: function() {
-            var white_texture = THREE.ImageUtils.loadTexture( 'images/whitetile2.png' );
-            var black_texture = THREE.ImageUtils.loadTexture( 'images/blacktile2.png' );
+            var piece_size = 88;
+            var piece_height = 15;
+            var sq_size = 90;
+            var sq_height = 15;
+            var capstone_height = 90;
+            var capstone_radius = 20;
+            var stack_selection_height = 60;
+            var border_size = 30;
+            var letter_size = 12;
 
-            var geometry = new THREE.BoxGeometry( piece_size, piece_height, piece_size);
-            geometry.center();
+            var raycaster = new THREE.Raycaster();
+            var highlighter;
+            var mouse = new THREE.Vector2();
+            var offset = new THREE.Vector3();
 
-            var white_material = new THREE.MeshBasicMaterial( { map: white_texture } );
-            var black_material = new THREE.MeshBasicMaterial( { map: black_texture } );
+            var board = {
+                size: 0,
+                totcaps: 0,
+                tottiles: 0,
+                whitepiecesleft: 0,
+                blackpiecesleft: 0,
+                mycolor: "white",
+                movecount: 0,
+                scratch: true,
+                sq: [],
+                board_objects: [],
+                piece_objects: [],
+                move: {start: null, end: null, dir: 'U', squares: []},
+                highlighted: null,
+                totalhighlighted: null,
+                selected: null,
+                selectedStack: null,
+                ismymove: false,
+                server: null,
+                gameno: 0,
+                boardside: "white",
+                result: "none",
+                observing: false,
+                position: {x: 0, y: 0, endx: 0, endz: 0},
+                init: function (sz, col, scr, obs) {
+                    this.size = sz;
 
-            for(i=0;i<this.tottiles;i++){
-              var stackno = Math.floor(i/10);
-              var stackheight = i%10;
-
-              var piece;
-
-              piece = new THREE.Mesh(geometry, white_material);
-              piece.position.set(this.position.endx+50, stackheight*piece_height, this.position.endz-piece_size - stackno*(piece_size+15));
-              piece.iswhitepiece = true;
-              piece.isstanding = false;
-              piece.onsquare = null;
-              piece.isboard = false;
-              piece.iscapstone = false;
-
-              this.piece_objects.push(piece);
-              scene.add(piece);
-
-              piece = new THREE.Mesh(geometry, black_material);
-              piece.position.set(this.position.x-50-piece_size, stackheight*piece_height, this.position.z+stackno*(piece_size+15));
-              piece.iswhitepiece = false;
-              piece.isstanding = false;
-              piece.onsquare = null;
-              piece.isboard = false;
-              piece.iscapstone =  false;
-
-              this.piece_objects.push(piece);
-              scene.add(piece);
-            }
-            for(i=0;i<this.totcaps;i++){
-                var stackno = Math.floor(this.tottiles/10) + i;
-                var geometry = new THREE.CylinderGeometry(capstone_radius,
-                                    capstone_radius, capstone_height, 30);
-                geometry.center();
-                var piece = new THREE.Mesh(geometry, white_material);
-                piece.position.set(this.position.endx+50, capstone_height/2, this.position.endz-piece_size-stackno*(piece_size+15));
-                piece.iswhitepiece = true;
-                piece.isstanding = true;
-                piece.onsquare = null;
-                piece.isboard = false;
-                piece.iscapstone = true;
-
-                this.piece_objects.push(piece);
-                scene.add(piece);
-
-                piece = new THREE.Mesh(geometry, black_material);
-                piece.position.set(this.position.x-50-piece_size, capstone_height/2, this.position.z+stackno*(piece_size+15));
-                piece.iswhitepiece = false;
-                piece.isstanding = true;
-                piece.onsquare = null;
-                piece.isboard = false;
-                piece.iscapstone = true;
-
-                this.piece_objects.push(piece);
-                scene.add(piece);
-            }
-        },
-        file: function(no) {
-            return String.fromCharCode('A'.charCodeAt(0)+no);
-        },
-        //file is no. rank is no.
-        squarename: function(file, rank) {
-            return this.file(file)+(rank+1);
-        },
-        get_board_obj: function(file, rank) {
-            return this.sq[file][this.size-1 -rank].board_object;
-        },
-        incmovecnt: function() {
-            this.movecount++;
-
-            v1 = document.getElementById("player1");
-            v1.className = (v1.className==="")?"selectplayer":"";
-            v2 = document.getElementById("player2");
-            v2.className = (v2.className==="")?"selectplayer":"";
-
-            if(this.scratch) {
-                if(this.mycolor === "white")
-                    this.mycolor = "black";
-                else
-                    this.mycolor = "white";
-            }
-
-            this.ismymove = this.checkifmymove();
-        },
-        leftclick: function() {
-            this.remove_total_highlight();
-            if(!this.ismymove) {
-                return;
-            }
-
-            if(this.highlighted && this.selected) {
-                st =  this.get_stack(this.highlighted);
-                hlt = this.highlighted;
-                this.unhighlight_sq();
-                sel = this.selected;
-                this.unselect();
-
-                //place on board
-                if(st.length===0){
-                    this.push(hlt, sel);
-
-                    var stone = 'Piece';
-                    if(sel.iscapstone)
-                        stone = 'Cap';
-                    else if(sel.isstanding)
-                        stone = 'Wall';
-
-                    console.log("Place "+this.movecount,
-                      sel.iswhitepiece?'White':'Black',stone,
-                      this.squarename(hlt.file, hlt.rank));
-
-                    var sqname = this.squarename(hlt.file, hlt.rank);
-                    var msg = "P "+sqname;
-                    if(stone!=='Piece')
-                        msg += " "+stone.charAt(0);
-                    this.sendmove(msg);
-                    this.notatePmove(sqname, stone.charAt(0));
-
-                    var pcs;
-                    if(this.mycolor==="white"){
-                        this.whitepiecesleft--;
-                        pcs = this.whitepiecesleft;
+                    if (sz === 4) {
+                        this.totcaps = 0;
+                        this.tottiles = 15;
+                    } else if (sz === 5) {
+                        this.totcaps = 1;
+                        this.tottiles = 20;
+                    } else if (sz === 6) {
+                        this.totcaps = 1;
+                        this.tottiles = 30;
+                    } else if (sz === 7) {
+                        this.totcaps = 2;
+                        this.tottiles = 40;
                     } else {
-                        this.blackpiecesleft--;
-                        pcs = this.blackpiecesleft;
+                        this.totcaps = 2;
+                        this.tottiles = 50;
                     }
-                    if(this.scratch) {
-                        this.checkroadwin();
-                        this.checksquaresover();
-                        if(pcs<=0) {
-                            this.findwhowon();
-                            this.gameover();
-                            return;
+                    this.whitepiecesleft = this.tottiles + this.totcaps;
+                    this.blackpiecesleft = this.tottiles + this.totcaps;
+
+                    this.mycolor = col;
+                    this.sq = [];
+                    this.movecount = 0;
+                    this.scratch = scr;
+                    this.board_objects = [];
+                    this.piece_objects = [];
+                    this.highlighted = null;
+                    this.selected = null;
+                    this.selectedStack = null;
+                    this.gameno = 0;
+                    this.move = {start: null, end: null, dir: 'U', squares: []};
+                    this.result = "none";
+                    this.observing = typeof obs !== 'undefined' ? obs : false;
+                    this.ismymove = this.checkifmymove();
+
+                    for (i = 0; i < this.size; i++) {
+                        this.sq[i] = [];
+                        for (j = 0; j < this.size; j++) {
+                            this.sq[i][j] = [];
                         }
                     }
-                    this.incmovecnt();
-                }
-                return;
-            }
 
-            //if already selected
-            if(this.selected) {
-                raycaster.setFromCamera(mouse, camera);
-                var intersects = raycaster.intersectObjects(scene.children);
-                if(intersects.length > 0){
-                    var obj = intersects[0].object;
-                    //if already selected is same as clicked obj, rotate it
-                    if(this.selected === obj && Math.floor(this.movecount/2)!==0) {
-                        this.rotate(obj);
+                    this.addboard();
+                    this.addpieces();
+
+                    var material = new THREE.LineBasicMaterial({color: 0x0000f0});
+                    var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
+
+                    document.getElementById("player1").className = "selectplayer";
+                    document.getElementById("player2").className = "";
+
+                    if (this.mycolor !== this.boardside)
+                        this.reverseboard();
+                },
+                addboard: function () {
+                    var white_texture = THREE.ImageUtils.loadTexture('images/whitesquare.png');
+                    var black_texture = THREE.ImageUtils.loadTexture('images/blacksquare.png');
+
+                    var geometry = new THREE.BoxGeometry(sq_size, sq_height, sq_size);
+                    geometry.center();
+
+                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
+                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
+
+                    var startx = -(this.size * sq_size) / 2.0 + sq_size / 2;
+                    var startz = -(this.size * sq_size) / 2.0;
+
+                    this.position.x = startx;
+                    this.position.z = startz;
+                    this.position.endx = startx + this.size * sq_size;
+                    this.position.endz = startz + this.size * sq_size;
+
+                    for (i = 0; i < this.size; i++) {
+                        for (j = 0; j < this.size; j++) {
+                            piece = new THREE.Mesh(geometry, ((i + j) % 2) ? white_material : black_material);
+                            piece.position.set(startx + i * sq_size, 0, startz + j * sq_size);
+
+                            piece.file = i;//String.fromCharCode('A'.charCodeAt(0)+i);
+                            piece.rank = this.size - 1 - j;
+                            piece.isboard = true;
+
+                            this.board_objects.push(piece);
+                            this.sq[i][j].board_object = piece;
+                            scene.add(piece);
+                        }
+                    }
+
+                    var border_material = new THREE.MeshBasicMaterial({color: 0x6f4734});
+                    geometry = new THREE.BoxGeometry(this.size * sq_size + 2 * border_size, piece_height, border_size);
+
+                    var border = new THREE.Mesh(geometry, border_material);
+                    border.position.set(0, 0, startz - sq_size / 2 - border_size / 2);
+                    scene.add(border);
+
+                    border = new THREE.Mesh(geometry, border_material);
+                    border.rotateY(Math.PI);
+                    border.position.set(0, 0, this.position.endz - sq_size / 2 + border_size / 2);
+                    scene.add(border);
+
+                    geometry = new THREE.BoxGeometry(this.size * sq_size, piece_height, border_size);
+                    border = new THREE.Mesh(geometry, border_material);
+                    border.rotateY(Math.PI / 2);
+                    border.position.set(this.position.x - sq_size / 2 - border_size / 2, 0, -sq_size / 2);
+                    scene.add(border);
+
+                    border = new THREE.Mesh(geometry, border_material);
+                    border.rotateY(-Math.PI / 2);
+                    border.position.set(this.position.endx - border_size, 0, -sq_size / 2);
+                    scene.add(border);
+
+                    var material = new THREE.MeshBasicMaterial({color: 0xFFF5B5});
+                    for (var i = 0; i < this.size; i++) {
+                        geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
+                                {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+
+                        var letter = new THREE.Mesh(geometry, material);
+                        letter.rotateX(-Math.PI / 2);
+                        letter.position.set(this.position.x - letter_size / 2 + i * sq_size, sq_height / 2,
+                                this.position.endz - border_size / 2 - letter_size);
+                        scene.add(letter);
+
+                        geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
+                                {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+                        letter = new THREE.Mesh(geometry, material);
+                        letter.rotateX(-Math.PI / 2);
+                        letter.position.set(this.position.x - sq_size / 2 - border_size / 2 - letter_size / 2, sq_height / 2,
+                                this.position.endz - border_size - sq_size / 2 - i * sq_size);
+                        scene.add(letter);
+                    }
+                    for (var i = this.size - 1; i >= 0; i--) {
+                        geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
+                                {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+                        var letter = new THREE.Mesh(geometry, material);
+                        letter.rotateX(Math.PI / 2);
+                        letter.rotateY(Math.PI);
+                        letter.position.set(this.position.x - letter_size / 2 + i * sq_size, sq_height / 2,
+                                this.position.z - sq_size / 2 - border_size / 2 - letter_size / 2);
+                        scene.add(letter);
+
+                        geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
+                                {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+                        letter = new THREE.Mesh(geometry, material);
+                        letter.rotateX(-Math.PI / 2);
+                        letter.rotateZ(Math.PI);
+                        letter.position.set(this.position.endx - sq_size / 2 + border_size / 2 + letter_size / 2, sq_height / 2,
+                                this.position.endz - border_size - sq_size / 2 - letter_size - i * sq_size);
+                        scene.add(letter);
+                    }
+                    this.position.x -= border_size;
+                    this.position.z -= border_size;
+                    this.position.endx += border_size;
+                    this.position.endz += border_size;
+
+                },
+                addpieces: function () {
+                    var white_texture = THREE.ImageUtils.loadTexture('images/whitetile2.png');
+                    var black_texture = THREE.ImageUtils.loadTexture('images/blacktile2.png');
+
+                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
+                    geometry.center();
+
+                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
+                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
+
+                    for (i = 0; i < this.tottiles; i++) {
+                        var stackno = Math.floor(i / 10);
+                        var stackheight = i % 10;
+
+                        var piece;
+
+                        piece = new THREE.Mesh(geometry, white_material);
+                        piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * (piece_size + 15));
+                        piece.iswhitepiece = true;
+                        piece.isstanding = false;
+                        piece.onsquare = null;
+                        piece.isboard = false;
+                        piece.iscapstone = false;
+
+                        this.piece_objects.push(piece);
+                        scene.add(piece);
+
+                        piece = new THREE.Mesh(geometry, black_material);
+                        piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * (piece_size + 15));
+                        piece.iswhitepiece = false;
+                        piece.isstanding = false;
+                        piece.onsquare = null;
+                        piece.isboard = false;
+                        piece.iscapstone = false;
+
+                        this.piece_objects.push(piece);
+                        scene.add(piece);
+                    }
+                    for (i = 0; i < this.totcaps; i++) {
+                        var stackno = Math.floor(this.tottiles / 10) + i;
+                        var geometry = new THREE.CylinderGeometry(capstone_radius,
+                                capstone_radius, capstone_height, 30);
+                        geometry.center();
+                        var piece = new THREE.Mesh(geometry, white_material);
+                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * (piece_size + 15));
+                        piece.iswhitepiece = true;
+                        piece.isstanding = true;
+                        piece.onsquare = null;
+                        piece.isboard = false;
+                        piece.iscapstone = true;
+
+                        this.piece_objects.push(piece);
+                        scene.add(piece);
+
+                        piece = new THREE.Mesh(geometry, black_material);
+                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * (piece_size + 15));
+                        piece.iswhitepiece = false;
+                        piece.isstanding = true;
+                        piece.onsquare = null;
+                        piece.isboard = false;
+                        piece.iscapstone = true;
+
+                        this.piece_objects.push(piece);
+                        scene.add(piece);
+                    }
+                },
+                file: function (no) {
+                    return String.fromCharCode('A'.charCodeAt(0) + no);
+                },
+                //file is no. rank is no.
+                squarename: function (file, rank) {
+                    return this.file(file) + (rank + 1);
+                },
+                get_board_obj: function (file, rank) {
+                    return this.sq[file][this.size - 1 - rank].board_object;
+                },
+                incmovecnt: function () {
+                    this.movecount++;
+
+                    v1 = document.getElementById("player1");
+                    v1.className = (v1.className === "") ? "selectplayer" : "";
+                    v2 = document.getElementById("player2");
+                    v2.className = (v2.className === "") ? "selectplayer" : "";
+
+                    if (this.scratch) {
+                        if (this.mycolor === "white")
+                            this.mycolor = "black";
+                        else
+                            this.mycolor = "white";
+                    }
+
+                    this.ismymove = this.checkifmymove();
+                },
+                leftclick: function () {
+                    this.remove_total_highlight();
+                    if (!this.ismymove) {
                         return;
                     }
-                }
-                this.unselect(obj);
-                return;
-            }
-            if(this.selectedStack) {
-                //move
-                if(this.highlighted && this.selectedStack.length>0){
-                    var obj = this.selectedStack.pop();
-                    //this.unselectStackElem(obj);
-                    this.push(this.highlighted, obj);
-                    this.move_stack_over(this.highlighted, this.selectedStack);
-                    this.move.squares.push(this.highlighted);
 
-                    if(this.move.squares.length>1 && this.move.dir==='U')
-                        this.setmovedir();
-
-                    if(this.selectedStack.length === 0) {
-                        this.move.end = this.highlighted;
-                        this.selectedStack = null;
+                    if (this.highlighted && this.selected) {
+                        st = this.get_stack(this.highlighted);
+                        hlt = this.highlighted;
                         this.unhighlight_sq();
-                        this.generateMove();
+                        sel = this.selected;
+                        this.unselect();
+
+                        //place on board
+                        if (st.length === 0) {
+                            this.push(hlt, sel);
+
+                            var stone = 'Piece';
+                            if (sel.iscapstone)
+                                stone = 'Cap';
+                            else if (sel.isstanding)
+                                stone = 'Wall';
+
+                            console.log("Place " + this.movecount,
+                                    sel.iswhitepiece ? 'White' : 'Black', stone,
+                                    this.squarename(hlt.file, hlt.rank));
+
+                            var sqname = this.squarename(hlt.file, hlt.rank);
+                            var msg = "P " + sqname;
+                            if (stone !== 'Piece')
+                                msg += " " + stone.charAt(0);
+                            this.sendmove(msg);
+                            this.notatePmove(sqname, stone.charAt(0));
+
+                            var pcs;
+                            if (this.mycolor === "white") {
+                                this.whitepiecesleft--;
+                                pcs = this.whitepiecesleft;
+                            } else {
+                                this.blackpiecesleft--;
+                                pcs = this.blackpiecesleft;
+                            }
+                            if (this.scratch) {
+                                this.checkroadwin();
+                                this.checksquaresover();
+                                if (pcs <= 0) {
+                                    this.findwhowon();
+                                    this.gameover();
+                                    return;
+                                }
+                            }
+                            this.incmovecnt();
+                        }
+                        return;
                     }
-                }else{
-                    this.move.end = this.move.squares[this.move.squares.length-1];
-                    this.unselectStack();
-                    this.generateMove();
-                }
-                return;
-            }
 
-            this.unhighlight_sq();
-
-            raycaster.setFromCamera(mouse, camera);
-            var intersects = raycaster.intersectObjects(scene.children);
-            //select piece
-            if(intersects.length > 0){
-                var obj = intersects[0].object;
-
-                if(!obj.isboard && !obj.onsquare) {
-                    if(obj.iswhitepiece !== this.is_white_piece_to_move())
+                    //if already selected
+                    if (this.selected) {
+                        raycaster.setFromCamera(mouse, camera);
+                        var intersects = raycaster.intersectObjects(scene.children);
+                        if (intersects.length > 0) {
+                            var obj = intersects[0].object;
+                            //if already selected is same as clicked obj, rotate it
+                            if (this.selected === obj && Math.floor(this.movecount / 2) !== 0) {
+                                this.rotate(obj);
+                                return;
+                            }
+                        }
+                        this.unselect(obj);
                         return;
-                    //no capstone move on 1st moves
-                    if(Math.floor(this.movecount/2)===0 && obj.iscapstone)
+                    }
+                    if (this.selectedStack) {
+                        //move
+                        if (this.highlighted && this.selectedStack.length > 0) {
+                            var obj = this.selectedStack.pop();
+                            //this.unselectStackElem(obj);
+                            this.push(this.highlighted, obj);
+                            this.move_stack_over(this.highlighted, this.selectedStack);
+                            this.move.squares.push(this.highlighted);
+
+                            if (this.move.squares.length > 1 && this.move.dir === 'U')
+                                this.setmovedir();
+
+                            if (this.selectedStack.length === 0) {
+                                this.move.end = this.highlighted;
+                                this.selectedStack = null;
+                                this.unhighlight_sq();
+                                this.generateMove();
+                            }
+                        } else {
+                            this.move.end = this.move.squares[this.move.squares.length - 1];
+                            this.unselectStack();
+                            this.generateMove();
+                        }
+                        return;
+                    }
+
+                    this.unhighlight_sq();
+
+                    raycaster.setFromCamera(mouse, camera);
+                    var intersects = raycaster.intersectObjects(scene.children);
+                    //select piece
+                    if (intersects.length > 0) {
+                        var obj = intersects[0].object;
+
+                        if (!obj.isboard && !obj.onsquare) {
+                            if (obj.iswhitepiece !== this.is_white_piece_to_move())
+                                return;
+                            //no capstone move on 1st moves
+                            if (Math.floor(this.movecount / 2) === 0 && obj.iscapstone)
+                                return;
+
+                            this.select(obj);
+                        }
+                        //select stack ... no stack selection on 1st moves
+                        else if (!this.selectedStack && Math.floor(this.movecount / 2) !== 0) {
+                            var sq = obj;
+                            if (!obj.isboard) {
+                                if (!obj.onsquare)
+                                    return;
+                                sq = obj.onsquare;
+                            }
+                            var stk = this.get_stack(sq);
+                            if (this.is_top_mine(sq) && stk.length > 0) {
+                                this.selectStack(stk);
+                                this.move.start = sq;
+                                this.move.squares.push(sq);
+                            }
+                        }
+                    }
+                },
+                mousemove: function () {
+                    if (!this.ismymove)
                         return;
 
-                    this.select(obj);
-                }
-                //select stack ... no stack selection on 1st moves
-                else if(!this.selectedStack && Math.floor(this.movecount/2)!==0){
-                    var sq = obj;
-                    if(!obj.isboard) {
-                        if(!obj.onsquare)
+                    raycaster.setFromCamera(mouse, camera);
+                    if (!this.selected && !this.selectedStack)
+                        return;
+
+                    var intersects = raycaster.intersectObjects(scene.children);
+
+                    if (intersects.length > 0) {
+                        var obj = intersects[0].object;
+                        if (!obj.isboard && !obj.onsquare)
                             return;
-                        sq = obj.onsquare;
-                    }
-                    var stk = this.get_stack(sq);
-                    if(this.is_top_mine(sq) && stk.length>0) {
-                        this.selectStack(stk);
-                        this.move.start = sq;
-                        this.move.squares.push(sq);
-                    }
-                }
-            }
-        },
-        mousemove: function() {
-            if(!this.ismymove)
-                return;
+                        if (!obj.isboard)
+                            obj = obj.onsquare;
 
-            raycaster.setFromCamera(mouse, camera);
-            if(!this.selected && !this.selectedStack)
-              return;
+                        if (this.selectedStack) {
+                            var tp = this.top_of_stack(obj);
+                            if (tp && tp.iscapstone)
+                                return;
+                            if (tp && tp.isstanding &&
+                                    !this.selectedStack[this.selectedStack.length - 1].iscapstone)
+                                return;
 
-            var intersects = raycaster.intersectObjects(scene.children);
+                            var prev = this.move.squares[this.move.squares.length - 1];
 
-            if(intersects.length>0){
-                var obj = intersects[0].object;
-                if(!obj.isboard && !obj.onsquare)
-                    return;
-                if(!obj.isboard)
-                    obj = obj.onsquare;
+                            var rel = this.sqrel(prev, obj);
 
-                if(this.selectedStack){
-                    var tp = this.top_of_stack(obj);
-                    if(tp && tp.iscapstone)
-                        return;
-                    if(tp && tp.isstanding &&
-                            !this.selectedStack[this.selectedStack.length-1].iscapstone)
-                        return;
-
-                    var prev = this.move.squares[this.move.squares.length-1];
-
-                    var rel = this.sqrel(prev, obj);
-
-                    if(this.move.dir==='U' && rel!=='OUTSIDE')
-                        this.highlight_sq(obj);
-                    else if(this.move.dir===rel || rel==='O')
-                        this.highlight_sq(obj);
-                } else if(this.get_stack(obj).length===0){
-                    this.highlight_sq(obj);
-                }
-            } else {
-              this.unhighlight_sq();
-            }
-        },
-        sendmove: function(e) {
-            if(!this.server || this.scratch)
-                return;
-            server.send("Game#"+this.gameno+" "+e);
-        },
-        getfromstack: function(cap, iswhite){
-            //randomly get any piece
-            for(i=0;i<this.piece_objects.length;i++){
-                var obj = this.piece_objects[i];
-                if(!obj.onsquare && (obj.iswhitepiece === iswhite)){
-                    if(cap) {
-                        if(obj.iscapstone)
-                            return obj;
+                            if (this.move.dir === 'U' && rel !== 'OUTSIDE')
+                                this.highlight_sq(obj);
+                            else if (this.move.dir === rel || rel === 'O')
+                                this.highlight_sq(obj);
+                        } else if (this.get_stack(obj).length === 0) {
+                            this.highlight_sq(obj);
+                        }
                     } else {
-                        return obj;
+                        this.unhighlight_sq();
                     }
-                }
-            }
-            return null;
-        },
-        //move the server sends
-        serverPmove: function(file, rank, caporwall) {
-            var obj = this.getfromstack((caporwall==='C'), this.is_white_piece_to_move());
+                },
+                sendmove: function (e) {
+                    if (!this.server || this.scratch)
+                        return;
+                    server.send("Game#" + this.gameno + " " + e);
+                },
+                getfromstack: function (cap, iswhite) {
+                    //randomly get any piece
+                    for (i = 0; i < this.piece_objects.length; i++) {
+                        var obj = this.piece_objects[i];
+                        if (!obj.onsquare && (obj.iswhitepiece === iswhite)) {
+                            if (cap) {
+                                if (obj.iscapstone)
+                                    return obj;
+                            } else {
+                                return obj;
+                            }
+                        }
+                    }
+                    return null;
+                },
+                //move the server sends
+                serverPmove: function (file, rank, caporwall) {
+                    var obj = this.getfromstack((caporwall === 'C'), this.is_white_piece_to_move());
 
-            if(!obj){
-                console.log("something is wrong");
-                return;
-            }
+                    if (!obj) {
+                        console.log("something is wrong");
+                        return;
+                    }
 
-            if(caporwall==='W') {
-                this.standup(obj);
-            }
+                    if (caporwall === 'W') {
+                        this.standup(obj);
+                    }
 
-            var hlt = this.get_board_obj(file.charCodeAt(0)-'A'.charCodeAt(0), rank-1);
-            this.push(hlt, obj);
+                    var hlt = this.get_board_obj(file.charCodeAt(0) - 'A'.charCodeAt(0), rank - 1);
+                    this.push(hlt, obj);
 
-            this.notatePmove(file+rank, caporwall);
-            this.incmovecnt();
-        },
-        //Move move the server sends
-        serverMmove: function(f1, r1, f2, r2, nums) {
-            var s1 = this.get_board_obj(f1.charCodeAt(0)-'A'.charCodeAt(0), r1-1);
-            var fi=0, ri=0;
-            if(f1===f2)
-                ri=r2>r1?1:-1;
-            if(r1===r2)
-                fi=f2>f1?1:-1;
+                    this.notatePmove(file + rank, caporwall);
+                    this.incmovecnt();
+                },
+                //Move move the server sends
+                serverMmove: function (f1, r1, f2, r2, nums) {
+                    var s1 = this.get_board_obj(f1.charCodeAt(0) - 'A'.charCodeAt(0), r1 - 1);
+                    var fi = 0, ri = 0;
+                    if (f1 === f2)
+                        ri = r2 > r1 ? 1 : -1;
+                    if (r1 === r2)
+                        fi = f2 > f1 ? 1 : -1;
 
-            var tot=0;
-            for(i=0;i<nums.length;i++)
-                tot+=nums[i];
+                    var tot = 0;
+                    for (i = 0; i < nums.length; i++)
+                        tot += nums[i];
 
-            var tstk=[];
-            var stk = this.get_stack(s1);
-            for(i=0;i<tot;i++) {
-                tstk.push(stk.pop());
-            }
-            for(i=0;i<nums.length;i++){
-                var sq = this.get_board_obj(s1.file+(i+1)*fi, s1.rank+(i+1)*ri);
-                for(j=0;j<nums[i];j++) {
-                    this.push(sq, tstk.pop());
-                }
-            }
-            this.notateMmove(f1.charCodeAt(0)-'A'.charCodeAt(0), Number(r1)-1,
-                                f2.charCodeAt(0)-'A'.charCodeAt(0), Number(r2)-1, nums);
-            this.incmovecnt();
-        },
-        gameover: function() {
-            console.log('gameover '+this.result);
-            this.notate(this.result);
-            alert("Game over!! "+this.result);
-            this.scratch = true;
-        },
-        newgame: function(sz, col) {
-            this.clear();
-            this.init(sz, col, false);
-        },
-        findwhowon: function() {
-            var whitec=0, blackc=0;
-            for(i=0;i<this.size;i++) {
-                for(j=0;j<this.size;j++) {
-                    var stk = this.sq[i][j];
-                    if(stk.length===0)
-                        continue;
-                    var top = stk[stk.length-1];
-                    if(top.isstanding && !top.iscapstone)
-                        continue;
-                    if(top.iswhitepiece)
-                        whitec++;
+                    var tstk = [];
+                    var stk = this.get_stack(s1);
+                    for (i = 0; i < tot; i++) {
+                        tstk.push(stk.pop());
+                    }
+                    for (i = 0; i < nums.length; i++) {
+                        var sq = this.get_board_obj(s1.file + (i + 1) * fi, s1.rank + (i + 1) * ri);
+                        for (j = 0; j < nums[i]; j++) {
+                            this.push(sq, tstk.pop());
+                        }
+                    }
+                    this.notateMmove(f1.charCodeAt(0) - 'A'.charCodeAt(0), Number(r1) - 1,
+                            f2.charCodeAt(0) - 'A'.charCodeAt(0), Number(r2) - 1, nums);
+                    this.incmovecnt();
+                },
+                gameover: function () {
+                    console.log('gameover ' + this.result);
+                    this.notate(this.result);
+                    alert("Game over!! " + this.result);
+                    this.scratch = true;
+                },
+                newgame: function (sz, col) {
+                    this.clear();
+                    this.init(sz, col, false);
+                },
+                findwhowon: function () {
+                    var whitec = 0, blackc = 0;
+                    for (i = 0; i < this.size; i++) {
+                        for (j = 0; j < this.size; j++) {
+                            var stk = this.sq[i][j];
+                            if (stk.length === 0)
+                                continue;
+                            var top = stk[stk.length - 1];
+                            if (top.isstanding && !top.iscapstone)
+                                continue;
+                            if (top.iswhitepiece)
+                                whitec++;
+                            else
+                                blackc++;
+                        }
+                    }
+                    if (whitec === blackc)
+                        this.result = "1/2-1/2";
+                    else if (whitec > blackc)
+                        this.result = "F-0";
                     else
-                        blackc++;
-                }
-            }
-            if(whitec===blackc)
-                this.result = "1/2-1/2";
-            else if(whitec>blackc)
-                this.result = "F-0";
-            else
-                this.result = "0-F";
-        },
-        checkroadwin: function() {
-            for(var i=0;i<this.size;i++){
-                for(var j=0;j<this.size;j++){
-                    var cur_st = this.sq[i][j];
-                    cur_st.graph = -1;
-                    if(cur_st.length===0)
-                        continue;
+                        this.result = "0-F";
+                },
+                checkroadwin: function () {
+                    for (var i = 0; i < this.size; i++) {
+                        for (var j = 0; j < this.size; j++) {
+                            var cur_st = this.sq[i][j];
+                            cur_st.graph = -1;
+                            if (cur_st.length === 0)
+                                continue;
 
-                    var ctop = cur_st[cur_st.length-1];
-                    if(ctop.isstanding && !ctop.iscapstone)
-                        continue;
+                            var ctop = cur_st[cur_st.length - 1];
+                            if (ctop.isstanding && !ctop.iscapstone)
+                                continue;
 
-                    cur_st.graph = (i+j*this.size).toString();
+                            cur_st.graph = (i + j * this.size).toString();
 
-                    if(i-1>=0){
-                        var left_st = this.sq[i-1][j];
-                        if(left_st.length!==0){
-                            var ltop = left_st[left_st.length-1];
-                            if(!(ltop.isstanding && !ltop.iscapstone)){
-                                if(ctop.iswhitepiece === ltop.iswhitepiece){
-                                    for(var r=0;r<this.size;r++){
-                                        for(var c=0;c<this.size;c++){
-                                            if(this.sq[r][c].graph === cur_st.graph){
-                                                this.sq[r][c].graph = left_st.graph;
+                            if (i - 1 >= 0) {
+                                var left_st = this.sq[i - 1][j];
+                                if (left_st.length !== 0) {
+                                    var ltop = left_st[left_st.length - 1];
+                                    if (!(ltop.isstanding && !ltop.iscapstone)) {
+                                        if (ctop.iswhitepiece === ltop.iswhitepiece) {
+                                            for (var r = 0; r < this.size; r++) {
+                                                for (var c = 0; c < this.size; c++) {
+                                                    if (this.sq[r][c].graph === cur_st.graph) {
+                                                        this.sq[r][c].graph = left_st.graph;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (j - 1 >= 0) {
+                                var top_st = this.sq[i][j - 1];
+                                if (top_st.length !== 0) {
+                                    var ttop = top_st[top_st.length - 1];
+                                    if (!(ttop.isstanding && !ttop.iscapstone)) {
+                                        if (ctop.iswhitepiece === ttop.iswhitepiece) {
+                                            for (var r = 0; r < this.size; r++) {
+                                                for (var c = 0; c < this.size; c++) {
+                                                    if (this.sq[r][c].graph === cur_st.graph) {
+                                                        this.sq[r][c].graph = top_st.graph;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -889,826 +994,788 @@
                             }
                         }
                     }
-                    if(j-1>=0) {
-                        var top_st = this.sq[i][j-1];
-                        if(top_st.length!==0){
-                            var ttop = top_st[top_st.length-1];
-                            if(!(ttop.isstanding && !ttop.iscapstone)){
-                                if(ctop.iswhitepiece === ttop.iswhitepiece){
-                                    for(var r=0;r<this.size;r++){
-                                        for(var c=0;c<this.size;c++){
-                                            if(this.sq[r][c].graph === cur_st.graph){
-                                                this.sq[r][c].graph = top_st.graph;
-                                            }
-                                        }
-                                    }
+                    var whitewin = false;
+                    var blackwin = false;
+                    //            console.log("--------");
+                    //            for(var i=0;i<this.size;i++){
+                    //                var st="";
+                    //                for(var j=0;j<this.size;j++){
+                    //                    st+="("+this.sq[i][j].graph+") ";
+                    //                }
+                    //                console.log(st);
+                    //            }
+                    //            console.log("=======");
+                    for (var tr = 0; tr < this.size; tr++) {
+                        var tsq = this.sq[tr][0];
+                        var no = tsq.graph;
+                        if (no === -1)
+                            continue;
+                        for (var br = 0; br < this.size; br++) {
+                            var brno = this.sq[br][this.size - 1].graph;
+                            if (no === brno) {
+                                if (tsq[tsq.length - 1].iswhitepiece)
+                                    whitewin = true;
+                                else
+                                    blackwin = true;
+                            }
+                        }
+                    }
+                    for (var tr = 0; tr < this.size; tr++) {
+                        var tsq = this.sq[0][tr];
+                        var no = tsq.graph;
+                        if (no === -1)
+                            continue;
+                        for (var br = 0; br < this.size; br++) {
+                            var brno = this.sq[this.size - 1][br].graph;
+                            if (no === brno) {
+                                if (tsq[tsq.length - 1].iswhitepiece)
+                                    whitewin = true;
+                                else
+                                    blackwin = true;
+                            }
+                        }
+                    }
+                    if (whitewin && blackwin)
+                        this.result = "1/2-1/2";
+                    else if (whitewin)
+                        this.result = "R-0";
+                    else if (blackwin)
+                        this.result = "0-R";
+
+                    if (whitewin || blackwin)
+                        this.gameover();
+                },
+                checksquaresover: function () {
+                    for (i = 0; i < this.size; i++)
+                        for (j = 0; j < this.size; j++)
+                            if (this.sq[i][j].length === 0)
+                                return;
+
+                    this.findwhowon();
+                    this.gameover();
+                },
+                reverseboard: function () {
+                    camera.position.z = -camera.position.z;
+                    this.boardside = (this.boardside === "white") ? "black" : "white";
+                },
+                setmovedir: function () {
+                    var s1 = this.move.start;
+                    var s2 = this.move.squares[1];
+                    if (s1.file === s2.file && s1.rank === s2.rank)
+                        return;
+
+                    if (s1.file === s2.file) {
+                        if (s2.rank > s1.rank)
+                            this.move.dir = 'N';
+                        else
+                            this.move.dir = 'S';
+                    } else {
+                        if (s2.file > s1.file)
+                            this.move.dir = 'E';
+                        else
+                            this.move.dir = 'W';
+                    }
+                },
+                notate: function (txt) {
+                    if (this.movecount !== 0 && this.movecount % 2 === 1) {
+                        var om = document.getElementById("moveslist");
+                        var col = om.rows[om.rows.length - 1].cells[2];
+                        col.innerHTML = txt;
+                    } else {
+                        var ol = document.getElementById("moveslist");
+                        var row = ol.insertRow();
+                        var cell0 = row.insertCell(0);
+                        cell0.innerHTML = Math.floor(this.movecount / 2 + 1) + '.';
+                        var cell1 = row.insertCell(1);
+                        row.insertCell(2);
+                        cell1.innerHTML = txt;
+                    }
+                },
+                notatePmove: function (sqname, pos) {
+                    if (pos === 'W')
+                        pos = 'S';
+                    else if (pos === 'C')
+                        pos = 'C';
+                    else
+                        pos = '';
+                    this.notate(pos + sqname.toLowerCase());
+                },
+                //all params are nums
+                notateMmove: function (stf, str, endf, endr, nos) {
+                    var dir = '';
+                    if (stf === endf)
+                        dir = (endr < str) ? '-' : '+';
+                    else
+                        dir = (endf < stf) ? '<' : '>';
+                    var tot = 0;
+                    var lst = '';
+                    for (var i = 0; i < nos.length; i++) {
+                        tot += Number(nos[i]);
+                        lst = lst + (nos[i] + '').trim();
+                    }
+                    if (tot === 1) {
+                        var s1 = this.get_board_obj(stf, str);
+                        if (this.get_stack(s1).length === 0) {
+                            tot = '';
+                            lst = '';
+                        } else if (tot === Number(lst))
+                            lst = '';
+                    } else if (tot === Number(lst))
+                        lst = '';
+                    var move = tot + this.squarename(stf, str).toLowerCase()
+                            + dir + '' + lst;
+                    this.notate(move);
+                },
+                generateMove: function () {
+                    var st = this.squarename(this.move.start.file, this.move.start.rank);
+                    var end = this.squarename(this.move.end.file, this.move.end.rank);
+                    var lst = [];
+                    var prev = null;
+
+                    for (i = 0, c = 0; i < this.move.squares.length; i++) {
+                        var obj = this.move.squares[i];
+                        if (obj === this.move.start)
+                            continue;
+
+                        if (obj === prev)
+                            lst[c - 1] = lst[c - 1] + 1;
+                        else {
+                            prev = obj;
+                            lst[c] = 1;
+                            c++;
+                        }
+                    }
+                    if (st !== end) {
+                        console.log("Move ", this.movecount, st, end, lst);
+                        var nos = "";
+                        for (i = 0; i < lst.length; i++)
+                            nos += lst[i] + " ";
+                        this.sendmove("M " + st + " " + end + " " + nos.trim());
+                        this.notateMmove(this.move.start.file, this.move.start.rank,
+                                this.move.end.file, this.move.end.rank, nos);
+                        if (this.scratch) {
+                            this.checkroadwin();
+                            this.checksquaresover();
+                        }
+                        this.incmovecnt();
+                    }
+                    this.move = {start: null, end: null, dir: 'U', squares: []};
+                },
+                push: function (sq, pc) {
+                    var st = this.get_stack(sq);
+                    var top = this.top_of_stack(sq);
+                    if (top && top.isstanding && !top.iscapstone && pc.iscapstone)
+                        this.rotate(top);
+
+                    pc.position.x = sq.position.x;
+
+                    if (pc.isstanding)
+                        pc.position.y = sq_height / 2 + piece_size / 2 + piece_height * st.length;
+                    else
+                        pc.position.y = sq_height + st.length * piece_height;
+
+                    pc.position.z = sq.position.z;
+                    pc.onsquare = sq;
+                    st.push(pc);
+                },
+                rotate: function (piece) {
+                    if (piece.iscapstone)
+                        return;
+                    if (piece.isstanding)
+                        this.flatten(piece);
+                    else
+                        this.standup(piece);
+                },
+                flatten: function (piece) {
+                    if (!piece.isstanding)
+                        return;
+                    piece.position.y -= piece_size / 2 - piece_height / 2;
+                    piece.rotateX(Math.PI / 2);
+                    piece.isstanding = false;
+                },
+                standup: function (piece) {
+                    if (piece.isstanding)
+                        return;
+                    piece.position.y += piece_size / 2 - piece_height / 2;
+                    piece.rotateX(-Math.PI / 2);
+                    piece.isstanding = true;
+                },
+                rightclick: function () {
+                    if (this.selected && Math.floor(this.movecount / 2) !== 0) {
+                        this.rotate(this.selected);
+                    } else {
+                        raycaster.setFromCamera(mouse, camera);
+                        var intersects = raycaster.intersectObjects(scene.children);
+                        if (intersects.length > 0) {
+                            var obj = intersects[0].object;
+                            var sq = obj;
+                            if (!obj.isboard)
+                                sq = obj.onsquare;
+                            var stk = this.get_stack(sq);
+                            if (stk.length === 0)
+                                return;
+                            for (var i = 0; i < scene.children.length; i++) {
+                                var obj = scene.children[i];
+                                if (obj.isboard || !obj.onsquare)
+                                    continue;
+                                obj.visible = false;
+                            }
+                            for (var i = 0; i < stk.length; i++) {
+                                stk[i].visible = true;
+                            }
+                            this.totalhighlighted = sq;
+                        }
+                    }
+                },
+                remove_total_highlight: function () {
+                    if (this.totalhighlighted !== null) {
+                        for (var i = 0; i < scene.children.length; i++) {
+                            var obj = scene.children[i];
+                            if (obj.isboard || !obj.onsquare)
+                                continue;
+                            obj.visible = true;
+                        }
+                        this.totalhighlighted = null;
+                    }
+                },
+                rightup: function () {
+                    console.log('right up');
+                    this.remove_total_highlight();
+                },
+                clear: function () {
+                    for (var i = scene.children.length - 1; i >= 0; i--) {
+                        scene.remove(scene.children[i]);
+                    }
+                    var tbl = document.getElementById("moveslist");
+                    while (tbl.rows.length > 0)
+                        tbl.deleteRow(0);
+                },
+                sqrel: function (sq1, sq2) {
+                    var f1 = sq1.file;
+                    var r1 = sq1.rank;
+                    var f2 = sq2.file;
+                    var r2 = sq2.rank;
+                    if (f1 === f2 && r1 === r2)
+                        return 'O';
+
+                    if (f1 === f2) {
+                        if (r2 === r1 + 1)
+                            return 'N';
+                        else if (r1 === r2 + 1)
+                            return 'S';
+                    } else if (r1 === r2) {
+                        if (f2 === f1 + 1)
+                            return 'E';
+                        else if (f1 === f2 + 1)
+                            return 'W';
+                    }
+                    return 'OUTSIDE';
+                },
+                checkifmymove: function () {
+                    if (this.observing)
+                        return false;
+                    var tomove = (this.movecount % 2 === 0) ? "white" : "black";
+                    //console.log('tomove = ', tomove, this.mycolor, tomove===this.mycolor);
+                    return tomove === this.mycolor;
+                },
+                is_white_piece_to_move: function () {
+                    if (this.movecount === 0)
+                        return false;
+                    if (this.movecount === 1)
+                        return true;
+                    return this.movecount % 2 === 0;
+                },
+                select: function (obj) {
+                    obj.position.y += stack_selection_height;
+                    this.selected = obj;
+                },
+                unselect: function () {
+                    if (this.selected) {
+                        this.selected.position.y -= stack_selection_height;
+                        this.selected = null;
+                    }
+                },
+                selectStack: function (stk) {
+                    //this.selectedStack = stk;
+                    this.selectedStack = [];
+                    for (i = 0; stk.length > 0 && i < this.size; i++) {
+                        obj = stk.pop();
+                        obj.position.y += stack_selection_height;
+                        this.selectedStack.push(obj);
+                    }
+                },
+                unselectStackElem: function (obj) {
+                    obj.position.y -= stack_selection_height;
+                },
+                unselectStack: function () {
+                    var stk = this.selectedStack.reverse();
+                    var lastsq = this.move.squares[this.move.squares.length - 1];
+                    //push unselected stack elems onto last moved square
+                    for (i = 0; i < stk.length; i++) {
+                        this.unselectStackElem(stk[i]);
+                        this.push(lastsq, stk[i]);
+                        this.move.squares.push(lastsq);
+                    }
+                    this.selectedStack = null;
+                },
+                highlight_sq: function (sq) {
+                    this.unhighlight_sq(this.highlighted);
+                    this.highlighted = sq;
+
+                    highlighter.position.x = sq.position.x;
+                    highlighter.position.y = sq_height / 2;
+                    highlighter.position.z = sq.position.z;
+                    scene.add(highlighter);
+                },
+                unhighlight_sq: function () {
+                    if (this.highlighted) {
+                        //this.highlighted.position.y -= 10;
+                        this.highlighted = null;
+                        scene.remove(highlighter);
+                    }
+                },
+                get_stack: function (sq) {
+                    return this.sq[sq.file][sq.rank];
+                },
+                top_of_stack: function (sq) {
+                    var st = this.get_stack(sq);
+                    if (st.length === 0)
+                        return null;
+                    return st[st.length - 1];
+                },
+                is_top_mine: function (sq) {
+                    var ts = this.top_of_stack(sq);
+                    if (!ts)
+                        return true;
+                    if (ts.iswhitepiece && this.mycolor === "white")
+                        return true;
+                    if (!ts.iswhitepiece && this.mycolor !== "white")
+                        return true;
+                    return false;
+                },
+                move_stack_over: function (sq, stk) {
+                    if (stk.length === 0)
+                        return;
+                    var top = this.top_of_stack(sq);
+                    if (!top)
+                        top = sq;
+
+                    var ts = stk[stk.length - 1];
+                    if (ts.onsquare === sq)
+                        return;
+
+                    var diffy = ts.position.y - top.position.y;
+
+                    for (i = 0; i < stk.length; i++) {
+                        stk[i].position.x = sq.position.x;
+                        stk[i].position.z = sq.position.z;
+                        stk[i].position.y += stack_selection_height - diffy;
+                        stk[i].onsquare = sq;
+                    }
+                },
+                loadtpn: function (tpn) {
+                    if (!this.scratch) {
+                        alert('TPN won\'t be displayed in the middle of an online game');
+                        return;
+                    }
+                    tpn = tpn.trim().split("[")[1].split("]")[0].trim();
+                    var tt = tpn.split(" ");
+                    var ptomove = tt[1];//string
+
+                    var rows = tt[0].split("/");
+                    this.clear();
+                    this.init(rows.length, "white", true);
+                    for (var i = 0; i < rows.length; i++) {
+                        var cells = rows[i].split(",");
+                        var cols = 0;
+                        for (var j = 0; j < cells.length; j++, cols++) {
+                            var cell = cells[j];
+                            if (cell.charAt(0) === 'x') {
+                                if (cell.length === 1) //lone x
+                                    continue;
+                                cols += Number(cell.charAt(1)) - 1;//x5
+                                continue;
+                            }
+                            var sq = this.get_board_obj(cols, rows.length - 1 - i);
+
+                            for (var k = 0; k < cell.length; k++) {
+                                var ch = cell[k];
+                                //console.log('ch', ch);
+                                if (ch === 'S' || ch === 'C')
+                                    continue;
+                                var piece = '';
+                                if (k + 1 === cell.length - 1) {
+                                    if (cell[k + 1] === 'C')
+                                        piece = 'C';
+                                    else if (cell[k + 1] === 'S')
+                                        piece = 'W';
                                 }
+
+                                var pc = this.getfromstack(piece === 'C', ch === '1');
+                                if (pc === null || typeof pc === 'undefined') {
+                                    alert('Out of pieces. Wrong TPS!');
+                                    return;
+                                }
+                                if (piece === 'W') {
+                                    this.standup(pc);
+                                }
+                                this.push(sq, pc);
                             }
                         }
                     }
                 }
-            }
-            var whitewin=false;
-            var blackwin=false;
-//            console.log("--------");
-//            for(var i=0;i<this.size;i++){
-//                var st="";
-//                for(var j=0;j<this.size;j++){
-//                    st+="("+this.sq[i][j].graph+") ";
-//                }
-//                console.log(st);
-//            }
-//            console.log("=======");
-            for(var tr=0;tr<this.size;tr++){
-                var tsq = this.sq[tr][0];
-                var no = tsq.graph;
-                if(no===-1)
-                    continue;
-                for(var br=0;br<this.size;br++){
-                    var brno = this.sq[br][this.size-1].graph;
-                    if(no===brno){
-                        if(tsq[tsq.length-1].iswhitepiece)
-                            whitewin = true;
-                        else
-                            blackwin = true;
-                    }
-                }
-            }
-            for(var tr=0;tr<this.size;tr++){
-                var tsq = this.sq[0][tr];
-                var no = tsq.graph;
-                if(no===-1)
-                    continue;
-                for(var br=0;br<this.size;br++){
-                    var brno = this.sq[this.size-1][br].graph;
-                    if(no===brno){
-                        if(tsq[tsq.length-1].iswhitepiece)
-                            whitewin = true;
-                        else
-                            blackwin = true;
-                    }
-                }
-            }
-            if(whitewin && blackwin)
-                this.result = "1/2-1/2";
-            else if(whitewin)
-                this.result = "R-0";
-            else if(blackwin)
-                this.result = "0-R";
+            };
 
-            if(whitewin||blackwin)
-                this.gameover();
-        },
-        checksquaresover: function() {
-            for(i=0;i<this.size;i++)
-                for(j=0;j<this.size;j++)
-                    if(this.sq[i][j].length===0)
+            var server = {
+                connection: null,
+                init: function () {
+                    if (this.connection && this.connection.readyState === 2)//closing connection
                         return;
-
-            this.findwhowon();
-            this.gameover();
-        },
-        reverseboard: function() {
-            camera.position.z = -camera.position.z;
-            this.boardside = (this.boardside==="white")?"black":"white";
-        },
-        setmovedir: function() {
-            var s1 = this.move.start;
-            var s2 = this.move.squares[1];
-            if(s1.file === s2.file && s1.rank === s2.rank)
-                return;
-
-            if(s1.file === s2.file) {
-                if(s2.rank>s1.rank)
-                    this.move.dir='N';
-                else
-                    this.move.dir = 'S';
-            } else {
-                if(s2.file>s1.file)
-                    this.move.dir = 'E';
-                else
-                    this.move.dir = 'W';
-            }
-        },
-        notate: function(txt) {
-            if(this.movecount!==0 && this.movecount%2===1) {
-                var om = document.getElementById("moveslist");
-                var col = om.rows[om.rows.length-1].cells[2];
-                col.innerHTML = txt;
-            } else {
-                var ol = document.getElementById("moveslist");
-                var row = ol.insertRow();
-                var cell0 = row.insertCell(0);
-                cell0.innerHTML = Math.floor(this.movecount/2 + 1)+'.';
-                var cell1 = row.insertCell(1);
-                row.insertCell(2);
-                cell1.innerHTML = txt;
-            }
-        },
-        notatePmove: function(sqname, pos) {
-            if(pos==='W')
-                pos = 'S';
-            else if (pos==='C')
-                pos='C';
-            else
-                pos='';
-            this.notate(pos+sqname.toLowerCase());
-        },
-        //all params are nums
-        notateMmove: function(stf, str, endf, endr, nos) {
-            var dir='';
-            if(stf===endf)
-                dir=(endr<str)?'-':'+';
-            else
-                dir=(endf<stf)?'<':'>';
-            var tot=0;
-            var lst='';
-            for(var i=0;i<nos.length;i++) {
-                tot+=Number(nos[i]);
-                lst=lst+(nos[i]+'').trim();
-            }
-            if(tot===1) {
-                var s1 = this.get_board_obj(stf, str);
-                if(this.get_stack(s1).length===0) {
-                    tot = '';
-                    lst='';
-                } else if(tot===Number(lst))
-                    lst='';
-            } else if(tot===Number(lst))
-                    lst='';
-            var move=tot+this.squarename(stf, str).toLowerCase()
-                            +dir+''+lst;
-            this.notate(move);
-        },
-        generateMove: function() {
-            var st = this.squarename(this.move.start.file, this.move.start.rank);
-            var end  = this.squarename(this.move.end.file, this.move.end.rank);
-            var lst=[];
-            var prev=null;
-
-            for(i=0,c=0;i<this.move.squares.length;i++){
-                var obj = this.move.squares[i];
-                if(obj === this.move.start)
-                    continue;
-
-                if(obj===prev)
-                    lst[c-1] = lst[c-1]+1;
-                else {
-                    prev = obj;
-                    lst[c] = 1;
-                    c++;
-                }
-            }
-            if(st!==end){
-                console.log("Move ", this.movecount,st, end, lst);
-                var nos="";
-                for(i=0;i<lst.length;i++)
-                    nos += lst[i]+" ";
-                this.sendmove("M "+st+" "+end+" "+nos.trim());
-                this.notateMmove(this.move.start.file, this.move.start.rank,
-                    this.move.end.file, this.move.end.rank, nos);
-                if(this.scratch){
-                    this.checkroadwin();
-                    this.checksquaresover();
-                }
-                this.incmovecnt();
-            }
-            this.move = {start:null, end:null, dir:'U', squares:[]};
-        },
-        push: function(sq, pc) {
-            var st =  this.get_stack(sq);
-            var top = this.top_of_stack(sq);
-            if(top && top.isstanding && !top.iscapstone && pc.iscapstone)
-                this.rotate(top);
-
-            pc.position.x = sq.position.x;
-
-            if(pc.isstanding)
-                pc.position.y = sq_height/2 + piece_size/2+piece_height*st.length;
-            else
-                pc.position.y = sq_height + st.length*piece_height;
-
-            pc.position.z = sq.position.z;
-            pc.onsquare = sq;
-            st.push(pc);
-        },
-        rotate: function(piece) {
-            if(piece.iscapstone)
-                return;
-            if(piece.isstanding)
-                this.flatten(piece);
-            else
-                this.standup(piece);
-        },
-        flatten: function(piece) {
-            if(!piece.isstanding)
-                return;
-            piece.position.y -= piece_size/2-piece_height/2;
-            piece.rotateX(Math.PI/2);
-            piece.isstanding = false;
-        },
-        standup: function(piece) {
-            if(piece.isstanding)
-                return;
-            piece.position.y+=piece_size/2-piece_height/2;
-            piece.rotateX(-Math.PI/2);
-            piece.isstanding = true;
-        },
-        rightclick: function() {
-            if(this.selected && Math.floor(this.movecount/2)!==0){
-                this.rotate(this.selected);
-            } else {
-                raycaster.setFromCamera(mouse, camera);
-                var intersects = raycaster.intersectObjects(scene.children);
-                if(intersects.length > 0){
-                    var obj = intersects[0].object;
-                    var sq = obj;
-                    if(!obj.isboard)
-                        sq = obj.onsquare;
-                    var stk = this.get_stack(sq);
-                    if(stk.length===0)
+                    if (this.connection && this.connection.readyState === 3)//closed
+                        this.connection = null;
+                    if (this.connection) {
+                        this.connection.close();
+                        document.getElementById('login-button').textContent = 'Sign up / Login';
+                        document.getElementById("seek").disabled = true;
+                        alert("Disconnnecting from server....");
                         return;
-                    for(var i=0;i<scene.children.length;i++){
-                        var obj = scene.children[i];
-                        if(obj.isboard || !obj.onsquare)
-                            continue;
-                        obj.visible = false;
                     }
-                    for(var i=0;i<stk.length;i++) {
-                        stk[i].visible = true;
-                    }
-                    this.totalhighlighted = sq;
-                }
-            }
-        },
-        remove_total_highlight: function() {
-            if(this.totalhighlighted!==null){
-                for(var i=0;i<scene.children.length;i++){
-                    var obj = scene.children[i];
-                    if(obj.isboard || !obj.onsquare)
-                        continue;
-                    obj.visible = true;
-                }
-                this.totalhighlighted = null;
-            }
-        },
-        rightup: function() {
-            console.log('right up');
-            this.remove_total_highlight();
-        },
-        clear: function() {
-            for( var i=scene.children.length-1;i>=0;i--) {
-                scene.remove(scene.children[i]);
-            }
-            var tbl = document.getElementById("moveslist");
-            while(tbl.rows.length>0)
-                tbl.deleteRow(0);
-        },
-        sqrel: function(sq1, sq2){
-            var f1=sq1.file;
-            var r1=sq1.rank;
-            var f2=sq2.file;
-            var r2=sq2.rank;
-            if(f1===f2 && r1===r2)
-                return 'O';
-
-            if(f1===f2){
-                if(r2===r1+1)
-                    return 'N';
-                else if(r1===r2+1)
-                    return 'S';
-            } else if(r1===r2){
-                if(f2===f1+1)
-                    return 'E';
-                else if(f1===f2+1)
-                    return 'W';
-            }
-            return 'OUTSIDE';
-        },
-        checkifmymove: function() {
-            if(this.observing)
-                return false;
-            var tomove = (this.movecount%2===0)?"white":"black";
-            //console.log('tomove = ', tomove, this.mycolor, tomove===this.mycolor);
-            return tomove===this.mycolor;
-        },
-        is_white_piece_to_move: function() {
-            if(this.movecount===0)
-                return false;
-            if(this.movecount===1)
-                return true;
-            return this.movecount%2===0;
-        },
-        select: function(obj) {
-            obj.position.y += stack_selection_height;
-            this.selected = obj;
-        },
-        unselect: function() {
-            if(this.selected) {
-                this.selected.position.y-=stack_selection_height;
-                this.selected = null;
-            }
-        },
-        selectStack: function(stk) {
-            //this.selectedStack = stk;
-            this.selectedStack=[];
-            for(i=0;stk.length>0 && i<this.size;i++){
-                obj = stk.pop();
-                obj.position.y += stack_selection_height;
-                this.selectedStack.push(obj);
-            }
-        },
-        unselectStackElem: function(obj) {
-            obj.position.y -= stack_selection_height;
-        },
-        unselectStack: function() {
-            var stk = this.selectedStack.reverse();
-            var lastsq = this.move.squares[this.move.squares.length-1];
-            //push unselected stack elems onto last moved square
-            for(i=0;i<stk.length;i++){
-                this.unselectStackElem(stk[i]);
-                this.push(lastsq, stk[i]);
-                this.move.squares.push(lastsq);
-            }
-            this.selectedStack = null;
-        },
-        highlight_sq: function(sq) {
-          this.unhighlight_sq(this.highlighted);
-          this.highlighted=sq;
-
-          highlighter.position.x = sq.position.x;
-          highlighter.position.y = sq_height/2;
-          highlighter.position.z = sq.position.z;
-          scene.add(highlighter);
-        },
-        unhighlight_sq: function() {
-            if(this.highlighted){
-                //this.highlighted.position.y -= 10;
-                this.highlighted = null;
-                scene.remove(highlighter);
-            }
-        },
-        get_stack: function(sq) {
-            return this.sq[sq.file][sq.rank];
-        },
-        top_of_stack: function(sq) {
-            var st = this.get_stack(sq);
-            if(st.length===0)
-                return null;
-            return st[st.length-1];
-        },
-        is_top_mine: function(sq) {
-            var ts = this.top_of_stack(sq);
-            if(!ts)
-                return true;
-            if(ts.iswhitepiece && this.mycolor==="white")
-                return true;
-            if(!ts.iswhitepiece && this.mycolor!=="white")
-                return true;
-            return false;
-        },
-        move_stack_over: function(sq, stk) {
-            if(stk.length===0)
-                return;
-            var top = this.top_of_stack(sq);
-            if(!top)
-                top = sq;
-
-            var ts=stk[stk.length-1];
-            if(ts.onsquare === sq)
-                return;
-
-            var diffy = ts.position.y - top.position.y;
-
-            for(i=0;i<stk.length;i++) {
-                stk[i].position.x = sq.position.x;
-                stk[i].position.z = sq.position.z;
-                stk[i].position.y += stack_selection_height-diffy;
-                stk[i].onsquare = sq;
-            }
-        },
-        loadtpn: function(tpn) {
-            if(!this.scratch) {
-                alert('TPN won\'t be displayed in the middle of an online game');
-                return;
-            }
-            tpn = tpn.trim().split("[")[1].split("]")[0].trim();
-            var tt = tpn.split(" ");
-            var ptomove = tt[1];//string
-
-            var rows=tt[0].split("/");
-            this.clear();
-            this.init(rows.length, "white", true);
-            for(var i=0;i<rows.length;i++){
-                var cells=rows[i].split(",");
-                var cols=0;
-                for(var j=0;j<cells.length;j++, cols++){
-                    var cell=cells[j];
-                    if(cell.charAt(0)==='x'){
-                        if(cell.length===1) //lone x
-                            continue;
-                        cols+=Number(cell.charAt(1))-1;//x5
-                        continue;
-                    }
-                    var sq=this.get_board_obj(cols, rows.length-1-i);
-
-                    for(var k=0;k<cell.length;k++){
-                        var ch = cell[k];
-                        //console.log('ch', ch);
-                        if(ch==='S'||ch==='C')
-                            continue;
-                        var piece='';
-                        if(k+1===cell.length-1){
-                            if(cell[k+1]==='C')
-                                piece='C';
-                            else if(cell[k+1]==='S')
-                                piece='W';
-                        }
-
-                        var pc = this.getfromstack(piece==='C', ch==='1');
-                        if(pc===null || typeof pc==='undefined'){
-                            alert('Out of pieces. Wrong TPS!');
-                            return;
-                        }
-                        if(piece==='W'){
-                            this.standup(pc);
-                        }
-                        this.push(sq, pc);
-                    }
-                }
-            }
-        }
-      };
-
-      var server = {
-          connection:null,
-          init: function() {
-                if(this.connection && this.connection.readyState===2)//closing connection
-                    return;
-                if(this.connection && this.connection.readyState===3)//closed
-                    this.connection = null;
-                if(this.connection) {
-                    this.connection.close();
-                    document.getElementById("multiplayer").className = "unselected";
-                    document.getElementById("seek").disabled = true;
-                    alert("Disconnnecting from server....");
-                    return;
-                }
-                var url=window.location.host;
-                if(url.indexOf("playtak")>-1)
-                    url = 'playtak.com:3000';
-                this.connection = new WebSocket('ws://'+url, "binary");
-                board.server = this;
-                this.connection.onerror = function(e) {
-                    this.output("Connection error: "+e);
-                };
-                this.connection.onmessage = function(e) {
-                    var blob = e.data;
-                    var reader = new FileReader();
-                    reader.onload = function(event) {
-                        var res = reader.result.split("\n");
-                        var i;
-                        for(i=0;i<res.length-1;i++) {
-                            server.msg(res[i]);
-                        }
+                    var url = window.location.host;
+                    if (url.indexOf("playtak") > -1)
+                        url = 'playtak.com:3000';
+                    this.connection = new WebSocket('ws://' + url, "binary");
+                    board.server = this;
+                    this.connection.onerror = function (e) {
+                        this.output("Connection error: " + e);
                     };
-                    reader.readAsText(blob);
-                };
-                this.connection.onopen = function(e) {
-                    document.getElementById("multiplayer").className = "selected";
-                    document.getElementById("seek").disabled = false;
-                };
-                this.connection.onclose = function(e) {
-                    document.getElementById("multiplayer").className = "unselected";
-                    document.getElementById("seek").disabled = true;
-                    document.getElementById("onlineplayers").innerHTML="";
-                    document.getElementById("scratchsize").disabled = false;
-                    board.scratch = true;
-                    board.gameno = 0;
-                    document.title = "Tak";
-                    var lst = document.getElementById("seeklist");
-                    for(i=0;i<lst.options.length;i++){
-                        var opt = lst.options[i];
-                        lst.removeChild(opt);
-                    }
-                    lst = document.getElementById("gamelist");
-                    for(i=0;i<lst.options.length;i++){
-                        var opt = lst.options[i];
-                        lst.removeChild(opt);
-                    }
-                    alert("You're disconnected from server");
-                };
-          },
-          msg: function(e) {
-            output(e);
-            e = e.trim();
-            if(e.indexOf("Game Start") > -1){
-                //Game Start no. size player_white vs player_black yourcolor
-                var spl = e.split(" ");
-                board.newgame(Number(spl[3]), spl[7]);
-                board.gameno = Number(spl[2]);
-                document.getElementById("scratchsize").disabled = true;
-                document.getElementById("seek").disabled = true;
-                document.getElementById("player1").innerHTML = spl[4];
-                document.getElementById("player2").innerHTML = spl[6];
-                document.title = "Tak: "+spl[4]+" vs "+spl[6];
+                    this.connection.onmessage = function (e) {
+                        var blob = e.data;
+                        var reader = new FileReader();
+                        reader.onload = function (event) {
+                            var res = reader.result.split("\n");
+                            var i;
+                            for (i = 0; i < res.length - 1; i++) {
+                                server.msg(res[i]);
+                            }
+                        };
+                        reader.readAsText(blob);
+                    };
+                    this.connection.onopen = function (e) {
+                        document.getElementById("seek").disabled = false;
+                    };
+                    this.connection.onclose = function (e) {
+                        document.getElementById('login-button').textContent = 'Sign up / Login';
+                        document.getElementById("seek").disabled = true;
+                        document.getElementById("onlineplayers").innerHTML = "";
+                        document.getElementById("scratchsize").disabled = false;
+                        board.scratch = true;
+                        board.gameno = 0;
+                        document.title = "Tak";
+                        $('#seeklist').children().each(function() {
+                            this.remove();
+                        });
+                        lst = document.getElementById("gamelist");
+                        for (i = 0; i < lst.options.length; i++) {
+                            var opt = lst.options[i];
+                            lst.removeChild(opt);
+                        }
+                        alert("You're disconnected from server");
+                    };
+                },
+                login: function () {
+                    var name = $('#login-username').val();
+                    var pass = $('#login-pwd').val();
+                    this.send("Login " + name + " " + pass);
+                },
+                register: function () {
+                    var name = $('#register-username').val();
+                    var email = $('#register-email').val();
+                    this.send("Register " + name + " " + email);
+                },
+                msg: function (e) {
+                    output(e);
+                    e = e.trim();
+                    if (e.indexOf("Game Start") > -1) {
+                        //Game Start no. size player_white vs player_black yourcolor
+                        var spl = e.split(" ");
+                        board.newgame(Number(spl[3]), spl[7]);
+                        board.gameno = Number(spl[2]);
+                        document.getElementById("scratchsize").disabled = true;
+                        document.getElementById("seek").disabled = true;
+                        document.getElementById("player1").innerHTML = spl[4];
+                        document.getElementById("player2").innerHTML = spl[6];
+                        document.title = "Tak: " + spl[4] + " vs " + spl[6];
 
-                if(spl[7]==="white")
-                    document.getElementById("player1").innerHTML = "You";
+                        if (spl[7] === "white")
+                            document.getElementById("player1").innerHTML = "You";
+                        else
+                            document.getElementById("player2").innerHTML = "You";
+                    }
+                    else if (e.indexOf("Observe Game#") > -1) {
+                        //Observe Game#1 player1 vs player2, 4x4,7 half-moves played, player2 to move
+                        var spl = e.split(" ");
+                        board.clear();
+                        board.init(Number(spl[5].split("x")[0]), "white", false, true);
+                        board.gameno = Number(spl[1].split("Game#")[1]);
+                        document.getElementById("player1").innerHTML = spl[2];
+                        document.getElementById("player2").innerHTML = spl[4].split(",")[0];
+                        document.title = "Tak: " + spl[2] + " vs " + spl[4];
+                    }
+                    else if (e.indexOf("GameList Add Game#") > -1) {
+                        //GameList Add Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
+                        var spl = e.split(" ");
+
+                        var lst = document.getElementById("gamelist");
+                        var entry = document.createElement('option');
+
+                        var node = document.createTextNode(spl[2].split("Game#")[1] + " " + spl[3]
+                                + " vs " + spl[5].split(",")[0] + " " + spl[6]);
+                        entry.appendChild(node);
+                        lst.appendChild(entry);
+                    }
+                    else if (e.indexOf("GameList Remove Game#") > -1) {
+                        //GameList Remove Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
+                        var spl = e.split(" ");
+                        var lst = document.getElementById("gamelist");
+                        var val = spl[2].split("Game#")[1] + " " + spl[3]
+                                + " vs " + spl[5].split(",")[0] + " " + spl[6];
+
+                        for (i = 0; i < lst.options.length; i++) {
+                            var opt = lst.options[i];
+                            if (opt.value === val) {
+                                lst.removeChild(opt);
+                                break;
+                            }
+                        }
+                    }
+                    else if (e.indexOf("Game#") > -1) {
+                        //Game#1 P A4 (C|W)
+                        if (e.indexOf(" P ") > -1) {
+                            var spl = e.split(" ");
+                            board.serverPmove(spl[2].charAt(0), Number(spl[2].charAt(1)), spl[3]);
+                        }
+                        //Game#1 M A2 A5 2 1
+                        else if (e.indexOf(" M ") > -1) {
+                            var spl = e.split(" ");
+                            var nums = [];
+                            for (i = 4; i < spl.length; i++)
+                                nums.push(Number(spl[i]));
+                            board.serverMmove(spl[2].charAt(0), Number(spl[2].charAt(1)),
+                                    spl[3].charAt(0), Number(spl[3].charAt(1)),
+                                    nums);
+                        }
+                        //Game#1 Over result
+                        else if (e.indexOf("Over") > -1) {
+                            document.title = "Tak";
+                            var spl = e.split(" ");
+                            board.scratch = true;
+                            board.notate(spl[2]);
+                            alert("Game over " + spl[2]);
+                            document.getElementById("scratchsize").disabled = false;
+                            document.getElementById("seek").disabled = false;
+                        }
+                        //Abandoned
+                        else if (e.indexOf("Abandoned") > -1) {
+                            //Game#1 Abandoned. name quit
+                            var spl = e.split(" ");
+                            document.title = "Tak";
+                            board.scratch = true;
+                            alert("Game abandoned by " + spl[2]);
+                            document.getElementById("scratchsize").disabled = false;
+                            document.getElementById("seek").disabled = false;
+                        }
+                    } else if (e.indexOf("Login or Register") > -1) {
+                        server.send("Client " + "TakWeb-15.12.30");
+                        $('#login').modal('show');
+                    } else if (e.startsWith("Welcome")) {
+                        $('#login').modal('hide');
+                        document.getElementById('login-button').textContent = 'Logout';
+                    } else if (e.indexOf("Message") > -1) {
+                        var msg = e.split("Message ");
+                        alert("Server says: " + msg[1]);
+                    }
+                    //new seek
+                    else if (e.indexOf("Seek new") > -1) {
+                        //Seek new 1 chaitu 5
+                        var spl = e.split(" ");
+                        var $li = $('<li/>').appendTo($('#seeklist'));
+                        $('<a/>').text(spl[3]+' - '+spl[4]+'x'+spl[4]).
+                                click(function() {server.acceptseek(spl[2])}).appendTo($li);
+                    }
+                    //remove seek
+                    else if (e.indexOf("Seek remove") > -1) {
+                        //Seek remove 1 chaitu 5
+                        var spl = e.split(" ");
+                        var val = spl[3]+' - '+spl[4]+'x'+spl[4];
+                        $('#seeklist').children().each(function() {
+                            if($(this).find('a')[0].innerHTML === val) {
+                                this.remove();
+                            }
+                        });
+                    }
+                    //Online players
+                    else if (e.indexOf("Online ") > -1) {
+                        var op = document.getElementById("onlineplayers");
+                        op.innerHTML = Number(e.split("Online ")[1]) + " players on server";
+                    }
+                },
+                send: function (e) {
+                    if (this.connection)
+                        this.connection.send(e + "\n");
+                    else
+                        this.error("Error: Not connected to server");
+                },
+                error: function (e) {
+                    alert(e);
+                },
+                seek: function (size) {
+                    this.send("Seek " + size);
+                },
+                acceptseek: function (e) {
+                    this.send("Accept " + e);
+                },
+                observegame: function (e) {
+                    if (board.observing === false && board.scratch === false) //don't observe game while playing another
+                        return;
+                    var lst = document.getElementById("gamelist");
+                    if (lst.selectedIndex === -1)
+                        return;
+                    var selected = lst[lst.selectedIndex];
+                    var no = Number(selected.value.split(" ")[0]);
+                    if (no === board.gameno)
+                        return;
+                    else
+                        this.send("Unobserve " + board.gameno);
+                    this.send("Observe " + selected.value.split(" ")[0]);
+                }
+            };
+
+            init();
+            animate();
+
+            function init() {
+                canvas = document.getElementById("gamecanvas");
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                camera = new THREE.PerspectiveCamera(70, canvas.width / canvas.height, 1, 2000);
+                camera.position.set(0, canvas.width / 2, canvas.height / 2);
+                //camera.updateProjectionMatrix();
+
+                scene = new THREE.Scene();
+
+                renderer = new THREE.WebGLRenderer({canvas: canvas});
+                renderer.setPixelRatio(window.devicePixelRatio);
+                //renderer.setSize( window.innerWidth, window.innerHeight );
+                //renderer.setSize( 800, 640);
+                renderer.setClearColor(0xdddddd, 1);
+
+                document.body.appendChild(renderer.domElement);
+
+                window.addEventListener('resize', onWindowResize, false);
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.minDistance = 200;
+                controls.maxDistance = 1500;
+                var ua = navigator.userAgent.toLowerCase();
+                if (ua.indexOf("android") > -1 || ua.indexOf("iphone") > -1 ||
+                        ua.indexOf("ipod") > -1 || ua.indexOf("ipad") > -1)
+                    controls.zoomSpeed = 0.5;
+
+                var material = new THREE.LineBasicMaterial({color: 0x0000f0});
+                var geometry = new THREE.TorusGeometry(sq_size / 2 + 5, 3, 16, 100);
+                //geometry.vertices.shift();
+                highlighter = new THREE.Mesh(geometry, material);
+                highlighter.rotateX(Math.PI / 2);
+
+                canvas.addEventListener('mousedown', onDocumentMouseDown, false);
+                canvas.addEventListener('mouseup', onDocumentMouseUp, false);
+                canvas.addEventListener('mousemove', onDocumentMouseMove, false);
+
+                board.init(5, "white", true);
+            }
+
+            function onWindowResize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                camera.aspect = canvas.width / canvas.height;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(canvas.width, canvas.height);
+            }
+
+            function animate() {
+                setTimeout(function () {
+                    requestAnimationFrame(animate);
+                }, 1000 / 30);
+
+                renderer.render(scene, camera);
+                controls.update();
+            }
+
+            function onDocumentMouseMove(e) {
+                e.preventDefault();
+                var x = e.clientX - canvas.offsetLeft;
+                var y = e.clientY - canvas.offsetTop;
+                mouse.x = (x / canvas.width) * 2 - 1;
+                mouse.y = -(y / canvas.height) * 2 + 1;
+                board.mousemove();
+            }
+
+            function onDocumentMouseDown(e) {
+                e.preventDefault();
+
+                var x = e.clientX - canvas.offsetLeft;
+                var y = e.clientY - canvas.offsetTop;
+                mouse.x = (x / canvas.width) * 2 - 1;
+                mouse.y = -(y / canvas.height) * 2 + 1;
+                if (e.button === 2)
+                    board.rightclick();
                 else
-                    document.getElementById("player2").innerHTML = "You";
+                    board.leftclick();
             }
-            else if(e.indexOf("Observe Game#")>-1) {
-                //Observe Game#1 player1 vs player2, 4x4,7 half-moves played, player2 to move
-                var spl = e.split(" ");
-                board.clear();
-                board.init(Number(spl[5].split("x")[0]), "white", false, true);
-                board.gameno = Number(spl[1].split("Game#")[1]);
-                document.getElementById("player1").innerHTML = spl[2];
-                document.getElementById("player2").innerHTML = spl[4].split(",")[0];
-                document.title = "Tak: "+spl[2]+" vs "+spl[4];
+            function onDocumentMouseUp(e) {
+                if (e.button === 2)
+                    board.rightup();
             }
-            else if(e.indexOf("GameList Add Game#")>-1) {
-                //GameList Add Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
-                var spl = e.split(" ");
+            function output(e) {
+                console.log("output:" + e);
+            }
 
-                var lst = document.getElementById("gamelist");
-                var entry = document.createElement('option');
-
-                var node = document.createTextNode(spl[2].split("Game#")[1]+" "+spl[3]
-                        +" vs "+spl[5].split(",")[0]+" "+spl[6]);
-                entry.appendChild(node);
-                lst.appendChild(entry);
+            function buttonclick() {
+                var input = document.getElementById("input");
+                var data = input.value;
+                input.value = "";
+                server.send(data);
             }
-            else if(e.indexOf("GameList Remove Game#")>-1){
-                //GameList Remove Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
-                var spl = e.split(" ");
-                var lst = document.getElementById("gamelist");
-                var val = spl[2].split("Game#")[1]+" "+spl[3]
-                        +" vs "+spl[5].split(",")[0]+" "+spl[6];
 
-                for(i=0;i<lst.options.length;i++){
-                    var opt = lst.options[i];
-                    if(opt.value === val) {
-                        lst.removeChild(opt);
-                        break;
-                    }
+            function scratchbutton(size) {
+                if (board.observing)
+                    server.send("Unobserve " + board.gameno);
+                if (board.scratch || board.observing) {
+                    board.clear();
+                    board.init(size, "white", true);
                 }
             }
-            else if(e.indexOf("Game#") > -1) {
-                //Game#1 P A4 (C|W)
-                if(e.indexOf(" P ")>-1){
-                    var spl = e.split(" ");
-                    board.serverPmove(spl[2].charAt(0), Number(spl[2].charAt(1)), spl[3]);
-                }
-                //Game#1 M A2 A5 2 1
-                else if (e.indexOf(" M ")>-1){
-                    var spl = e.split(" ");
-                    var nums=[];
-                    for(i=4;i<spl.length;i++)
-                        nums.push(Number(spl[i]));
-                    board.serverMmove(spl[2].charAt(0), Number(spl[2].charAt(1)),
-                                      spl[3].charAt(0), Number(spl[3].charAt(1)),
-                                      nums);
-                }
-                //Game#1 Over result
-                else if (e.indexOf("Over")>-1){
-                    document.title = "Tak";
-                    var spl = e.split(" ");
-                    board.scratch = true;
-                    board.notate(spl[2]);
-                    alert("Game over "+spl[2]);
-                    document.getElementById("scratchsize").disabled = false;
-                    document.getElementById("seek").disabled = false;
-                }
-                //Abandoned
-                else if (e.indexOf("Abandoned")>-1){
-                    //Game#1 Abandoned. name quit
-                    var spl = e.split(" ");
-                    document.title = "Tak";
-                    board.scratch = true;
-                    alert("Game abandoned by "+spl[2]);
-                    document.getElementById("scratchsize").disabled = false;
-                    document.getElementById("seek").disabled = false;
-                }
-            } else if (e.indexOf("Name?")>-1){
-                server.send("Client "+"TakWeb-15.10.22");
-                var spl = e.split("Name?");
-                var name = window.prompt(spl[1], "");
-                if(!name) {
-                    this.connection.close();
+            function rmenu() {
+                var menu = document.getElementById("rmenu");
+                menu.className = (menu.className === "show") ? "hide" : "show";
+            }
+            function zoom(out) {
+                console.log('zoom', out, controls);
+                if (out)
+                    controls.constraint.dollyOut(1.5);
+                else
+                    controls.constraint.dollyIn(1.5);
+            }
+            function loadtpn() {
+                var tpn = window.prompt("Paste TPS here", "");
+                if (!tpn)
                     return;
-                }
-                server.send("Name "+name);
-            } else if (e.indexOf("Message")>-1){
-                var msg = e.split("Message ");
-                alert("Server says: "+msg[1]);
+                board.loadtpn(tpn);
             }
-            //new seek
-            else if (e.indexOf("Seek new")>-1){
-                //Seek new 1 chaitu 5
-                var spl = e.split(" ");
+        </script>
 
-                var lst = document.getElementById("seeklist");
-                var entry = document.createElement('option');
-
-                var node = document.createTextNode(spl[2]+":"+spl[3]+" "+spl[4]+"x"+spl[4]);
-                entry.appendChild(node);
-                lst.appendChild(entry);
-            }
-            //remove seek
-            else if (e.indexOf("Seek remove")>-1){
-                //Seek remove 1 chaitu 5
-                var spl = e.split(" ");
-                var lst = document.getElementById("seeklist");
-                var val = spl[2]+":"+spl[3]+" "+spl[4]+"x"+spl[4];
-
-                for(i=0;i<lst.options.length;i++){
-                    var opt = lst.options[i];
-                    if(opt.value === val) {
-                        lst.removeChild(opt);
-                        break;
-                    }
-                }
-            }
-            //Online players
-            else if (e.indexOf("Online ")>-1){
-                var op = document.getElementById("onlineplayers");
-                op.innerHTML=Number(e.split("Online ")[1])+" players on server";
-            }
-          },
-          send: function(e) {
-              if(this.connection)
-                this.connection.send(e+"\n");
-              else
-                this.error("Error: Not connected to server");
-          },
-          error: function(e) {
-              alert(e);
-          },
-          seek: function(e) {
-              var input = document.getElementById("seek");
-              if(input.selectedIndex===0)
-                  return;
-              this.send("Seek "+(3+input.selectedIndex));
-          },
-          acceptseek: function(e) {
-            var lst = document.getElementById("seeklist");
-            console.log('selected', lst.selectedIndex);
-            if(lst.selectedIndex===-1)
-                return;
-            var selected=lst[lst.selectedIndex];
-            this.send("Accept "+selected.value.split(" ")[0]);
-          },
-          observegame: function(e) {
-            if(board.observing === false && board.scratch===false) //don't observe game while playing another
-                    return;
-            var lst = document.getElementById("gamelist");
-            if(lst.selectedIndex===-1)
-                return;
-            var selected=lst[lst.selectedIndex];
-            var no = Number(selected.value.split(" ")[0]);
-            if(no===board.gameno)
-                return;
-            else
-                this.send("Unobserve "+board.gameno);
-            this.send("Observe "+selected.value.split(" ")[0]);
-          }
-      };
-
-      init();
-      animate();
-
-      function init() {
-        canvas = document.getElementById("gamecanvas");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        camera = new THREE.PerspectiveCamera( 70, canvas.width / canvas.height, 1, 2000 );
-        camera.position.set(0, canvas.width/2, canvas.height/2);
-        //camera.updateProjectionMatrix();
-
-        scene = new THREE.Scene();
-
-        renderer = new THREE.WebGLRenderer({canvas: canvas});
-        renderer.setPixelRatio( window.devicePixelRatio );
-        //renderer.setSize( window.innerWidth, window.innerHeight );
-        //renderer.setSize( 800, 640);
-        renderer.setClearColor(0xdddddd, 1);
-
-        document.body.appendChild( renderer.domElement );
-
-        window.addEventListener( 'resize', onWindowResize, false );
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.minDistance = 200;
-        controls.maxDistance = 1500;
-        var ua = navigator.userAgent.toLowerCase();
-        if(ua.indexOf("android")>-1 || ua.indexOf("iphone")>-1 ||
-                ua.indexOf("ipod")>-1 || ua.indexOf("ipad")>-1)
-            controls.zoomSpeed = 0.5;
-
-        var material = new THREE.LineBasicMaterial({color:0x0000f0});
-        var geometry = new THREE.TorusGeometry(sq_size/2+5, 3, 16, 100);
-        //geometry.vertices.shift();
-        highlighter = new THREE.Mesh(geometry, material);
-        highlighter.rotateX(Math.PI/2);
-
-        canvas.addEventListener('mousedown', onDocumentMouseDown, false);
-        canvas.addEventListener('mouseup', onDocumentMouseUp, false);
-        canvas.addEventListener('mousemove', onDocumentMouseMove, false);
-
-        board.init(5, "white", true);
-      }
- 
-      function onWindowResize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        camera.aspect = canvas.width / canvas.height;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize( canvas.width, canvas.height );
-      }
-
-      function animate() {
-        setTimeout(function() {
-            requestAnimationFrame( animate );
-        }, 1000/30);
-
-        renderer.render( scene, camera );
-        controls.update();
-      }
-
-      function onDocumentMouseMove(e) {
-        e.preventDefault();
-        var x = e.clientX - canvas.offsetLeft;
-        var y = e.clientY - canvas.offsetTop;
-        mouse.x = (x / canvas.width)*2 - 1;
-        mouse.y = -(y/ canvas.height)*2 + 1;
-        board.mousemove();
-      }
-      
-      function onDocumentMouseDown(e) {
-        e.preventDefault();
-
-        document.getElementById("helptext").className = "hide";
-
-        var x = e.clientX - canvas.offsetLeft;
-        var y = e.clientY - canvas.offsetTop;
-        mouse.x = (x / canvas.width)*2 - 1;
-        mouse.y = -(y / canvas.height)*2 + 1;
-        if(e.button === 2)
-            board.rightclick();
-        else
-            board.leftclick();
-      }
-      function onDocumentMouseUp(e) {
-        if(e.button === 2)
-            board.rightup();
-      }
-      function output(e) {
-          console.log("output:"+e);
-      }
-
-      function buttonclick() {
-          var input = document.getElementById("input");
-          var data = input.value;
-          input.value = "";
-          server.send(data);
-      }
-
-      function scratchbutton() {
-          var input = document.getElementById("scratchsize");
-          if(board.observing)
-              server.send("Unobserve "+board.gameno);
-          if(board.scratch || board.observing){
-              board.clear();
-              board.init(4+input.selectedIndex, "white", true);
-          }
-      }
-      function cmenu() {
-          var menu = document.getElementById("helptext");
-          menu.className = (menu.className==="show")?"hide":"show";
-      }
-      function rmenu() {
-          var menu = document.getElementById("rmenu");
-          menu.className = (menu.className==="show")?"hide":"show";
-      }
-      function zoom(out){
-          console.log('zoom', out, controls);
-          if(out)
-              controls.constraint.dollyOut(1.5);
-          else
-              controls.constraint.dollyIn(1.5);
-      }
-      function loadtpn() {
-        var tpn = window.prompt("Paste TPN here", "");
-        if(!tpn)
-            return;
-        board.loadtpn(tpn);
-      }
-    </script>
-
-  </body>
+    </body>
 </html>
 
