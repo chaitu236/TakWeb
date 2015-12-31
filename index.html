@@ -3,7 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+
         <title>Tak</title>
+
         <script>
             (function (i, s, o, g, r, a, m) {
                 i['GoogleAnalyticsObject'] = r;
@@ -21,7 +24,15 @@
             ga('send', 'pageview');
 
         </script>
-        <meta charset="utf-8">
+        <script src="js/three.min.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/helvetiker_regular.typeface.js"></script>
+
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
         <style>
             body {
                 margin: 0px;
@@ -38,7 +49,7 @@
             #floating {
                 position: absolute;
                 right: 5px;
-                top: 5px;
+                top: 60px;
                 z-index: 10;
             }
             #status {
@@ -47,42 +58,13 @@
                 right: 0px;
                 z-index: 10;
             }
-            #help {
-                position: absolute;
-                top: 5px;
-                left: 5px;
-                z-index: 10;
-            }
-            #helptext{
-                background-color: #593514;
-                color: #d8cdab;
-                padding-left: 0px;
-                padding-right: 10px;
-            }
-            #helptext a {
-                color: white;
-            }
-            #helptext>ul {
-                font-weight: bold;
-            }
-            #helptext>ul>li {
-                font-weight: normal;
-                margin-left: 15px;
-            }
             #pindicator {
                 position: absolute;
-                top: 10px;
+                top: 60px;
                 left: 50%;
                 transform: translate(-50%, 0);
                 font-size: 200%;
                 z-index: 10;
-            }
-            #notationbar {
-                color: black;
-                text-align: center;
-                border-style: solid;
-                border-width: 2px;
-                border-color: black;
             }
             #zoomcontrols {
                 position: absolute;
@@ -117,9 +99,6 @@
             }
             #moveslist>tr>td:last-child {
                 text-align: right;
-            }
-            li {
-                margin: 2px 0;
             }
             .selected {
                 background: red;
@@ -170,13 +149,6 @@
                 overflow: auto;
             }
         </style>
-        <script src="js/three.min.js"></script>
-        <script src="js/OrbitControls.js"></script>
-        <script src="js/helvetiker_regular.typeface.js"></script>
-
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     </head>
     <body style="border:1px solid #000000;">
@@ -242,6 +214,9 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li>
+                            <a href="#"> Online <span class="badge" id="onlineplayers"></span></a>
+                        </li>
+                        <li>
                             <button id="login-button" type="button" class="btn btn-default navbar-btn" onclick="server.init()">Sign up / Login</button>
                         </li>
                     </ul>
@@ -251,15 +226,11 @@
 
         <div id="pindicator"><div id="player1">You</div> vs <div id="player2">You</div></div>
 
-        <div align="right" id="floating">
+        <div align="right" id="floating" class="ui-widget-content">
             <a title="Click to show/hide menu" href="#" onclick="rmenu()">
                 <img src="images/ic_menu_black_24px.svg" height="40" width="40"/>
             </a>
             <ul id="rmenu" style="list-style-type:none">
-
-
-                <li id="onlineplayers"></li>
-
                 <li><div title="Notation for current game appears here" id="notationbar">
                         Game notation
                         <table id="moveslist">
@@ -268,6 +239,9 @@
                 </li>
             </ul>
         </div>
+        <script>$(function() {
+            $('#floating').draggable();
+        });</script>
 
         <div>
             <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
@@ -1478,11 +1452,9 @@
                         $('#seeklist').children().each(function() {
                             this.remove();
                         });
-                        lst = document.getElementById("gamelist");
-                        for (i = 0; i < lst.options.length; i++) {
-                            var opt = lst.options[i];
-                            lst.removeChild(opt);
-                        }
+                        $('#gamelist').children().each(function() {
+                            this.remove();
+                        });
                         alert("You're disconnected from server");
                     };
                 },
@@ -1531,7 +1503,7 @@
                         var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6];
                         var $li = $('<li/>').appendTo($('#gamelist'));
                         $('<a/>').text(val).
-                                click(function() {server.observegame(spl[2].split("Game#")[1])}).
+                                click(function() {server.observegame(spl[2].split("Game#")[1]);}).
                                     appendTo($li);
                     }
                     else if (e.indexOf("GameList Remove Game#") > -1) {
@@ -1613,7 +1585,7 @@
                     //Online players
                     else if (e.indexOf("Online ") > -1) {
                         var op = document.getElementById("onlineplayers");
-                        op.innerHTML = Number(e.split("Online ")[1]) + " players on server";
+                        op.innerHTML = Number(e.split("Online ")[1]);
                     }
                 },
                 send: function (e) {
