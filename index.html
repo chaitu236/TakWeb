@@ -24,20 +24,20 @@
             ga('send', 'pageview');
 
         </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="js/three.min.js"></script>
         <script src="js/OrbitControls.js"></script>
         <script src="js/helvetiker_regular.typeface.js"></script>
 
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<!--        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+        <script src="js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css">
 
         <style>
             body {
                 margin: 0px;
-                padding:0px;
-                background-color: #ffffff;
+                padding: 0px;
                 overflow: hidden;
             }
             #gamecanvas{
@@ -154,7 +154,7 @@
     <body style="border:1px solid #000000;">
 
         <!-- Static navbar -->
-        <nav class="navbar navbar-default navbar-static-top">
+        <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -181,7 +181,8 @@
                                 <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
                             </ul>
                         </li>
-                        <li><a title="Reverse view" href="#" onclick="board.reverseboard()">Flip view</a></li>
+                        <li><a title="Reverse view" class="hidden-xs" href="#" onclick="board.reverseboard()">Flip view</a></li>
+                        <li><a href="#" onclick="loadtpn()">Load TPS</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
                                title="Post your seek" aria-haspopup="true" aria-expanded="false" id="seek" > Create game
@@ -199,22 +200,23 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
                                title="Accept a seek" aria-haspopup="true" aria-expanded="false" id="seek" > Join game
+                                <span class="badge" id="seekcount">0</span>
                                 <span class="caret"></span></a>
                             <ul id="seeklist" class="dropdown-menu">
                             </ul>
                         </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               title="Observe a game" aria-haspopup="true" aria-expanded="false" id="seek" > Observe game
+                               title="Observe a game" aria-haspopup="true" aria-expanded="false" id="seek" > Watch
+                                <span class="badge" id="gamecount">0</span>
                                 <span class="caret"></span></a>
                             <ul id="gamelist" class="dropdown-menu">
                             </ul>
                         </li>
-                        <li><a href="#" onclick="loadtpn()">Load TPS</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <a href="#"> Online <span class="badge" id="onlineplayers"></span></a>
+                            <a href="#"> Online <span class="badge" id="onlineplayers">0</span></a>
                         </li>
                         <li>
                             <button id="login-button" type="button" class="btn btn-default navbar-btn" onclick="server.init()">Sign up / Login</button>
@@ -226,7 +228,7 @@
 
         <div id="pindicator"><div id="player1">You</div> vs <div id="player2">You</div></div>
 
-        <div align="right" id="floating" class="ui-widget-content">
+        <div align="right" id="floating">
             <a title="Click to show/hide menu" href="#" onclick="rmenu()">
                 <img src="images/ic_menu_black_24px.svg" height="40" width="40"/>
             </a>
@@ -239,9 +241,6 @@
                 </li>
             </ul>
         </div>
-        <script>$(function() {
-            $('#floating').draggable();
-        });</script>
 
         <div>
             <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
@@ -1407,6 +1406,7 @@
             var server = {
                 connection: null,
                 init: function () {
+                    console.log("called init");
                     if (this.connection && this.connection.readyState === 2)//closing connection
                         return;
                     if (this.connection && this.connection.readyState === 3)//closed
@@ -1444,7 +1444,9 @@
                     this.connection.onclose = function (e) {
                         document.getElementById('login-button').textContent = 'Sign up / Login';
                         document.getElementById("seek").disabled = true;
-                        document.getElementById("onlineplayers").innerHTML = "";
+                        document.getElementById("onlineplayers").innerHTML = "0";
+                        document.getElementById("seekcount").innerHTML = "0";
+                        document.getElementById("gamecount").innerHTML = "0";
                         document.getElementById("scratchsize").disabled = false;
                         board.scratch = true;
                         board.gameno = 0;
@@ -1505,6 +1507,9 @@
                         $('<a/>').text(val).
                                 click(function() {server.observegame(spl[2].split("Game#")[1]);}).
                                     appendTo($li);
+
+                        var op = document.getElementById("gamecount");
+                        op.innerHTML = Number(op.innerHTML)+1;
                     }
                     else if (e.indexOf("GameList Remove Game#") > -1) {
                         //GameList Remove Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
@@ -1515,6 +1520,9 @@
                                 this.remove();
                             }
                         });
+
+                        var op = document.getElementById("gamecount");
+                        op.innerHTML = Number(op.innerHTML)-1;
                     }
                     else if (e.indexOf("Game#") > -1) {
                         //Game#1 P A4 (C|W)
@@ -1570,6 +1578,9 @@
                         $('<a/>').text(spl[3]+' - '+spl[4]+'x'+spl[4]).
                                 click(function() {server.acceptseek(spl[2])}).
                                     appendTo($li);
+
+                        var op = document.getElementById("seekcount");
+                        op.innerHTML = Number(op.innerHTML)+1;
                     }
                     //remove seek
                     else if (e.indexOf("Seek remove") > -1) {
@@ -1581,6 +1592,9 @@
                                 this.remove();
                             }
                         });
+
+                        var op = document.getElementById("seekcount");
+                        op.innerHTML = Number(op.innerHTML)-1;
                     }
                     //Online players
                     else if (e.indexOf("Online ") > -1) {
