@@ -231,6 +231,13 @@
                             <ul id="seeklist" class="dropdown-menu">
                             </ul>
                         </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                               title="Observe a game" aria-haspopup="true" aria-expanded="false" id="seek" > Observe game
+                                <span class="caret"></span></a>
+                            <ul id="gamelist" class="dropdown-menu">
+                            </ul>
+                        </li>
                         <li><a href="#" onclick="loadtpn()">Load TPS</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
@@ -259,9 +266,6 @@
                         </table>
                     </div>
                 </li>
-                <li><select title="Doubleclick a game here to observe" ondblclick="server.observegame()" size="10" name="Games" id="gamelist"></select></li>
-                <li><button title="Observe selected game" onclick="server.observegame()">Observe</button></li>
-
             </ul>
         </div>
 
@@ -1524,29 +1528,21 @@
                     else if (e.indexOf("GameList Add Game#") > -1) {
                         //GameList Add Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
                         var spl = e.split(" ");
-
-                        var lst = document.getElementById("gamelist");
-                        var entry = document.createElement('option');
-
-                        var node = document.createTextNode(spl[2].split("Game#")[1] + " " + spl[3]
-                                + " vs " + spl[5].split(",")[0] + " " + spl[6]);
-                        entry.appendChild(node);
-                        lst.appendChild(entry);
+                        var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6];
+                        var $li = $('<li/>').appendTo($('#gamelist'));
+                        $('<a/>').text(val).
+                                click(function() {server.observegame(spl[2].split("Game#")[1])}).
+                                    appendTo($li);
                     }
                     else if (e.indexOf("GameList Remove Game#") > -1) {
                         //GameList Remove Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
                         var spl = e.split(" ");
-                        var lst = document.getElementById("gamelist");
-                        var val = spl[2].split("Game#")[1] + " " + spl[3]
-                                + " vs " + spl[5].split(",")[0] + " " + spl[6];
-
-                        for (i = 0; i < lst.options.length; i++) {
-                            var opt = lst.options[i];
-                            if (opt.value === val) {
-                                lst.removeChild(opt);
-                                break;
+                        var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6];
+                        $('#gamelist').children().each(function() {
+                            if($(this).find('a')[0].innerHTML === val) {
+                                this.remove();
                             }
-                        }
+                        });
                     }
                     else if (e.indexOf("Game#") > -1) {
                         //Game#1 P A4 (C|W)
@@ -1600,7 +1596,8 @@
                         var spl = e.split(" ");
                         var $li = $('<li/>').appendTo($('#seeklist'));
                         $('<a/>').text(spl[3]+' - '+spl[4]+'x'+spl[4]).
-                                click(function() {server.acceptseek(spl[2])}).appendTo($li);
+                                click(function() {server.acceptseek(spl[2])}).
+                                    appendTo($li);
                     }
                     //remove seek
                     else if (e.indexOf("Seek remove") > -1) {
@@ -1634,19 +1631,14 @@
                 acceptseek: function (e) {
                     this.send("Accept " + e);
                 },
-                observegame: function (e) {
+                observegame: function (no) {
                     if (board.observing === false && board.scratch === false) //don't observe game while playing another
                         return;
-                    var lst = document.getElementById("gamelist");
-                    if (lst.selectedIndex === -1)
-                        return;
-                    var selected = lst[lst.selectedIndex];
-                    var no = Number(selected.value.split(" ")[0]);
                     if (no === board.gameno)
                         return;
                     else
                         this.send("Unobserve " + board.gameno);
-                    this.send("Observe " + selected.value.split(" ")[0]);
+                    this.send("Observe " + no);
                 }
             };
 
