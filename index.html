@@ -175,7 +175,7 @@
 
                             <ul class="dropdown-menu">
                                 <li><a href="#" onclick="scratchbutton(4);">4x4</a></li>
-                                <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>
+                                <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>f
                                 <li><a href="#" onclick="scratchbutton(6);">6x6</a></li>
                                 <li><a href="#" onclick="scratchbutton(7);">7x7</a></li>
                                 <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
@@ -242,6 +242,11 @@
             </ul>
         </div>
 
+<!--        <div id="status">
+            <input id="status-inp" type="text">
+            <button onclick="statusclick()">Ok</button>
+        </div>-->
+
         <div>
             <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
         </div>
@@ -251,7 +256,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-sm-6">
-                                <form role="form">
+                                <form role="form" onsubmit="server.login(); return false;">
                                     <div class="form-group">
                                         <label for="usr">Username</label>
                                         <input type="text" class="form-control" id="login-username">
@@ -260,11 +265,11 @@
                                         <label for="pwd">Password:</label>
                                         <input type="password" class="form-control" id="login-pwd">
                                     </div>
-                                    <button type="submit" class="btn btn-default" onclick="server.login()">Login</button>
+                                    <button type="submit" class="btn btn-default">Login</button>
                                 </form>
                             </div>
                             <div class="col-sm-6">
-                                <form role="form">
+                                <form role="form" onsubmit="server.register(); return false;">
                                     <div class="form-group">
                                         <label for="usr">Username</label>
                                         <input type="text" class="form-control" id="register-username">
@@ -273,7 +278,7 @@
                                         <label for="email">Email address:</label>
                                         <input type="email" class="form-control" id="register-email">
                                     </div>
-                                    <button type="submit" class="btn btn-default" onclick="server.register()">Sign up</button>
+                                    <button type="submit" class="btn btn-default">Sign up</button>
                                 </form>
                             </div>
                         </div>
@@ -1751,6 +1756,12 @@
                 if (!tpn)
                     return;
                 board.loadtpn(tpn);
+            }
+            function statusclick() {
+                var inp = document.getElementById('status-inp');
+                console.log('input: '+inp.value);
+                server.send(inp.value);
+                inp.innerHTML='';
             }
         </script>
 
