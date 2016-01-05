@@ -48,9 +48,28 @@
             }
             #floating {
                 position: absolute;
+                left: 5px;
+                top: 60px;
+                z-index: 10;
+            }
+            #chat {
+                position: absolute;
                 right: 5px;
                 top: 60px;
                 z-index: 10;
+                width: 180px;
+                height: 500px;
+            }
+            #chat-server {
+                height:100%;
+            }
+            .width-full {
+                margin: 0 auto;
+                width: 100%;
+            }
+            .height-full {
+                margin: 0 auto;
+                height: 100%;
             }
             #status {
                 position: absolute;
@@ -175,7 +194,7 @@
 
                             <ul class="dropdown-menu">
                                 <li><a href="#" onclick="scratchbutton(4);">4x4</a></li>
-                                <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>f
+                                <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>
                                 <li><a href="#" onclick="scratchbutton(6);">6x6</a></li>
                                 <li><a href="#" onclick="scratchbutton(7);">7x7</a></li>
                                 <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
@@ -240,6 +259,18 @@
                     </div>
                 </li>
             </ul>
+        </div>
+
+        <div id="chat" class="hidden-xs">
+            <form role="form" onsubmit="server.chat(); return false;" class="height-full">
+                <div class="form-group height-full">
+                    <textarea class="form-control" id="chat-server" readonly></textarea>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" id="chat-me"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
         </div>
 
 <!--        <div id="status">
@@ -1565,15 +1596,24 @@
                             document.getElementById("scratchsize").disabled = false;
                             document.getElementById("seek").disabled = false;
                         }
-                    } else if (e.indexOf("Login or Register") > -1) {
+                    }
+                    else if (e.indexOf("Login or Register") > -1) {
                         server.send("Client " + "TakWeb-15.12.30");
                         $('#login').modal('show');
-                    } else if (e.startsWith("Welcome")) {
+                    }
+                    else if (e.startsWith("Welcome")) {
                         $('#login').modal('hide');
                         document.getElementById('login-button').textContent = 'Logout';
-                    } else if (e.indexOf("Message") > -1) {
+                    }
+                    else if (e.indexOf("Message") > -1) {
                         var msg = e.split("Message ");
                         alert("Server says: " + msg[1]);
+                    }
+                    else if (e.indexOf("Shout") > -1) {
+                        var msg = e.split("Shout ");
+                        console.log("received msg "+msg[1]);
+                        var $cs = $('#chat-server');
+                        $cs.val($cs.val()+msg[1]+'\n');
                     }
                     //new seek
                     else if (e.indexOf("Seek new") > -1) {
@@ -1606,6 +1646,12 @@
                         var op = document.getElementById("onlineplayers");
                         op.innerHTML = Number(e.split("Online ")[1]);
                     }
+                },
+                chat: function () {
+                    var msg = $('#chat-me').val();
+                    console.log('msg= '+msg);
+                    this.send('Shout '+msg);
+                    $('#chat-me').val('');
                 },
                 send: function (e) {
                     if (this.connection)
