@@ -262,13 +262,11 @@
         </div>
 
         <div id="chat" class="hidden-xs">
-            <form role="form" onsubmit="server.chat(); return false;" class="height-full">
                 <div class="form-group height-full">
                     <textarea class="form-control" id="chat-server" readonly></textarea>
                 </div>
-                <div class="form-group">
-                    <textarea class="form-control" id="chat-me"></textarea>
-                </div>
+            <form role="form" onsubmit="server.chat(); return false;" class="height-full">
+                    <input type="text" class="form-control" id="chat-me"></textarea>
                 <button type="submit" class="btn btn-primary">Send</button>
             </form>
         </div>
