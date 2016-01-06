@@ -1455,6 +1455,10 @@
                     var url = window.location.host;
                     if (url.indexOf("playtak") > -1)
                         url = 'playtak.com:3000';
+                    var proto='ws://';
+                    if (window.location.protocol === "https:")
+                        proto='wss://';
+                    this.connection = new WebSocket(proto+url, "binary");
                     this.connection = new WebSocket('ws://' + url, "binary");
                     board.server = this;
                     this.connection.onerror = function (e) {
