@@ -235,7 +235,17 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <a href="#"> Online <span class="badge" id="onlineplayers">0</span></a>
+                            <a href="#" role="button" onclick="volume_change()">
+                            <!--<button type="button" class="btn btn-default">-->
+                                <img id="volume-img" src="images/ic_volume_mute_black_24px.svg" height="20" width="20"/>
+                            <!--</button>-->
+                            </a>
+                            <audio id="move-sound" muted>
+                                <source src="audio/move.mp3" type="audio/mpeg">
+                            </audio>
+                        </li>
+                        <li>
+                            <a href="#">Online <span class="badge" id="onlineplayers">0</span></a>
                         </li>
                         <li>
                             <button id="login-button" type="button" class="btn btn-default navbar-btn" onclick="server.init()">Sign up / Login</button>
@@ -669,6 +679,7 @@
                 },
                 incmovecnt: function () {
                     this.movecount++;
+                    document.getElementById("move-sound").play();
 
                     v1 = document.getElementById("player1");
                     v1.className = (v1.className === "") ? "selectplayer" : "";
@@ -1809,6 +1820,17 @@
                 console.log('input: '+inp.value);
                 server.send(inp.value);
                 inp.innerHTML='';
+            }
+            function volume_change() {
+                var img = document.getElementById("volume-img");
+                var sound = document.getElementById("move-sound");
+                if(img.src.match("mute")) {
+                    img.src = "images/ic_volume_up_black_24px.svg";
+                    sound.muted = false;
+                } else {
+                    img.src = "images/ic_volume_mute_black_24px.svg";
+                    sound.muted = true;
+                }
             }
         </script>
 
