@@ -1822,11 +1822,19 @@
                 if(img.src.match("mute")) {
                     img.src = "images/ic_volume_up_black_24px.svg";
                     sound.muted = false;
+                    localStorage.setItem('sound', 'true');
                 } else {
                     img.src = "images/ic_volume_mute_black_24px.svg";
                     sound.muted = true;
+                    localStorage.setItem('sound', 'false');
                 }
             }
+            $(document).ready(function() {
+                console.log("document ready");
+                if(localStorage.getItem('sound')==='true') {
+                    volume_change();
+                }
+            })
         </script>
 
     </body>
