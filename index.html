@@ -96,6 +96,20 @@
                 border-width: 2px;
                 border-color: black;
             }
+            #alertbox {
+                position: absolute;
+                bottom: 0px;
+                width: 100%;
+                z-index: 8;
+            }
+            .alerts {
+                width: 60%;
+                margin: auto;
+            }
+            .alert {
+                margin: 0px;
+                /*height: 50px;*/
+            }
             #moveslist {
                 display: table;
                 width: 150px;
@@ -136,36 +150,6 @@
             #player2 {
                 color: #593514;
                 display: inline;
-            }
-            //css display popup code taken from
-            //http://stackoverflow.com/questions/19064987/html-css-popup-div-on-text-click
-            .black_overlay{
-                display: none;
-                position: absolute;
-                top: 0%;
-                left: 0%;
-                width: 100%;
-                height: 100%;
-                background-color: black;
-                z-index:1001;
-                -moz-opacity: 0.8;
-                opacity:.80;
-                filter: alpha(opacity=80);
-            }
-            .white_content {
-                display: none;
-                position: absolute;
-                text-align: center;
-                top: 40%;
-                left: 35%;
-                width: 30%;
-                height: 20%;
-                padding: 16px;
-                border: 16px solid black;
-                background-color: white;
-                color: black;
-                z-index:1002;
-                overflow: auto;
             }
         </style>
 
@@ -286,6 +270,15 @@
             <button onclick="statusclick()">Ok</button>
         </div>-->
 
+        <div id="alertbox">
+            <div class="alerts">
+                <div id="alert" class="alert alert-dismissible hidden" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <span id="alert-text">Text</span>
+                </div>
+            </div>
+        </div>
+
         <div>
             <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
         </div>
@@ -382,12 +375,6 @@
             </div>
         </div>
 
-        <div id="light" class="white_content"><div id="onscreenmsg"></div>
-            <a href = "javascript:void(0)" onclick = "
-                    document.getElementById('light').style.display = 'none';
-                    document.getElementById('fade').style.display = 'none'">Close</a></div>
-        <div id="fade" class="black_overlay"></div>
-
         <div id="zoomcontrols">
             <a href="#" onclick="zoom(true)">
                 <img src="images/ic_zoom_out_black_24px.svg" height="40" width="40"/>
@@ -399,10 +386,17 @@
 
         <script>
 
-            function alert(msg) {
-                document.getElementById('onscreenmsg').innerHTML = msg;
-                document.getElementById('light').style.display = 'block';
-                document.getElementById('fade').style.display = 'block';
+            function alert(type, msg) {
+                $('#alert-text').text(msg);
+                var $alert = $('#alert');
+                $alert.removeClass("alert-success alert-info alert-warning alert-danger");
+
+                $alert.addClass("alert-"+type);
+                $alert.removeClass('hidden');
+                $alert.stop(true, true);
+                $alert.fadeTo(2000, 500).slideUp(500, function() {
+                    $alert.addClass('hidden');
+                });
             }
             var camera, scene, renderer, light, canvas, controls = null;
 
@@ -936,7 +930,7 @@
                 gameover: function () {
                     console.log('gameover ' + this.result);
                     this.notate(this.result);
-                    alert("Game over!! " + this.result);
+                    alert("info", "Game over!! " + this.result);
                     this.scratch = true;
                 },
                 newgame: function (sz, col) {
@@ -1397,7 +1391,7 @@
                 },
                 loadtpn: function (tpn) {
                     if (!this.scratch) {
-                        alert('TPN won\'t be displayed in the middle of an online game');
+                        alert('warning', 'TPN won\'t be displayed in the middle of an online game');
                         return;
                     }
                     tpn = tpn.trim().split("[")[1].split("]")[0].trim();
@@ -1435,7 +1429,7 @@
 
                                 var pc = this.getfromstack(piece === 'C', ch === '1');
                                 if (pc === null || typeof pc === 'undefined') {
-                                    alert('Out of pieces. Wrong TPS!');
+                                    alert('danger', 'Out of pieces. Wrong TPS!');
                                     return;
                                 }
                                 if (piece === 'W') {
@@ -1460,7 +1454,7 @@
                         this.connection.close();
                         document.getElementById('login-button').textContent = 'Sign up / Login';
                         document.getElementById("seek").disabled = true;
-                        alert("Disconnnecting from server....");
+                        alert("info", "Disconnnecting from server....");
                         return;
                     }
                     var url = window.location.host;
@@ -1505,7 +1499,7 @@
                         $('#gamelist').children().each(function() {
                             this.remove();
                         });
-                        alert("You're disconnected from server");
+                        alert("info", "You're disconnected from server");
                     };
                 },
                 login: function () {
@@ -1594,7 +1588,7 @@
                             var spl = e.split(" ");
                             board.scratch = true;
                             board.notate(spl[2]);
-                            alert("Game over " + spl[2]);
+                            alert("info", "Game over " + spl[2]);
                             document.getElementById("scratchsize").disabled = false;
                             document.getElementById("seek").disabled = false;
                         }
@@ -1604,7 +1598,7 @@
                             var spl = e.split(" ");
                             document.title = "Tak";
                             board.scratch = true;
-                            alert("Game abandoned by " + spl[2]);
+                            alert("info", "Game abandoned by " + spl[2]);
                             document.getElementById("scratchsize").disabled = false;
                             document.getElementById("seek").disabled = false;
                         }
@@ -1619,7 +1613,7 @@
                     }
                     else if (e.indexOf("Message") > -1) {
                         var msg = e.split("Message ");
-                        alert("Server says: " + msg[1]);
+                        alert("info", "Server says: " + msg[1]);
                     }
                     else if (e.indexOf("Shout") > -1) {
                         var msg = e.split("Shout ");
@@ -1669,10 +1663,10 @@
                     if (this.connection)
                         this.connection.send(e + "\n");
                     else
-                        this.error("Error: Not connected to server");
+                        this.error("Not connected to server");
                 },
                 error: function (e) {
-                    alert(e);
+                    alert("danger", e);
                 },
                 seek: function (size) {
                     this.send("Seek " + size);
