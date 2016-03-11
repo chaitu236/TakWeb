@@ -49,7 +49,7 @@
             #floating {
                 position: absolute;
                 left: 5px;
-                top: 60px;
+                top: 20%;
                 z-index: 10;
             }
             #chat {
@@ -95,6 +95,16 @@
                 border-style: solid;
                 border-width: 2px;
                 border-color: black;
+                padding: 5px;
+                width: 220px;
+                text-align: left;
+                overflow: hidden;
+            }
+            #rmenu li:nth-child(1) {
+            }
+            #notationbar {
+                height: 150px;
+                overflow: auto;
             }
             #alertbox {
                 position: absolute;
@@ -113,7 +123,16 @@
                 display: table;
                 width: 150px;
             }
-            #moveslist thead, #moveslist tbody{
+            .center {
+                text-align: center;
+            }
+            .left {
+                text-align: left;
+            }
+            .right {
+                text-align: right;
+            }
+/*            #moveslist thead, #moveslist tbody{
                 float: left;
                 width: 100%;
             }
@@ -131,7 +150,7 @@
             }
             #moveslist>tr>td:last-child {
                 text-align: right;
-            }
+            }*/
             .selected {
                 background: red;
             }
@@ -140,15 +159,20 @@
             }
             .selectplayer {
                 border-radius: 2px;
-                border: 2px solid red;
+                border: 2px solid black;
+                border-radius: 20px;
             }
-            #player1 {
-                color: #d8cdab;
+            #player1, #player1-name {
                 display: inline;
+                /*color: #d8cdab;*/
+                color: #b3b3b3;
+                padding: 2px;
             }
-            #player2 {
-                color: #593514;
+            #player2, #player2-name {
                 display: inline;
+                /*color: #593514;*/
+                color: black;
+                padding: 2px;
             }
         </style>
 
@@ -172,7 +196,7 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
                                title="Create a new empty board to play locally" aria-haspopup="true" aria-expanded="false"
-                               id="scratchsize"> New Board
+                               id="scratchsize"> Scratch Board
                                 <span class="caret"></span></a>
 
                             <ul class="dropdown-menu">
@@ -183,7 +207,7 @@
                                 <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
                             </ul>
                         </li>
-                        <li><a title="Reverse view" class="hidden-xs" href="#" onclick="board.reverseboard()">Flip view</a></li>
+                        <!--<li><a  class="visible-xs-block" title="Reverse view" class="hidden-xs" href="#" onclick="board.reverseboard()">Flip view</a></li>-->
                         <li><a href="#" onclick="loadtpn()">Load TPS</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
@@ -238,15 +262,24 @@
             </div>
         </nav>
 
-        <div id="pindicator"><div id="player1">You</div> vs <div id="player2">You</div></div>
-
-        <div align="right" id="floating">
+        <div id="floating">
             <a title="Click to show/hide menu" href="#" onclick="rmenu()">
-                <img src="images/ic_menu_black_24px.svg" height="40" width="40"/>
+                <img src="images/ic_menu_black_24px.svg" height="30" width="30"/>
             </a>
             <ul id="rmenu" style="list-style-type:none">
-                <li><div title="Notation for current game appears here" id="notationbar">
-                        Game notation
+                <li class="center">
+                    <div id="player1">
+                    <img src="images/player-white.png" height="20" width="20">
+                    <div id="player1-name">You</div>
+                    </div>x
+                    <div id="player2">
+                    <img src="images/player-black.png" height="20" width="20">
+                    <div id="player2-name">You</div>
+                    </div>
+                </li>
+                <li>
+                    <div title="Notation for current game appears here" id="notationbar">
+                        <div class="center">Game notation</div>
                         <table id="moveslist">
                         </table>
                     </div>
@@ -254,7 +287,7 @@
             </ul>
         </div>
 
-        <div id="chat" class="hidden-xs">
+        <div id="chat" class="hidden-xs hidden-sm">
                 <div class="form-group height-full">
                     <textarea class="form-control" id="chat-server" readonly></textarea>
                 </div>
@@ -262,6 +295,10 @@
                     <input type="text" class="form-control" id="chat-me"></textarea>
                 <button type="submit" class="btn btn-primary">Send</button>
             </form>
+        </div>
+
+        <div>
+            <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
         </div>
 
 <!--        <div id="status">
@@ -278,9 +315,6 @@
             </div>
         </div>
 
-        <div>
-            <canvas id="gamecanvas" style="border:1px solid #000000;"></canvas>
-        </div>
         <div id="login" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -381,6 +415,9 @@
             <a href="#" onclick="zoom(false)">
                 <img src="images/ic_zoom_in_black_24px.svg" height="40" width="40"/>
             </a>
+            <a href="#" onclick="board.reverseboard()">
+                <img src="images/ic_screen_rotation_black_24px.svg" height="35" width="35"/>
+            </a>
         </div>
 
         <script>
@@ -446,7 +483,7 @@
                         this.tottiles = 15;
                     } else if (sz === 5) {
                         this.totcaps = 1;
-                        this.tottiles = 20;
+                        this.tottiles = 21;
                     } else if (sz === 6) {
                         this.totcaps = 1;
                         this.tottiles = 30;
@@ -1521,14 +1558,15 @@
                         board.gameno = Number(spl[2]);
                         document.getElementById("scratchsize").disabled = true;
                         document.getElementById("seek").disabled = true;
-                        document.getElementById("player1").innerHTML = spl[4];
-                        document.getElementById("player2").innerHTML = spl[6];
+                        document.getElementById("player1-name").innerHTML = spl[4];
+                        document.getElementById("player2-name").innerHTML = spl[6];
                         document.title = "Tak: " + spl[4] + " vs " + spl[6];
 
-                        if (spl[7] === "white")
-                            document.getElementById("player1").innerHTML = "You";
-                        else
-                            document.getElementById("player2").innerHTML = "You";
+                        if (spl[7] === "white") {//I am white
+                            document.getElementById("player1-name").innerHTML = "You";
+                        } else {//I am black
+                            document.getElementById("player2-name").innerHTML = "You";
+                        }
                     }
                     else if (e.indexOf("Observe Game#") > -1) {
                         //Observe Game#1 player1 vs player2, 4x4,7 half-moves played, player2 to move
@@ -1734,10 +1772,10 @@
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
 
+                renderer.setSize(canvas.width, canvas.height);
+
                 camera.aspect = canvas.width / canvas.height;
                 camera.updateProjectionMatrix();
-
-                renderer.setSize(canvas.width, canvas.height);
             }
 
             function animate() {
@@ -1755,6 +1793,7 @@
                 var y = e.clientY - canvas.offsetTop;
                 mouse.x = (x / canvas.width) * 2 - 1;
                 mouse.y = -(y / canvas.height) * 2 + 1;
+
                 board.mousemove();
             }
 
@@ -1765,6 +1804,7 @@
                 var y = e.clientY - canvas.offsetTop;
                 mouse.x = (x / canvas.width) * 2 - 1;
                 mouse.y = -(y / canvas.height) * 2 + 1;
+
                 if (e.button === 2)
                     board.rightclick();
                 else
@@ -1830,7 +1870,6 @@
                 }
             }
             $(document).ready(function() {
-                console.log("document ready");
                 if(localStorage.getItem('sound')==='true') {
                     volume_change();
                 }
