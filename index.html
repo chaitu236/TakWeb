@@ -123,8 +123,6 @@
                 text-align: left;
                 overflow: hidden;
             }
-            #rmenu li:nth-child(1) {
-            }
             #notationbar {
                 height: 150px;
                 overflow: auto;
@@ -205,6 +203,11 @@
         </style>
 
     </head>
+    <div class="device-xs hidden-xs"></div>
+    <div class="device-sm hidden-sm"></div>
+    <div class="device-md hidden-md"></div>
+    <div class="device-lg hidden-lg"></div>
+
     <body style="border:1px solid #000000;">
 
         <!-- Static navbar -->
@@ -1824,6 +1827,14 @@
 
                 camera.aspect = canvas.width / canvas.height;
                 camera.updateProjectionMatrix();
+
+                if(isBreakpoint('xs') || isBreakpoint('sm')) {
+                    hidechat();
+                    hidermenu();
+                } else {
+                    showchat();
+                    showrmenu();
+                }
             }
 
             function animate() {
@@ -1883,10 +1894,17 @@
             }
             function rmenu() {
                 if($('#rmenu').hasClass('hidden'))
-                    $('#notation-toggle-text').html('<<<br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n');
+                    showrmenu();
                 else
-                    $('#notation-toggle-text').html('>><br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n');
-                $('#rmenu').toggleClass('hidden');
+                    hidermenu();
+            }
+            function showrmenu() {
+                $('#notation-toggle-text').html('<<<br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n');
+                $('#rmenu').removeClass('hidden');
+            }
+            function hidermenu() {
+                $('#rmenu').addClass('hidden');
+                $('#notation-toggle-text').html('>><br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n');
             }
             function zoom(out) {
                 console.log('zoom', out, controls);
@@ -1921,19 +1939,35 @@
                 }
             }
             function togglechat() {
-                var $tbtn = $('#chat-toggle-button');
                 if($('#chat').hasClass('hidden')) {
-                    $tbtn.css('right', 185);
-                    $('#chat-toggle-text').html('>><br>c<br>h<br>a<br>t');
+                    showchat()
                 } else {
-                    $tbtn.css('right', 0);
-                    $('#chat-toggle-text').html('<<<br>c<br>h<br>a<br>t');
+                    hidechat();
                 }
-                $('#chat').toggleClass("hidden");
+            }
+            function showchat() {
+                $('#chat-toggle-button').css('right', 185);
+                $('#chat-toggle-text').html('>><br>c<br>h<br>a<br>t');
+                $('#chat').removeClass('hidden');
+            }
+            function hidechat() {
+                $('#chat-toggle-button').css('right', 0);
+                $('#chat-toggle-text').html('<<<br>c<br>h<br>a<br>t');
+                $('#chat').addClass('hidden');
+            }
+            function isBreakpoint( alias ) {
+                return $('.device-' + alias).is(':hidden');
             }
             $(document).ready(function() {
                 if(localStorage.getItem('sound')==='true') {
                     volume_change();
+                }
+                if(isBreakpoint('xs') || isBreakpoint('sm')) {
+                    hidechat();
+                    hidermenu();
+                } else {
+                    showchat();
+                    showrmenu();
                 }
             })
         </script>
