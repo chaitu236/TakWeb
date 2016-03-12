@@ -186,9 +186,8 @@
                 background: grey;
             }
             .selectplayer {
-                border-radius: 2px;
-                border: 2px solid black;
                 border-radius: 20px;
+                border: 2px solid black;
             }
             #player1, #player1-name {
                 display: inline;
@@ -201,6 +200,12 @@
                 /*color: #593514;*/
                 color: black;
                 padding: 2px;
+            }
+            .border {
+              border-radius : 20px;
+              padding: 2px;
+              margin: 2px;
+              border : 2px solid black;
             }
         </style>
 
@@ -370,7 +375,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <div class="row">
+                        <div class="row border">
                             <div class="col-sm-6">
                                 <form role="form" onsubmit="server.login(); return false;">
                                     <div class="form-group">
@@ -398,9 +403,9 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="row">
-                          <div class="col-sm-6">
+                        <div class="row center">
                             <br>Or<br><br>
+                          <div class="col-sm-12">
                             <form role="form" onsubmit="server.guestlogin(); return false;">
                               <button type="submit" class="btn btn-default">Guest Login</button>
                             </form>
