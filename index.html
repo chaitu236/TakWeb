@@ -313,6 +313,11 @@
                     <div id="player2-name">You</div>
                     </div>
                 </li>
+                <li class="center">
+                    <!--<a href="#" title="Reverse board" onclick="board.reverseboard()"><img src="images/ic_screen_rotation_black_24px.svg" width="25 height=25"></a>-->
+                    <a href="#" title="Offer/Accept draw" onclick="server.draw()"><img id="draw" src="images/offer-hand.png" width="25" height="25"></a>
+                    <a href="#" title="Resign" onclick="server.resign()"><img src="images/flag.svg" width="25" height="20"></a>
+                </li>
                 <li>
                     <div title="Notation for current game appears here" id="notationbar">
                         <!--<div class="center">Game notation</div>-->
@@ -476,7 +481,7 @@
                 $alert.addClass("alert-"+type);
                 $alert.removeClass('hidden');
                 $alert.stop(true, true);
-                $alert.fadeTo(2000, 500).slideUp(500, function() {
+                $alert.fadeTo(4000, 500).slideUp(500, function() {
                     $alert.addClass('hidden');
                 });
             }
@@ -1671,6 +1676,16 @@
                                     spl[3].charAt(0), Number(spl[3].charAt(1)),
                                     nums);
                         }
+                        //Game#1 OfferDraw
+                        else if (e.indexOf("OfferDraw") > -1) {
+                            document.getElementById("draw").src = "images/hand-other-offered.png";
+                            alert("info", "Draw is offered by your opponent");
+                        }
+                        //Game#1 RemoveDraw
+                        else if (e.indexOf("RemoveDraw") > -1) {
+                            document.getElementById("draw").src = "images/offer-hand.png";
+                            alert("info", "Draw offer is taken back by your opponent");
+                        }
                         //Game#1 Over result
                         else if (e.indexOf("Over") > -1) {
                             document.title = "Tak";
@@ -1762,6 +1777,21 @@
                 },
                 seek: function (size) {
                     this.send("Seek " + size);
+                },
+                draw: function() {
+                    var img = document.getElementById("draw");
+                    if(img.src.match("offer-hand")) {//offer
+                        img.src = "images/hand-i-offered.png";
+                        this.send("Game#" + board.gameno + " OfferDraw");
+                    } else if(img.src.match("hand-i-offered")) {//remove offer
+                        img.src = "images/offer-hand.png";
+                        this.send("Game#" + board.gameno + " RemoveDraw");
+                    } else {//accept the offer
+                        this.send("Game#" + board.gameno + " OfferDraw");
+                    }
+                },
+                resign: function() {
+                    this.send("Game#" + board.gameno + " Resign");
                 },
                 acceptseek: function (e) {
                     this.send("Accept " + e);
