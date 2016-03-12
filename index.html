@@ -448,8 +448,8 @@
                                     <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
                                     <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch. Or use zoom buttons on bottom right.</li>
                                     <li>Menu on the right side can be shown/hidden by clicking on the menu icon</li>
-                                    <li>Click on the "Reverse" icon in menu to reverse the board view</li>
-                                    <li>Current player is indicated by highlighting their name with red border</li>
+                                    <li>Click on the "Reverse" icon in the bottom to reverse the board view</li>
+                                    <li>Current player to move is indicated by highlighting their name with a border</li>
                                     <li>To load TPN notation, click on "load TPN" and paste the notation</li>
                                     <li>If any of the above controls don't work, it means that control is invalid for current move</li>
                                 </ul></li>
@@ -457,11 +457,12 @@
                                     <li>Select board size to create a new empty board on which you can play locally</li>
                                 </ul></li>
                             <li><ul>Play online:
-                                    <li>Connect to server by clicking "Multiplayer" button</li>
-                                    <li>Post your seek by selecting seek size or accept another player's seek by double clicking on it</li>
+                                    <li>Login to server by clicking "Sign up/Login" button, signup and then login</li>
+                                    <li>Post your seek by selecting board size in "Create game" menu or accept another player's
+                                        seek by selecting it in "Join game" menu</li>
                                 </ul></li>
                             <li><ul>Observe/Spectate another game:
-                                    <li>Double click on one of the ongoing games or select and click Observe</li>
+                                    <li>Click on one of any ongoing games from "Watch" menu</li>
                                     <li>You can't observe a game while playing an online game</li>
                                 </ul></li>
                             <li><ul>About the game:
@@ -470,7 +471,7 @@
                                     <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a></li>
                                     <li>Backend code can be found <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
                                     <li>Check out <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">these </a>
-                                        <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
+                                        - <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
                                 </ul></li>
                         </ul>
                     </div>
@@ -1553,6 +1554,7 @@
                 connection: null,
                 timeoutvar: null,
                 myname: null,
+                tries:0,
 
                 init: function () {
                     console.log("called init");
@@ -1738,13 +1740,17 @@
                         }
                     }
                     else if (e.startsWith("Login or Register")) {
-                        server.send("Client " + "TakWeb-15.12.30");
+                        server.send("Client " + "TakWeb-16.03.12");
 
-                        if(localStorage.getItem('keeploggedin')==='true') {
+                        if(localStorage.getItem('keeploggedin')==='true' && this.tries<3) {
                           var uname = localStorage.getItem('usr');
                           var token = localStorage.getItem('token');
                           server.send("Login " + uname + " " + token);
+                          this.tries++;
                         } else {
+                          localStorage.removeItem('keeploggedin');
+                          localStorage.removeItem('usr');
+                          localStorage.removeItem('token');
                           $('#login').modal('show');
                         }
                     }
@@ -1767,6 +1773,7 @@
                     }
                     //Welcome kaka!
                     else if (e.startsWith("Welcome ")) {
+                        this.tries = 0;
                         $('#login').modal('hide');
                         document.getElementById('login-button').textContent = 'Logout';
                         this.timeoutvar = window.setInterval(this.keepalive, 30000);
@@ -1774,7 +1781,7 @@
                         alert("success", "You're logged in "+this.myname+"!");
 
                         var rem = $('#keeploggedin').is(':checked');
-                        if( rem === true) {
+                        if( rem === true && !this.myname.startsWith("Guest")) {
                           console.log('storing');
                           var name = $('#login-username').val();
                           var token = $('#login-pwd').val();
@@ -1833,10 +1840,10 @@
                     $('#chat-me').val('');
                 },
                 send: function (e) {
-                    if (this.connection)
+                    if (this.connection && this.connection.readyState === 1)
                         this.connection.send(e + "\n");
                     else
-                        this.error("You are not logged in to server");
+                        this.error("You are not logged on to the server");
                 },
                 error: function (e) {
                     alert("danger", e);
