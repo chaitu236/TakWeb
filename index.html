@@ -315,8 +315,8 @@
                 </li>
                 <li class="center">
                     <!--<a href="#" title="Reverse board" onclick="board.reverseboard()"><img src="images/ic_screen_rotation_black_24px.svg" width="25 height=25"></a>-->
-                    <a href="#" title="Offer/Accept draw" onclick="server.draw()"><img id="draw" src="images/offer-hand.png" width="25" height="25"></a>
-                    <a href="#" title="Resign" onclick="server.resign()"><img src="images/flag.svg" width="25" height="20"></a>
+                    <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()"><img id="draw" src="images/offer-hand.png" width="25" height="25"></a>
+                    <a href="#" title="Resign" class="btn" onclick="server.resign()"><img src="images/flag.svg" width="25" height="20"></a>
                 </li>
                 <li>
                     <div title="Notation for current game appears here" id="notationbar">
@@ -1022,7 +1022,7 @@
                 },
                 newgame: function (sz, col) {
                     this.clear();
-                    this.init(sz, col, false);
+                    this.init(sz, col, false, false);
                 },
                 findwhowon: function () {
                     var whitec = 0, blackc = 0;
@@ -1352,6 +1352,7 @@
                     var tbl = document.getElementById("moveslist");
                     while (tbl.rows.length > 0)
                         tbl.deleteRow(0);
+                    document.getElementById("draw").src = "images/offer-hand.png";
                 },
                 sqrel: function (sq1, sq2) {
                     var f1 = sq1.file;
@@ -1532,6 +1533,8 @@
             var server = {
                 connection: null,
                 timeoutvar: null,
+                myname: null,
+
                 init: function () {
                     console.log("called init");
                     if (this.connection && this.connection.readyState === 2)//closing connection
@@ -1579,6 +1582,7 @@
                         document.getElementById("gamecount").innerHTML = "0";
                         document.getElementById("scratchsize").disabled = false;
                         board.scratch = true;
+                        board.observing = false;
                         board.gameno = 0;
                         document.title = "Tak";
                         $('#seeklist').children().each(function() {
@@ -1716,7 +1720,8 @@
                         $('#login').modal('hide');
                         document.getElementById('login-button').textContent = 'Logout';
                         this.timeoutvar = window.setInterval(this.keepalive, 30000);
-                        alert("success", "You're logged in "+e.split("Welcome ")[1]);
+                        this.myname = e.split("Welcome ")[1].split("!")[0];
+                        alert("success", "You're logged in "+this.myname+"!");
                     }
                     else if (e.indexOf("Message") > -1) {
                         var msg = e.split("Message ");
@@ -1779,6 +1784,11 @@
                     this.send("Seek " + size);
                 },
                 draw: function() {
+                    if(board.scratch)
+                      return;
+                    else if(board.observing)
+                      return;
+
                     var img = document.getElementById("draw");
                     if(img.src.match("offer-hand")) {//offer
                         img.src = "images/hand-i-offered.png";
@@ -1791,6 +1801,11 @@
                     }
                 },
                 resign: function() {
+                    if(board.scratch)
+                      return;
+                    else if(board.observing)
+                      return;
+
                     this.send("Game#" + board.gameno + " Resign");
                 },
                 acceptseek: function (e) {
