@@ -52,6 +52,12 @@
                 top: 20%;
                 z-index: 10;
             }
+            #chat-toggle-button{
+                position: absolute;
+                right: 185px;
+                top: 60px;
+                z-index: 10;
+            }
             #chat {
                 position: absolute;
                 right: 5px;
@@ -62,6 +68,23 @@
             }
             #chat-server {
                 height:100%;
+            }
+            .toggle-text {
+                border-radius: 2px;
+                border: 2px solid #404040;
+                border-radius: 5px;
+                text-align: center;
+                color: #c3c3c3;
+                background-color: #404040;
+                line-height: 12px;
+                width: 19px;
+            }
+            #chat-toggle-text {
+            }
+            #notation-toggle-text {
+                position: absolute;
+                right: -19px;
+                top: 0px;
             }
             .width-full {
                 margin: 0 auto;
@@ -131,6 +154,11 @@
             }
             .right {
                 text-align: right;
+            }
+            .vertical-text {
+                transform-origin: bottom right;
+                transform: rotate(-90deg);
+                float: left;
             }
 /*            #moveslist thead, #moveslist tbody{
                 float: left;
@@ -264,7 +292,10 @@
 
         <div id="floating">
             <a title="Click to show/hide menu" href="#" onclick="rmenu()">
-                <img src="images/ic_menu_black_24px.svg" height="30" width="30"/>
+                <!--<img src="images/ic_menu_black_24px.svg" height="30" width="30"/>-->
+                <div id="notation-toggle-text" class="toggle-text">
+                    <<<br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n
+                </div>
             </a>
             <ul id="rmenu" style="list-style-type:none">
                 <li class="center">
@@ -279,7 +310,7 @@
                 </li>
                 <li>
                     <div title="Notation for current game appears here" id="notationbar">
-                        <div class="center">Game notation</div>
+                        <!--<div class="center">Game notation</div>-->
                         <table id="moveslist">
                         </table>
                     </div>
@@ -287,7 +318,17 @@
             </ul>
         </div>
 
-        <div id="chat" class="hidden-xs hidden-sm">
+        <div id="chat-toggle-button">
+            <a href="#" onclick="togglechat()">
+                <!--<img src="images/ic_menu_black_24px.svg" width="24" height="24">-->
+                <!--<div class="vertical-text">chat</div>-->
+                <div id="chat-toggle-text" class="toggle-text">
+                >><br>
+                c<br>h<br>a<br>t
+                </div>
+            </a>
+        </div>
+        <div id="chat"">
                 <div class="form-group height-full">
                     <textarea class="form-control" id="chat-server" readonly></textarea>
                 </div>
@@ -1709,7 +1750,7 @@
                     if (this.connection)
                         this.connection.send(e + "\n");
                     else
-                        this.error("Not connected to server");
+                        this.error("You are not logged in to server");
                 },
                 error: function (e) {
                     alert("danger", e);
@@ -1841,8 +1882,11 @@
                 }
             }
             function rmenu() {
-                var menu = document.getElementById("rmenu");
-                menu.className = (menu.className === "show") ? "hide" : "show";
+                if($('#rmenu').hasClass('hidden'))
+                    $('#notation-toggle-text').html('<<<br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n');
+                else
+                    $('#notation-toggle-text').html('>><br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n');
+                $('#rmenu').toggleClass('hidden');
             }
             function zoom(out) {
                 console.log('zoom', out, controls);
@@ -1875,6 +1919,17 @@
                     sound.muted = true;
                     localStorage.setItem('sound', 'false');
                 }
+            }
+            function togglechat() {
+                var $tbtn = $('#chat-toggle-button');
+                if($('#chat').hasClass('hidden')) {
+                    $tbtn.css('right', 185);
+                    $('#chat-toggle-text').html('>><br>c<br>h<br>a<br>t');
+                } else {
+                    $tbtn.css('right', 0);
+                    $('#chat-toggle-text').html('<<<br>c<br>h<br>a<br>t');
+                }
+                $('#chat').toggleClass("hidden");
             }
             $(document).ready(function() {
                 if(localStorage.getItem('sound')==='true') {
