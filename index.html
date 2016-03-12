@@ -1943,6 +1943,7 @@
                 camera.aspect = canvas.width / canvas.height;
                 camera.updateProjectionMatrix();
 
+                $('#chat').height(window.innerHeight - $('nav').height() - 85);
                 if(isBreakpoint('xs') || isBreakpoint('sm')) {
                     hidechat();
                     hidermenu();
@@ -2087,6 +2088,7 @@
                     showchat();
                     showrmenu();
                 }
+                $('#chat').height(window.innerHeight - $('nav').height() - 85);
             })
         </script>
 
