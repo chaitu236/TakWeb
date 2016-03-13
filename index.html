@@ -32,7 +32,11 @@
 <!--        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap-tour.min.js"></script>
+        <script src="js/playtaktour.js"></script>
+
         <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap-tour.min.css">
 
         <style>
             body {
@@ -246,9 +250,9 @@
                             </ul>
                         </li>
                         <!--<li><a  class="visible-xs-block" title="Reverse view" class="hidden-xs" href="#" onclick="board.reverseboard()">Flip view</a></li>-->
-                        <li><a href="#" onclick="loadtpn()">Load TPS</a></li>
+                        <li><a id="loadtps" href="#" onclick="loadtpn()">Load TPS</a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                            <a id="creategame" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
                                title="Post your seek" aria-haspopup="true" aria-expanded="false" id="seek" > Create game
                                 <span class="caret"></span></a>
                             <ul class="dropdown-menu">
@@ -262,7 +266,7 @@
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                            <a id="joingame" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
                                title="Accept a seek" aria-haspopup="true" aria-expanded="false" id="seek" > Join game
                                 <span class="badge" id="seekcount">0</span>
                                 <span class="caret"></span></a>
@@ -270,7 +274,7 @@
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                            <a id="watch" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
                                title="Observe a game" aria-haspopup="true" aria-expanded="false" id="seek" > Watch
                                 <span class="badge" id="gamecount">0</span>
                                 <span class="caret"></span></a>
@@ -488,6 +492,9 @@
             </a>
             <a href="#" onclick="board.reverseboard()">
                 <img src="images/ic_screen_rotation_black_24px.svg" height="35" width="35"/>
+            </a>
+            <a href="#" onclick="tour(true)">
+                <img src="images/bus.png" height="35" width="35"/>
             </a>
         </div>
 
@@ -2074,6 +2081,7 @@
             function isBreakpoint( alias ) {
                 return $('.device-' + alias).is(':hidden');
             }
+
             $(document).ready(function() {
                 if(localStorage.getItem('sound')==='true') {
                     volume_change();
@@ -2089,6 +2097,8 @@
                     showrmenu();
                 }
                 $('#chat').height(window.innerHeight - $('nav').height() - 85);
+
+                tour(false);
             })
         </script>
 
