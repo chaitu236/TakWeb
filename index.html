@@ -253,7 +253,7 @@
                         <li><a id="loadtps" href="#" onclick="loadtpn()">Load TPS</a></li>
                         <li class="dropdown">
                             <a id="creategame" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               title="Post your seek" aria-haspopup="true" aria-expanded="false" id="seek" > Create game
+                               title="Post your seek" aria-haspopup="true" aria-expanded="false"> Create game
                                 <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#" onclick="server.seek(4);">4x4</a></li>
@@ -267,7 +267,7 @@
                         </li>
                         <li class="dropdown">
                             <a id="joingame" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               title="Accept a seek" aria-haspopup="true" aria-expanded="false" id="seek" > Join game
+                               title="Accept a seek" aria-haspopup="true" aria-expanded="false"> Join game
                                 <span class="badge" id="seekcount">0</span>
                                 <span class="caret"></span></a>
                             <ul id="seeklist" class="dropdown-menu">
@@ -275,7 +275,7 @@
                         </li>
                         <li class="dropdown">
                             <a id="watch" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               title="Observe a game" aria-haspopup="true" aria-expanded="false" id="seek" > Watch
+                               title="Observe a game" aria-haspopup="true" aria-expanded="false"> Watch
                                 <span class="badge" id="gamecount">0</span>
                                 <span class="caret"></span></a>
                             <ul id="gamelist" class="dropdown-menu">
@@ -421,6 +421,13 @@
                             </form>
                           </div>
                         </div>
+                        <div class="row center">
+                          <div class="col-sm-12">
+                            <div id="alert2" class="alert alert-dismissible hidden" role="alert">
+                                <span id="alert-text2">Text</span>
+                            </div>
+                          </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" onclick="server.init()">Close</button>
@@ -503,6 +510,19 @@
             function alert(type, msg) {
                 $('#alert-text').text(msg);
                 var $alert = $('#alert');
+                $alert.removeClass("alert-success alert-info alert-warning alert-danger");
+
+                $alert.addClass("alert-"+type);
+                $alert.removeClass('hidden');
+                $alert.stop(true, true);
+                $alert.fadeTo(4000, 500).slideUp(500, function() {
+                    $alert.addClass('hidden');
+                });
+                alert2(type, msg);
+            }
+            function alert2(type, msg) {
+                $('#alert-text2').text(msg);
+                var $alert = $('#alert2');
                 $alert.removeClass("alert-success alert-info alert-warning alert-danger");
 
                 $alert.addClass("alert-"+type);
@@ -1571,7 +1591,6 @@
                         this.connection = null;
                     if (this.connection) { //user clicked logout
                         this.connection.close();
-                        document.getElementById("seek").disabled = true;
                         alert("info", "Disconnnecting from server....");
 
                         localStorage.removeItem('keeploggedin');
@@ -1603,11 +1622,9 @@
                         reader.readAsText(blob);
                     };
                     this.connection.onopen = function (e) {
-                        document.getElementById("seek").disabled = false;
                     };
                     this.connection.onclose = function (e) {
                         document.getElementById('login-button').textContent = 'Sign up / Login';
-                        document.getElementById("seek").disabled = true;
                         document.getElementById("onlineplayers").innerHTML = "0";
                         document.getElementById("seekcount").innerHTML = "0";
                         document.getElementById("gamecount").innerHTML = "0";
@@ -1653,7 +1670,6 @@
                         board.newgame(Number(spl[3]), spl[7]);
                         board.gameno = Number(spl[2]);
                         document.getElementById("scratchsize").disabled = true;
-                        document.getElementById("seek").disabled = true;
                         document.getElementById("player1-name").innerHTML = spl[4];
                         document.getElementById("player2-name").innerHTML = spl[6];
                         document.title = "Tak: " + spl[4] + " vs " + spl[6];
@@ -1733,7 +1749,6 @@
                             board.notate(spl[2]);
                             alert("info", "Game over " + spl[2]);
                             document.getElementById("scratchsize").disabled = false;
-                            document.getElementById("seek").disabled = false;
                         }
                         //Abandoned
                         else if (e.indexOf("Abandoned") > -1) {
@@ -1743,7 +1758,6 @@
                             board.scratch = true;
                             alert("info", "Game abandoned by " + spl[2]);
                             document.getElementById("scratchsize").disabled = false;
-                            document.getElementById("seek").disabled = false;
                         }
                     }
                     else if (e.startsWith("Login or Register")) {
@@ -1760,6 +1774,18 @@
                           localStorage.removeItem('token');
                           $('#login').modal('show');
                         }
+                    }
+                    //Registered ...
+                    else if (e.startsWith("Registered")) {
+                      alert("success", "You're registered! Check mail for password");
+                    }
+                    //Name already taken
+                    else if (e.startsWith("Name already taken")) {
+                      alert("danger", "Name is already taken");
+                    }
+                    //Can't register with guest in the name
+                    else if (e.startsWith("Can't register with guest in the name")) {
+                      alert("danger", "Can't register with guest in the name");
                     }
                     //Authentication failure
                     else if (e.startsWith("Authentication failure")) {
