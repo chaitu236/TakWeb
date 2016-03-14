@@ -1787,6 +1787,10 @@
                     else if (e.startsWith("Can't register with guest in the name")) {
                       alert("danger", "Can't register with guest in the name");
                     }
+                    //Unknown characters in username/email
+                    else if (e.startsWith("Unknown characters in username/email")) {
+                      alert("danger", e);
+                    }
                     //Authentication failure
                     else if (e.startsWith("Authentication failure")) {
                         console.log('failure');
