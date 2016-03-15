@@ -1640,6 +1640,7 @@
                 myname: null,
                 tries:0,
                 timervar: null,
+                lastTimeUpdate: null,
 
                 init: function () {
                     console.log("called init");
@@ -1794,6 +1795,12 @@
                           var spl = e.split(" ");
                           var wt = Number(spl[2]);
                           var bt = Number(spl[3]);
+                          lastWt = wt;
+                          lastBt = bt;
+
+                          var now = new Date();
+                          lastTimeUpdate = now.getHours()*60*60 + now.getMinutes()*60+now.getSeconds();
+
 
                           $('#player1time').html(getZero(parseInt(wt/60))+':'+getZero(wt%60));
                           $('#player2time').html(getZero(parseInt(bt/60))+':'+getZero(bt%60));
@@ -2193,20 +2200,19 @@
                 return $('.device-' + alias).is(':hidden');
             }
             function startTime() {
-              var p1 = $('#player1time').text().split(':');
-              var p2 = $('#player2time').text().split(':');
-              var t1 = Number(p1[0])*60 + Number(p1[1]);
-              var t2 = Number(p2[0])*60 + Number(p2[1]);
+              var now = new Date();
+              var t = now.getHours()*60*60 + now.getMinutes()*60+now.getSeconds();
+              var elapsed = t-lastTimeUpdate;
 
               if(board.movecount%2 === 0) {
-                t1 -= 1;
+                t1 = lastWt - elapsed;
                 $('#player1time').html(getZero(parseInt(t1/60))+':'+getZero(t1%60));
               } else {
-                t2 -= 1;
+                t2 = lastBt - elapsed;
                 $('#player2time').html(getZero(parseInt(t2/60))+':'+getZero(t2%60));
               }
 
-              timervar = setTimeout(startTime, 1000);
+              timervar = setTimeout(startTime, 500);
             }
 
             function getZero(t) {
