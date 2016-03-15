@@ -193,13 +193,13 @@
                 border-radius: 20px;
                 border: 2px solid black;
             }
-            #player1, #player1-name {
+            #player-opp, .player1-name {
                 display: inline;
                 /*color: #d8cdab;*/
                 color: #a3a3a3;
                 padding: 2px;
             }
-            #player2, #player2-name {
+            #player-me, .player2-name {
                 display: inline;
                 /*color: #593514;*/
                 color: black;
@@ -302,11 +302,11 @@
             </a>
             <ul id="rmenu" style="list-style-type:none">
                 <li class="center">
-                    <div id="player1">
-                    <img src="images/player-white.png" height="20" width="20">
-                    <div id="player1-name">You</div>
+                    <div id="player-opp">
+                    <img id="player-opp-img" src="images/player-white.png" height="20" width="20">
+                    <div id="player-opp-name" class="player1-name">You</div>
                     </div>
-                    <div id="player1time">0:00</div>
+                    <div id="player-opp-time" class="player1-time">0:00</div>
                 </li>
                 <li class="center">
                     <!--<a href="#" title="Reverse board" onclick="board.reverseboard()"><img src="images/ic_screen_rotation_black_24px.svg" width="25 height=25"></a>-->
@@ -321,11 +321,11 @@
                     </div>
                 </li>
                 <li class="center">
-                    <div id="player2">
-                    <img src="images/player-black.png" height="20" width="20">
-                    <div id="player2-name">You</div>
+                    <div id="player-me">
+                    <img id="player-me-img" src="images/player-black.png" height="20" width="20">
+                    <div id="player-me-name" class="player2-name">You</div>
                     </div>
-                    <div id="player2time">0:00</div>
+                    <div id="player-me-time" class="player2-time">0:00</div>
                 </li>
             </ul>
         </div>
@@ -675,8 +675,8 @@
                     var material = new THREE.LineBasicMaterial({color: 0x0000f0});
                     var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
 
-                    document.getElementById("player1").className = "selectplayer";
-                    document.getElementById("player2").className = "";
+                    document.getElementById("player-opp").className = "selectplayer";
+                    document.getElementById("player-me").className = "";
 
                     if (this.mycolor !== this.boardside)
                         this.reverseboard();
@@ -861,10 +861,12 @@
                     this.movecount++;
                     document.getElementById("move-sound").play();
 
-                    v1 = document.getElementById("player1");
+                    $('#player-me').toggleClass('selectplayer');
+                    $('#player-opp').toggleClass('selectplayer');
+                    /*v1 = document.getElementById("player-opp");
                     v1.className = (v1.className === "") ? "selectplayer" : "";
-                    v2 = document.getElementById("player2");
-                    v2.className = (v2.className === "") ? "selectplayer" : "";
+                    v2 = document.getElementById("player-me");
+                    v2.className = (v2.className === "") ? "selectplayer" : "";*/
 
                     if (this.scratch) {
                         if (this.mycolor === "white")
@@ -1453,8 +1455,31 @@
                         tbl.deleteRow(0);
                     document.getElementById("draw").src = "images/offer-hand.png";
                     stopTime();
-                    $('#player1time').html('0:00');
-                    $('#player2time').html('0:00');
+
+                    $('#player-me-name').removeClass('player1-name');
+                    $('#player-me-name').removeClass('player2-name');
+                    $('#player-opp-name').removeClass('player1-name');
+                    $('#player-opp-name').removeClass('player2-name');
+
+                    $('#player-me').removeClass('selectplayer');
+                    $('#player-opp').removeClass('selectplayer');
+
+                    //i'm always black after clearing
+                    $('#player-me-name').addClass('player2-name');
+                    $('#player-opp-name').addClass('player1-name');
+
+                    $('#player-me-time').addClass('player2-time');
+                    $('#player-opp-time').addClass('player1-time');
+
+                    $('#player-me-img').attr('src', 'images/player-black.png');
+                    $('#player-opp-img').attr('src', 'images/player-white.png');
+
+                    $('#player-opp').addClass('selectplayer');
+
+                    $('.player1-name:first').html('You');
+                    $('.player2-name:first').html('You');
+                    $('.player1-time:first').html('0:00');
+                    $('.player2-time:first').html('0:00');
                 },
                 sqrel: function (sq1, sq2) {
                     var f1 = sq1.file;
@@ -1727,21 +1752,53 @@
                         board.newgame(Number(spl[3]), spl[7]);
                         board.gameno = Number(spl[2]);
                         document.getElementById("scratchsize").disabled = true;
-                        document.getElementById("player1-name").innerHTML = spl[4];
-                        document.getElementById("player2-name").innerHTML = spl[6];
-                        document.title = "Tak: " + spl[4] + " vs " + spl[6];
+
+                        $('#player-me-name').removeClass('player1-name');
+                        $('#player-me-name').removeClass('player2-name');
+                        $('#player-opp-name').removeClass('player1-name');
+                        $('#player-opp-name').removeClass('player2-name');
+
+                        $('#player-me-time').removeClass('player1-time');
+                        $('#player-me-time').removeClass('player2-time');
+                        $('#player-opp-time').removeClass('player1-time');
+                        $('#player-opp-time').removeClass('player2-time');
+
+                        $('#player-me').removeClass('selectplayer');
+                        $('#player-opp').removeClass('selectplayer');
 
                         if (spl[7] === "white") {//I am white
-                            document.getElementById("player1-name").innerHTML = "You";
+                            $('#player-me-name').addClass('player1-name');
+                            $('#player-opp-name').addClass('player2-name');
+
+                            $('#player-me-time').addClass('player1-time');
+                            $('#player-opp-time').addClass('player2-time');
+
+                            $('#player-me-img').attr('src', 'images/player-white.png');
+                            $('#player-opp-img').attr('src', 'images/player-black.png');
+
+                            $('#player-me').addClass('selectplayer');
                         } else {//I am black
-                            document.getElementById("player2-name").innerHTML = "You";
+                            $('#player-me-name').addClass('player2-name');
+                            $('#player-opp-name').addClass('player1-name');
+
+                            $('#player-me-time').addClass('player2-time');
+                            $('#player-opp-time').addClass('player1-time');
+
+                            $('#player-me-img').attr('src', 'images/player-black.png');
+                            $('#player-opp-img').attr('src', 'images/player-white.png');
+
+                            $('#player-opp').addClass('selectplayer');
                         }
+
+                        $('.player1-name:first').html(spl[4]);
+                        $('.player2-name:first').html(spl[6]);
+                        document.title = "Tak: " + spl[4] + " vs " + spl[6];
 
                         var time = Number(spl[8]);
                         var m = parseInt(time/60);
                         var s = getZero(parseInt(time%60));
-                        $('#player1time').html(m+':'+s);
-                        $('#player2time').html(m+':'+s);
+                        $('.player1-time:first').html(m+':'+s);
+                        $('.player2-time:first').html(m+':'+s);
                     }
                     else if (e.indexOf("Observe Game#") > -1) {
                         //Observe Game#1 player1 vs player2, 4x4, 180, 7 half-moves played, player2 to move
@@ -1749,15 +1806,15 @@
                         board.clear();
                         board.init(Number(spl[5].split("x")[0]), "white", false, true);
                         board.gameno = Number(spl[1].split("Game#")[1]);
-                        document.getElementById("player1-name").innerHTML = spl[2];
-                        document.getElementById("player2-name").innerHTML = spl[4].split(",")[0];
+                        $('.player1-name:first').html(spl[2]);
+                        $('.player2-name:first').html(spl[4].split(",")[0]);
                         document.title = "Tak: " + spl[2] + " vs " + spl[4];
 
                         var time = Number(spl[6].split(",")[0]);
                         var m = parseInt(time/60);
                         var s = getZero(parseInt(time%60));
-                        $('#player1time').html(m+':'+s);
-                        $('#player2time').html(m+':'+s);
+                        $('.player1-time:first').html(m+':'+s);
+                        $('.player2-time:first').html(m+':'+s);
                     }
                     else if (e.indexOf("GameList Add Game#") > -1) {
                         //GameList Add Game#1 player1 vs player2, 4x4, 180, 0 half-moves played, player1 to move
@@ -1820,8 +1877,8 @@
                           lastTimeUpdate = now.getHours()*60*60 + now.getMinutes()*60+now.getSeconds();
 
 
-                          $('#player1time').html(parseInt(wt/60)+':'+getZero(wt%60));
-                          $('#player2time').html(parseInt(bt/60)+':'+getZero(bt%60));
+                          $('.player1-time:first').html(parseInt(wt/60)+':'+getZero(wt%60));
+                          $('.player2-time:first').html(parseInt(bt/60)+':'+getZero(bt%60));
 
                           if(board.movecount > 0) {
                             startTime(true);
@@ -2240,10 +2297,10 @@
 
               if(board.movecount%2 === 0) {
                 t1 = lastWt - elapsed;
-                $('#player1time').html(parseInt(t1/60)+':'+getZero(t1%60));
+                $('.player1-time:first').html(parseInt(t1/60)+':'+getZero(t1%60));
               } else {
                 t2 = lastBt - elapsed;
-                $('#player2time').html(parseInt(t2/60)+':'+getZero(t2%60));
+                $('.player2-time:first').html(parseInt(t2/60)+':'+getZero(t2%60));
               }
 
               server.timervar = setTimeout(startTime, 500);
