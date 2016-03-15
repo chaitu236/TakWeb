@@ -249,24 +249,10 @@
                                 <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
                             </ul>
                         </li>
-                        <li>
-                          <a href="#" title="Create online game" onclick="$('#creategamemodal').modal('show')">New Game</a>
-                        </li>
                         <!--<li><a  class="visible-xs-block" title="Reverse view" class="hidden-xs" href="#" onclick="board.reverseboard()">Flip view</a></li>-->
                         <li><a id="loadtps" href="#" onclick="loadtpn()">Load TPS</a></li>
-                        <li class="dropdown">
-                            <a id="creategame" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               title="Post your seek" aria-haspopup="true" aria-expanded="false"> Create game
-                                <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#" onclick="server.seek(4);">4x4</a></li>
-                                <li><a href="#" onclick="server.seek(5);">5x5</a></li>
-                                <li><a href="#" onclick="server.seek(6);">6x6</a></li>
-                                <li><a href="#" onclick="server.seek(7);">7x7</a></li>
-                                <li><a href="#" onclick="server.seek(8);">8x8</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#" onclick="server.seek(0);">Remove Seeks</a></li>
-                            </ul>
+                        <li>
+                          <a id="creategame" href="#" title="Create online game" onclick="$('#creategamemodal').modal('show')">New Game</a>
                         </li>
                         <li class="dropdown">
                             <a id="joingame" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
@@ -405,6 +391,7 @@
                             <div class="form-group">
                               <label for="time">Time</label>
                               <select class="form-control" id="timeselect">
+                                <option>1</option>
                                 <option>3</option>
                                 <option>5</option>
                                 <option>10</option>
@@ -1457,6 +1444,9 @@
                     while (tbl.rows.length > 0)
                         tbl.deleteRow(0);
                     document.getElementById("draw").src = "images/offer-hand.png";
+                    stopTime();
+                    $('#player1time').html('0:00');
+                    $('#player2time').html('0:00');
                 },
                 sqrel: function (sq1, sq2) {
                     var f1 = sq1.file;
@@ -1698,7 +1688,7 @@
                         $('#gamelist').children().each(function() {
                             this.remove();
                         });
-                        window.clearTimeout(server.timeoutvar);
+                        stopTime();
                         alert("info", "You're disconnected from server");
                     };
                 },
@@ -1724,7 +1714,7 @@
                     output(e);
                     e = e.trim();
                     if (e.indexOf("Game Start") > -1) {
-                        //Game Start no. size player_white vs player_black yourcolor
+                        //Game Start no. size player_white vs player_black yourcolor time
                         var spl = e.split(" ");
                         board.newgame(Number(spl[3]), spl[7]);
                         board.gameno = Number(spl[2]);
@@ -1738,9 +1728,15 @@
                         } else {//I am black
                             document.getElementById("player2-name").innerHTML = "You";
                         }
+
+                        var time = Number(spl[8]);
+                        var m = parseInt(time/60);
+                        var s = getZero(parseInt(time%60));
+                        $('#player1time').html(m+':'+s);
+                        $('#player2time').html(m+':'+s);
                     }
                     else if (e.indexOf("Observe Game#") > -1) {
-                        //Observe Game#1 player1 vs player2, 4x4,7 half-moves played, player2 to move
+                        //Observe Game#1 player1 vs player2, 4x4, 180, 7 half-moves played, player2 to move
                         var spl = e.split(" ");
                         board.clear();
                         board.init(Number(spl[5].split("x")[0]), "white", false, true);
@@ -1748,11 +1744,21 @@
                         document.getElementById("player1-name").innerHTML = spl[2];
                         document.getElementById("player2-name").innerHTML = spl[4].split(",")[0];
                         document.title = "Tak: " + spl[2] + " vs " + spl[4];
+
+                        var time = Number(spl[6].split(",")[0]);
+                        var m = parseInt(time/60);
+                        var s = getZero(parseInt(time%60));
+                        $('#player1time').html(m+':'+s);
+                        $('#player2time').html(m+':'+s);
                     }
                     else if (e.indexOf("GameList Add Game#") > -1) {
-                        //GameList Add Game#1 player1 vs player2, 4x4,0 half-moves played, player1 to move
+                        //GameList Add Game#1 player1 vs player2, 4x4, 180, 0 half-moves played, player1 to move
                         var spl = e.split(" ");
-                        var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6].split(",")[0];
+                        var t = Number(spl[7].split(",")[0]);
+                        var m = parseInt(t/60);
+                        var s = getZero(parseInt(t%60));
+
+                        var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6].split(",")[0] + " " + m+':'+s;
                         var $li = $('<li/>').appendTo($('#gamelist'));
                         $('<a/>').text(val).
                                 click(function() {server.observegame(spl[2].split("Game#")[1]);}).
@@ -1762,9 +1768,13 @@
                         op.innerHTML = Number(op.innerHTML)+1;
                     }
                     else if (e.indexOf("GameList Remove Game#") > -1) {
-                        //GameList Remove Game#1 player1 vs player2, 4x4, 0 half-moves played, player1 to move
+                        //GameList Remove Game#1 player1 vs player2, 4x4, 180, 0 half-moves played, player1 to move
                         var spl = e.split(" ");
-                        var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6].split(",")[0];
+                        var t = Number(spl[7].split(",")[0]);
+                        var m = parseInt(t/60);
+                        var s = getZero(parseInt(t%60));
+
+                        var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6].split(",")[0] + " " + m+':'+s;
                         $('#gamelist').children().each(function() {
                             if($(this).find('a')[0].innerHTML === val) {
                                 this.remove();
@@ -1802,11 +1812,11 @@
                           lastTimeUpdate = now.getHours()*60*60 + now.getMinutes()*60+now.getSeconds();
 
 
-                          $('#player1time').html(getZero(parseInt(wt/60))+':'+getZero(wt%60));
-                          $('#player2time').html(getZero(parseInt(bt/60))+':'+getZero(bt%60));
+                          $('#player1time').html(parseInt(wt/60)+':'+getZero(wt%60));
+                          $('#player2time').html(parseInt(bt/60)+':'+getZero(bt%60));
 
-                          if(board.movecount == 1) {
-                            startTime();
+                          if(board.movecount > 0) {
+                            startTime(true);
                           }
                         }
                         //Game#1 OfferDraw
@@ -1827,7 +1837,7 @@
                             board.notate(spl[2]);
                             alert("info", "Game over " + spl[2]);
                             document.getElementById("scratchsize").disabled = false;
-                            clearTimeout(timervar);
+                            stopTime();
                         }
                         //Abandoned
                         else if (e.indexOf("Abandoned") > -1) {
@@ -1837,7 +1847,7 @@
                             board.scratch = true;
                             alert("info", "Game abandoned by " + spl[2]);
                             document.getElementById("scratchsize").disabled = false;
-                            clearTimeout(timervar);
+                            stopTime();
                         }
                     }
                     else if (e.startsWith("Login or Register")) {
@@ -1921,10 +1931,15 @@
                     }
                     //new seek
                     else if (e.indexOf("Seek new") > -1) {
-                        //Seek new 1 chaitu 5 15
+                        //Seek new 1 chaitu 5 180
                         var spl = e.split(" ");
+
+                        var t = Number(spl[5]);
+                        var m = parseInt(t/60);
+                        var s = getZero(parseInt(t%60));
+
                         var $li = $('<li/>').appendTo($('#seeklist'));
-                        $('<a/>').text(spl[3]+' - '+spl[4]+'x'+spl[4]+' - '+spl[5]).
+                        $('<a/>').text(spl[3]+' - '+spl[4]+'x'+spl[4]+' - '+m+':'+s).
                                 click(function() {server.acceptseek(spl[2])}).
                                     appendTo($li);
 
@@ -1935,7 +1950,12 @@
                     else if (e.indexOf("Seek remove") > -1) {
                         //Seek remove 1 chaitu 5 15
                         var spl = e.split(" ");
-                        var val = spl[3]+' - '+spl[4]+'x'+spl[4]+' - '+spl[5];
+
+                        var t = Number(spl[5]);
+                        var m = parseInt(t/60);
+                        var s = getZero(parseInt(t%60));
+
+                        var val = spl[3]+' - '+spl[4]+'x'+spl[4]+' - '+m+':'+s;
                         $('#seeklist').children().each(function() {
                             if($(this).find('a')[0].innerHTML === val) {
                                 this.remove();
@@ -2199,20 +2219,27 @@
             function isBreakpoint( alias ) {
                 return $('.device-' + alias).is(':hidden');
             }
-            function startTime() {
+            function startTime(fromFn) {
+              if(typeof fromFn === 'undefined' && !server.timervar)
+                return;
               var now = new Date();
               var t = now.getHours()*60*60 + now.getMinutes()*60+now.getSeconds();
               var elapsed = t-lastTimeUpdate;
 
               if(board.movecount%2 === 0) {
                 t1 = lastWt - elapsed;
-                $('#player1time').html(getZero(parseInt(t1/60))+':'+getZero(t1%60));
+                $('#player1time').html(parseInt(t1/60)+':'+getZero(t1%60));
               } else {
                 t2 = lastBt - elapsed;
-                $('#player2time').html(getZero(parseInt(t2/60))+':'+getZero(t2%60));
+                $('#player2time').html(parseInt(t2/60)+':'+getZero(t2%60));
               }
 
-              timervar = setTimeout(startTime, 500);
+              server.timervar = setTimeout(startTime, 500);
+            }
+
+            function stopTime() {
+              clearTimeout(server.timervar);
+              server.timervar = null;
             }
 
             function getZero(t) {
