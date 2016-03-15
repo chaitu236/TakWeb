@@ -1686,8 +1686,8 @@
                         board.clear();
                         board.init(Number(spl[5].split("x")[0]), "white", false, true);
                         board.gameno = Number(spl[1].split("Game#")[1]);
-                        document.getElementById("player1").innerHTML = spl[2];
-                        document.getElementById("player2").innerHTML = spl[4].split(",")[0];
+                        document.getElementById("player1-name").innerHTML = spl[2];
+                        document.getElementById("player2-name").innerHTML = spl[4].split(",")[0];
                         document.title = "Tak: " + spl[2] + " vs " + spl[4];
                     }
                     else if (e.indexOf("GameList Add Game#") > -1) {
@@ -1837,6 +1837,7 @@
                         console.log("received msg "+msg[1]);
                         var $cs = $('#chat-server');
                         $cs.val($cs.val()+msg[1]+'\n');
+                        $cs.scrollTop($cs[0].scrollHeight);
                     }
                     //new seek
                     else if (e.indexOf("Seek new") > -1) {
