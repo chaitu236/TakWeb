@@ -378,7 +378,7 @@
                               <label for="boardsize"> Board Size</label>
                               <select class="form-control" id="boardsize">
                                 <option>4x4</option>
-                                <option>5x5</option>
+                                <option selected="selected">5x5</option>
                                 <option>6x6</option>
                                 <option>7x7</option>
                                 <option>8x8</option>
@@ -394,7 +394,7 @@
                                 <option>1</option>
                                 <option>3</option>
                                 <option>5</option>
-                                <option>10</option>
+                                <option selected="selected">10</option>
                                 <option>15</option>
                                 <option>20</option>
                                 <option>30</option>
@@ -407,6 +407,14 @@
                           <div class="col-sm-12">
                             <form role="form" onsubmit="server.seek(); return false;">
                               <button type="submit" class="btn btn-primary">Create</button>
+                            </form>
+                          </div>
+                        </div>
+                        <div class="row center">
+                          <div class="col-sm-12">
+                            <form role="form" onsubmit="server.removeseek(); return false;">
+                              <br>
+                              <button type="submit" class="btn btn-primary">Remove Seeks</button>
                             </form>
                           </div>
                         </div>
@@ -1991,6 +1999,10 @@
                     size = parseInt(size);
                     var time = $('#timeselect').find(':selected').text();
                     this.send("Seek "+size+" "+time*60);
+                    $('#creategamemodal').modal('hide');
+                },
+                removeseek: function() {
+                    this.send("Seek 0 0");
                     $('#creategamemodal').modal('hide');
                 },
                 draw: function() {
