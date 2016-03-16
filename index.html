@@ -275,10 +275,10 @@
                         <li>
                             <a href="#" title="Mute/Un mute" role="button" onclick="volume_change()">
                             <!--<button type="button" class="btn btn-default">-->
-                                <img id="volume-img" src="images/ic_volume_mute_black_24px.svg" height="20" width="20"/>
+                                <img id="volume-img" src="images/ic_volume_up_black_24px.svg" height="20" width="20"/>
                             <!--</button>-->
                             </a>
-                            <audio id="move-sound" muted>
+                            <audio id="move-sound">
                                 <source src="audio/move.mp3" type="audio/mpeg">
                             </audio>
                         </li>
@@ -921,12 +921,14 @@
                                 pcs = this.blackpiecesleft;
                             }
                             if (this.scratch) {
-                                this.checkroadwin();
-                                this.checksquaresover();
-                                if (pcs <= 0) {
-                                    this.findwhowon();
-                                    this.gameover();
-                                    return;
+                                var over = this.checkroadwin();
+                                if(!over) {
+                                  over = this.checksquaresover();
+                                  if (!over && pcs <= 0) {
+                                      this.findwhowon();
+                                      this.gameover();
+                                      return;
+                                  }
                                 }
                             }
                             this.incmovecnt();
@@ -1244,17 +1246,21 @@
                     else if (blackwin)
                         this.result = "0-R";
 
-                    if (whitewin || blackwin)
-                        this.gameover();
+                    if (whitewin || blackwin) {
+                      this.gameover();
+                      return true;
+                    }
+                    return false;
                 },
                 checksquaresover: function () {
                     for (i = 0; i < this.size; i++)
                         for (j = 0; j < this.size; j++)
                             if (this.sq[i][j].length === 0)
-                                return;
+                                return false;
 
                     this.findwhowon();
                     this.gameover();
+                    return true;
                 },
                 reverseboard: function () {
                     camera.position.z = -camera.position.z;
@@ -2259,6 +2265,7 @@
                 if(img.src.match("mute")) {
                     img.src = "images/ic_volume_up_black_24px.svg";
                     sound.muted = false;
+                    sound.play();
                     localStorage.setItem('sound', 'true');
                 } else {
                     img.src = "images/ic_volume_mute_black_24px.svg";
