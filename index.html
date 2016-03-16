@@ -1056,14 +1056,11 @@
                 },
                 getfromstack: function (cap, iswhite) {
                     //randomly get any piece
-                    for (i = 0; i < this.piece_objects.length; i++) {
+                    for (i = this.piece_objects.length-1; i >= 0; i--) {
                         var obj = this.piece_objects[i];
                         if (!obj.onsquare && (obj.iswhitepiece === iswhite)) {
-                            if (cap) {
-                                if (obj.iscapstone)
-                                    return obj;
-                            } else {
-                                return obj;
+                            if (cap === obj.iscapstone) {
+                              return obj;
                             }
                         }
                     }
