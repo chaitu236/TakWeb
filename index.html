@@ -1299,6 +1299,7 @@
                         row.insertCell(2);
                         cell1.innerHTML = txt;
                     }
+                    $('#notationbar').scrollTop($('#moveslist tr:last').position().top);
                 },
                 notatePmove: function (sqname, pos) {
                     if (pos === 'W')
