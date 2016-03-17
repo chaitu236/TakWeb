@@ -165,6 +165,20 @@
                 transform: rotate(-90deg);
                 float: left;
             }
+            .modal {
+              text-align: center;
+            }
+            .modal:before {
+              display: inline-block;
+              vertical-align: middle;
+              content: " ";
+              height: 100%;
+            }
+            .modal-dialog {
+              display: inline-block;
+              text-align: left;
+              vertical-align: middle;
+            }
 /*            #moveslist thead, #moveslist tbody{
                 float: left;
                 width: 100%;
@@ -427,6 +441,22 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div id="gameoveralert" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-6 center" id="gameoveralert-text">
+                            </div>
+                        </div>
+                        <div class="modal-footer center">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+           </div>
         </div>
 
         <div id="login" class="modal fade" role="dialog">
@@ -1489,6 +1519,8 @@
                     $('.player2-name:first').html('You');
                     $('.player1-time:first').html('0:00');
                     $('.player2-time:first').html('0:00');
+
+                    $('#gameoveralert').modal('hide');
                 },
                 sqrel: function (sq1, sq2) {
                     var f1 = sq1.file;
@@ -1909,9 +1941,14 @@
                             var spl = e.split(" ");
                             board.scratch = true;
                             board.notate(spl[2]);
-                            alert("info", "Game over " + spl[2]);
+
+                            var msg = "Game over " + spl[2];
+                            alert("info", msg);
                             document.getElementById("scratchsize").disabled = false;
                             stopTime();
+
+                            $('#gameoveralert-text').html(msg);
+                            $('#gameoveralert').modal('show');
                         }
                         //Abandoned
                         else if (e.indexOf("Abandoned") > -1) {
@@ -1919,9 +1956,14 @@
                             var spl = e.split(" ");
                             document.title = "Tak";
                             board.scratch = true;
-                            alert("info", "Game abandoned by " + spl[2]);
+
+                            var msg = "Game abandoned by " + spl[2];
+                            alert("info", msg);
                             document.getElementById("scratchsize").disabled = false;
                             stopTime();
+
+                            $('#gameoveralert-text').html(msg);
+                            $('#gameoveralert').modal('show');
                         }
                     }
                     else if (e.startsWith("Login or Register")) {
