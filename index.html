@@ -592,8 +592,8 @@
             var piece_height = 15;
             var sq_size = 90;
             var sq_height = 15;
-            var capstone_height = 90;
-            var capstone_radius = 20;
+            var capstone_height = 70;
+            var capstone_radius = 30;
             var stack_selection_height = 60;
             var border_size = 30;
             var letter_size = 12;
@@ -1378,9 +1378,12 @@
 
                     pc.position.x = sq.position.x;
 
-                    if (pc.isstanding)
-                        pc.position.y = sq_height / 2 + piece_size / 2 + piece_height * st.length;
-                    else
+                    if (pc.isstanding) {
+                      if(pc.iscapstone)
+                        pc.position.y = sq_height/2 + capstone_height/2 + piece_height*st.length;
+                      else
+                        pc.position.y = sq_height/2 + piece_size/2 + piece_height * st.length;
+                    } else
                         pc.position.y = sq_height + st.length * piece_height;
 
                     pc.position.z = sq.position.z;
