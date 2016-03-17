@@ -296,6 +296,9 @@
                             <audio id="move-sound">
                                 <source src="audio/move.mp3" type="audio/mpeg">
                             </audio>
+                            <audio id="chime-sound">
+                                <source src="audio/chime.mp3" type="audio/mpeg">
+                            </audio>
                         </li>
                         <li>
                             <a href="#" title="Number of online players" >Online <span class="badge" id="onlineplayers">0</span></a>
@@ -1840,6 +1843,9 @@
                         var s = getZero(parseInt(time%60));
                         $('.player1-time:first').html(m+':'+s);
                         $('.player2-time:first').html(m+':'+s);
+
+                        var chimesound = document.getElementById("chime-sound");
+                        chimesound.play();
                     }
                     else if (e.indexOf("Observe Game#") > -1) {
                         //Observe Game#1 player1 vs player2, 4x4, 180, 7 half-moves played, player2 to move
@@ -2308,15 +2314,21 @@
             }
             function volume_change() {
                 var img = document.getElementById("volume-img");
-                var sound = document.getElementById("move-sound");
+                var movesound = document.getElementById("move-sound");
+                var chimesound = document.getElementById("chime-sound");
+
                 if(img.src.match("mute")) {
                     img.src = "images/ic_volume_up_black_24px.svg";
-                    sound.muted = false;
-                    sound.play();
+                    movesound.muted = false;
+                    chimesound.muted = false;
+
+                    movesound.play();
                     localStorage.setItem('sound', 'true');
                 } else {
                     img.src = "images/ic_volume_mute_black_24px.svg";
-                    sound.muted = true;
+                    movesound.muted = true;
+                    chimesound.muted = true;
+
                     localStorage.setItem('sound', 'false');
                 }
             }
@@ -2368,7 +2380,7 @@
             }
 
             $(document).ready(function() {
-                if(localStorage.getItem('sound')==='true') {
+                if(localStorage.getItem('sound')==='flase') {
                     volume_change();
                 }
                 if(localStorage.getItem('keeploggedin')==='true') {
