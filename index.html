@@ -2186,6 +2186,7 @@
                 controls = new THREE.OrbitControls(camera, renderer.domElement);
                 controls.minDistance = 200;
                 controls.maxDistance = 1500;
+                controls.enableKeys = false;
                 var ua = navigator.userAgent.toLowerCase();
                 if (ua.indexOf("android") > -1 || ua.indexOf("iphone") > -1 ||
                         ua.indexOf("ipod") > -1 || ua.indexOf("ipad") > -1)
