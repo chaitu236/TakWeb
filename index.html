@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="utf-8">
+        <meta name="description" content="Play online Tak games. Tak is a strategy board game created by James Ernest and Patrick Rothfuss">
+        <meta name="keywords" content="online tak, playtak, play tak">
 
         <title>Tak</title>
 
@@ -83,6 +85,12 @@
                 background-color: #404040;
                 line-height: 12px;
                 width: 19px;
+            }
+            #help-modal ul li ul {
+              font-weight: bold;
+            }
+            #help-modal ul li ul li {
+              font-weight: normal;
             }
             #chat-toggle-text {
             }
@@ -407,7 +415,7 @@
                         <div class="row">
                           <div class="col-sm-12">
                             <div class="form-group">
-                              <label for="time">Time (minutes)</label>
+                              <label for="time">Time (minutes per player)</label>
                               <select class="form-control" id="timeselect">
                                 <option>1</option>
                                 <option>3</option>
@@ -536,19 +544,16 @@
                                     <li>White goes first</li>
                                     <li>On first move, each player must place his opponent's tile</li>
                                     <li>Create a path with flat stones and capstones between any two opposite ends of the board</li>
-                                    <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/sites/default/files/TakBetaRules9-22.pdf">here</a></li>
+                                    <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/sites/default/files/TakBetaRules3-10-16.pdf">here</a> [PDF].</li>
                                 </ul></li>
                             <li><ul>Controls:
                                     <li>Left click-drag (or touch-drag) to rotate board</li>
-                                    <li>Left click a piece to select it. Left click on it again (or right click anywhere) to rotate it</li>
+                                    <li>Left click a piece to select it. Left click on it again (or right click) to rotate it</li>
                                     <li>Left click on a square to place selected piece or to pick up stack</li>
-                                    <li>Right click and hold on a stack to hide pieces on all other squares (to see stack clearly)</li>
+                                    <li>Right click on a stack to hide pieces on all other squares (to see stack clearly)</li>
                                     <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
                                     <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch. Or use zoom buttons on bottom right.</li>
-                                    <li>Menu on the right side can be shown/hidden by clicking on the menu icon</li>
-                                    <li>Click on the "Reverse" icon in the bottom to reverse the board view</li>
                                     <li>Current player to move is indicated by highlighting their name with a border</li>
-                                    <li>To load TPN notation, click on "load TPN" and paste the notation</li>
                                     <li>If any of the above controls don't work, it means that control is invalid for current move</li>
                                 </ul></li>
                             <li><ul>Play locally:
@@ -558,16 +563,13 @@
                                     <li>Login to server by clicking "Sign up/Login" button, signup and then login</li>
                                     <li>Post your seek by selecting board size in "Create game" menu or accept another player's
                                         seek by selecting it in "Join game" menu</li>
-                                </ul></li>
-                            <li><ul>Observe/Spectate another game:
-                                    <li>Click on one of any ongoing games from "Watch" menu</li>
-                                    <li>You can't observe a game while playing an online game</li>
+                                    <li>Click on one of any ongoing games from "Watch" menu to watch an ongoing game</li>
                                 </ul></li>
                             <li><ul>About the game:
                                     <li>Rules for TAK are made by <a target="_blank" href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a target="_blank" href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
-                                    <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">me</a></li>
-                                    <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a></li>
-                                    <li>Backend code can be found <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
+                                    <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">Chaitanya Vadrevu (me)</a></li>
+                                    <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a>,
+                                    backend code <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
                                     <li>Check out <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">these </a>
                                         - <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
                                 </ul></li>
