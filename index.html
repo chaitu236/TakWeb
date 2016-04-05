@@ -1505,6 +1505,11 @@
                     $('#player-opp-name').removeClass('player1-name');
                     $('#player-opp-name').removeClass('player2-name');
 
+                    $('#player-me-time').removeClass('player1-time');
+                    $('#player-me-time').removeClass('player2-time');
+                    $('#player-opp-time').removeClass('player1-time');
+                    $('#player-opp-time').removeClass('player2-time');
+
                     $('#player-me').removeClass('selectplayer');
                     $('#player-opp').removeClass('selectplayer');
 
@@ -1792,11 +1797,12 @@
                 msg: function (e) {
                     output(e);
                     e = e.trim();
-                    if (e.indexOf("Game Start") > -1) {
+                    if (e.startsWith("Game Start")) {
                         //Game Start no. size player_white vs player_black yourcolor time
                         var spl = e.split(" ");
                         board.newgame(Number(spl[3]), spl[7]);
                         board.gameno = Number(spl[2]);
+                        console.log("gno "+board.gameno);
                         document.getElementById("scratchsize").disabled = true;
 
                         $('#player-me-name').removeClass('player1-name');
@@ -1849,7 +1855,7 @@
                         var chimesound = document.getElementById("chime-sound");
                         chimesound.play();
                     }
-                    else if (e.indexOf("Observe Game#") > -1) {
+                    else if (e.startsWith("Observe Game#")) {
                         //Observe Game#1 player1 vs player2, 4x4, 180, 7 half-moves played, player2 to move
                         var spl = e.split(" ");
                         board.clear();
@@ -1865,7 +1871,7 @@
                         $('.player1-time:first').html(m+':'+s);
                         $('.player2-time:first').html(m+':'+s);
                     }
-                    else if (e.indexOf("GameList Add Game#") > -1) {
+                    else if (e.startsWith("GameList Add Game#")) {
                         //GameList Add Game#1 player1 vs player2, 4x4, 180, 0 half-moves played, player1 to move
                         var spl = e.split(" ");
                         var t = Number(spl[7].split(",")[0]);
@@ -1881,7 +1887,7 @@
                         var op = document.getElementById("gamecount");
                         op.innerHTML = Number(op.innerHTML)+1;
                     }
-                    else if (e.indexOf("GameList Remove Game#") > -1) {
+                    else if (e.startsWith("GameList Remove Game#")) {
                         //GameList Remove Game#1 player1 vs player2, 4x4, 180, 0 half-moves played, player1 to move
                         var spl = e.split(" ");
                         var t = Number(spl[7].split(",")[0]);
@@ -1898,7 +1904,11 @@
                         var op = document.getElementById("gamecount");
                         op.innerHTML = Number(op.innerHTML)-1;
                     }
-                    else if (e.indexOf("Game#") > -1) {
+                    else if (e.startsWith("Game#")) {
+                      var gameno = Number(e.split("Game#")[1].split(" ")[0]);
+                      console.log("game no "+gameno+" "+board.gameno);
+                      //Game#1 ...
+                      if(gameno === board.gameno) {
                         //Game#1 P A4 (C|W)
                         if (e.indexOf(" P ") > -1) {
                             var spl = e.split(" ");
@@ -1973,6 +1983,7 @@
                             $('#gameoveralert-text').html(msg);
                             $('#gameoveralert').modal('show');
                         }
+                      }
                     }
                     else if (e.startsWith("Login or Register")) {
                         server.send("Client " + "TakWeb-16.03.16");
@@ -2001,8 +2012,8 @@
                     else if (e.startsWith("Can't register with guest in the name")) {
                       alert("danger", "Can't register with guest in the name");
                     }
-                    //Unknown characters in username/email
-                    else if (e.startsWith("Unknown characters in username/email")) {
+                    //Unknown format for username/email
+                    else if (e.startsWith("Unknown format for username/email")) {
                       alert("danger", e);
                     }
                     //Authentication failure
@@ -2042,11 +2053,15 @@
                           localStorage.setItem('token', token);
                         }
                     }
-                    else if (e.indexOf("Message") > -1) {
+                    else if (e.startsWith("Message")) {
                         var msg = e.split("Message ");
                         alert("info", "Server says: " + msg[1]);
                     }
-                    else if (e.indexOf("Shout") > -1) {
+                    else if (e.startsWith("Error")) {
+                        var msg = e.split("Error:")[1];
+                        alert("danger", "Server says: "+msg);
+                    }
+                    else if (e.startsWith("Shout")) {
                         var msg = e.split("Shout ");
                         console.log("received msg "+msg[1]);
                         var $cs = $('#chat-server');
@@ -2054,7 +2069,7 @@
                         $cs.scrollTop($cs[0].scrollHeight);
                     }
                     //new seek
-                    else if (e.indexOf("Seek new") > -1) {
+                    else if (e.startsWith("Seek new")) {
                         //Seek new 1 chaitu 5 180
                         var spl = e.split(" ");
 
@@ -2071,7 +2086,7 @@
                         op.innerHTML = Number(op.innerHTML)+1;
                     }
                     //remove seek
-                    else if (e.indexOf("Seek remove") > -1) {
+                    else if (e.startsWith("Seek remove")) {
                         //Seek remove 1 chaitu 5 15
                         var spl = e.split(" ");
 
@@ -2090,7 +2105,7 @@
                         op.innerHTML = Number(op.innerHTML)-1;
                     }
                     //Online players
-                    else if (e.indexOf("Online ") > -1) {
+                    else if (e.startsWith("Online ")) {
                         var op = document.getElementById("onlineplayers");
                         op.innerHTML = Number(e.split("Online ")[1]);
                     }
