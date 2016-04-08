@@ -265,6 +265,7 @@
                                 <span class="caret"></span></a>
 
                             <ul class="dropdown-menu">
+                                <li><a href="#" onclick="scratchbutton(3);">3x3</a></li>
                                 <li><a href="#" onclick="scratchbutton(4);">4x4</a></li>
                                 <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>
                                 <li><a href="#" onclick="scratchbutton(6);">6x6</a></li>
@@ -403,6 +404,7 @@
                             <div class="form-group">
                               <label for="boardsize"> Board Size</label>
                               <select class="form-control" id="boardsize">
+                                <option>3x3</option>
                                 <option>4x4</option>
                                 <option selected="selected">5x5</option>
                                 <option>6x6</option>
@@ -665,7 +667,10 @@
                 init: function (sz, col, scr, obs) {
                     this.size = sz;
 
-                    if (sz === 4) {
+                    if (sz === 3) {
+                        this.totcaps = 0;
+                        this.tottiles = 10;
+                    } else if (sz === 4) {
                         this.totcaps = 0;
                         this.tottiles = 15;
                     } else if (sz === 5) {
