@@ -826,12 +826,16 @@
                 addpieces: function () {
                     var white_texture = THREE.ImageUtils.loadTexture('images/whitetile2.png');
                     var black_texture = THREE.ImageUtils.loadTexture('images/blacktile2.png');
+                    var white_cap_texture = THREE.ImageUtils.loadTexture('images/white_capstone.png');
+                    var black_cap_texture = THREE.ImageUtils.loadTexture('images/black_capstone.png');
 
                     var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     geometry.center();
 
                     var white_material = new THREE.MeshBasicMaterial({map: white_texture});
                     var black_material = new THREE.MeshBasicMaterial({map: black_texture});
+                    var white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
+                    var black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture});
 
                     for (i = 0; i < this.tottiles; i++) {
                         var stackno = Math.floor(i / 10);
@@ -866,7 +870,7 @@
                         var geometry = new THREE.CylinderGeometry(capstone_radius,
                                 capstone_radius, capstone_height, 30);
                         geometry.center();
-                        var piece = new THREE.Mesh(geometry, white_material);
+                        var piece = new THREE.Mesh(geometry, white_cap_material);
                         piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * (piece_size + 15));
                         piece.iswhitepiece = true;
                         piece.isstanding = true;
@@ -877,7 +881,7 @@
                         this.piece_objects.push(piece);
                         scene.add(piece);
 
-                        piece = new THREE.Mesh(geometry, black_material);
+                        piece = new THREE.Mesh(geometry, black_cap_material);
                         piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * (piece_size + 15));
                         piece.iswhitepiece = false;
                         piece.isstanding = true;
