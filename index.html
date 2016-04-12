@@ -92,6 +92,56 @@
             #help-modal ul li ul li {
               font-weight: normal;
             }
+            #settings-modal ul li ul {
+              font-weight: bold;
+            }
+            #settings-modal ul li ul li {
+              font-weight: normal;
+            }
+            .split-container-left {
+              display: inline-block;
+              overflow: hidden;
+              width: 49%;
+              padding-right: 15px;
+              padding-bottom: 10px;
+              vertical-align: top;
+            }
+            .split-container-right {
+              display: inline-block;
+              overflow: hidden;
+              width: 49%;
+              padding-left: 15px;
+              padding-bottom: 10px;
+              border-left: 1px solid #ddd;
+              vertical-align: top;
+            }
+            input[type=checkbox] {
+              vertical-align: middle;
+              line-height: 14px;
+              margin: 0px;
+            }
+            input[type=range] {
+              vertical-align: middle;
+              margin: 0px;
+              display: inline-block;
+              background: transparent;
+              width: 50%;
+            }
+            input[type=range]::-moz-range-track {
+              height: 4px;
+              border-radius: 2px;
+              box-shadow: 1px 1px 1px #ddd, 0px 0px 1px #fff;
+            }
+            input[type=range]::-ms-track {
+              height: 4px;
+              border-radius: 2px;
+              box-shadow: 1px 1px 1px #ddd, 0px 0px 1px #fff;
+            }
+            input[type=range]::-webkit-slider-runnable-track {
+              height: 4px;
+              border-radius: 2px;
+              box-shadow: 1px 1px 1px #ddd, 0px 0px 1px #fff;
+            }
             #chat-toggle-text {
             }
             #notation-toggle-text {
@@ -309,6 +359,7 @@
                                 <source src="audio/chime.mp3" type="audio/mpeg">
                             </audio>
                         </li>
+                        <li><a href="#" data-toggle="modal" data-target="#settings-modal">Settings</a></li>
                         <li>
                             <a href="#" title="Number of online players" >Online <span class="badge" id="onlineplayers">0</span></a>
                         </li>
@@ -367,7 +418,7 @@
                 </div>
             </a>
         </div>
-        <div id="chat"">
+        <div id="chat">
                 <div class="form-group height-full">
                     <textarea class="form-control" id="chat-server" readonly></textarea>
                 </div>
@@ -533,6 +584,63 @@
 
             </div>
         </div>
+
+        <div id="settings-modal" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Settings</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="split-container-left">
+                          <p>
+                            <b>
+                              Board and Pieces
+                            </b>
+                            <br/>
+                            <i>Changes to board and pieces will only take effect, once you watch or start a new game.</i><br/>
+                          </p>
+                          <form>
+                            <input id="wall-orientation" type="checkbox" value="false" onClick="checkboxDiagonalWalls()"/>
+                            Place standing stones diagonally
+                            <br/>
+                            <br/>
+                            Piece size
+                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)"/> 
+                            <span id="piece-size-display">88</span>
+
+                          </form>
+                        </div>
+                        <div class="split-container-right">
+                          <p>
+                            <b>
+                              Interface
+                            </b>
+                            <br/>
+                            <i>Most changes to the interface will require the page to be reloaded.</i><br/>
+                          </p>
+                          <form>
+                            <input id="antialiasing-checkbox" type="checkbox" value="false" onClick="checkboxAntialiasing()"/>
+                            Activate Antialiasing (not reccomended for slower devices)
+                            <br/>
+                            <br/>
+                            <input id="autoopen-chat-checkbox" type="checkbox" value="true" onClick="checkboxAutoOpenChat()" checked/>
+                            Automatically show/hide the chat, if the window is resized.
+                          </form>
+                        </div>
+                        
+                        <br/>
+                        <p><i>
+                          The settings made in this dialog are stored local.
+                          If you log in from another device, or if you delete your browser cache,
+                          you will have to set this again.
+                        </i><p/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="help-modal" class="modal fade">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -625,6 +733,9 @@
             }
             var camera, scene, renderer, light, canvas, controls = null;
 
+            // antialiasing must be disabled per default, so slower devices are not impaired.
+            var antialiasing_mode = false;
+            
             var piece_size = 88;
             var piece_height = 15;
             var sq_size = 90;
@@ -663,6 +774,7 @@
                 boardside: "white",
                 result: "none",
                 observing: false,
+                diagonal_walls: false,
                 position: {x: 0, y: 0, endx: 0, endz: 0},
                 init: function (sz, col, scr, obs) {
                     this.size = sz;
@@ -711,6 +823,13 @@
                         }
                     }
 
+                    // update settings for board and pieces.
+                    this.diagonal_walls = localStorage.getItem('diagonal_walls')==='true';
+                    if (!localStorage.getItem('piece_size')===null)
+                    {
+                      piece_size = parseInt(localStorage.getItem('piece_size'));
+                    }
+                    
                     this.addboard();
                     this.addpieces();
 
@@ -1447,6 +1566,8 @@
                     if (!piece.isstanding)
                         return;
                     piece.position.y -= piece_size / 2 - piece_height / 2;
+                    if (this.diagonal_walls)
+                        piece.rotateZ(Math.PI / 4);
                     piece.rotateX(Math.PI / 2);
                     piece.isstanding = false;
                 },
@@ -1455,6 +1576,8 @@
                         return;
                     piece.position.y += piece_size / 2 - piece_height / 2;
                     piece.rotateX(-Math.PI / 2);
+                    if (this.diagonal_walls)
+                        piece.rotateZ(-Math.PI / 4);
                     piece.isstanding = true;
                 },
                 rightclick: function () {
@@ -2183,11 +2306,14 @@
                     this.send("Observe " + no);
                 }
             };
-
+            
             init();
             animate();
 
             function init() {
+                // load the user settings.
+                loadSettings();
+                
                 canvas = document.getElementById("gamecanvas");
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
@@ -2198,7 +2324,8 @@
 
                 scene = new THREE.Scene();
 
-                renderer = new THREE.WebGLRenderer({canvas: canvas});
+                renderer = new THREE.WebGLRenderer({canvas: canvas,
+                    antialias: antialiasing_mode});
                 renderer.setPixelRatio(window.devicePixelRatio);
                 //renderer.setSize( window.innerWidth, window.innerHeight );
                 //renderer.setSize( 800, 640);
@@ -2228,27 +2355,55 @@
 
                 board.init(5, "white", true);
             }
+            
+            function loadSettings() {
+              // load the setting for wall orientation.
+              if(localStorage.getItem('diagonal_walls')==='true') {
+                document.getElementById('wall-orientation').checked = true;
+              }
+              
+              // load the setting for antialiasing.
+              if(localStorage.getItem('antialiasing_mode')==='true') {
+                document.getElementById('antialiasing-checkbox').checked = true;
+                antialiasing_mode = true;
+              }
+              
+              // load the setting for automatically opening and closing the chat on window resize.
+              if(localStorage.getItem('auto_chat')==='false') {
+                document.getElementById('autoopen-chat-checkbox').checked = false;
+              }
+              
+              // load the setting for piece size.
+              if(!(localStorage.getItem('piece_size')===null)) {
+                piece_size = parseInt(localStorage.getItem('piece_size'));
+                document.getElementById('piece-size-display').innerHTML = piece_size;
+                document.getElementById('piece-size-slider').value = piece_size;
+              }
+            }
 
             function onWindowResize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+              canvas.width = window.innerWidth;
+              canvas.height = window.innerHeight;
 
-                renderer.setSize(canvas.width, canvas.height);
+              renderer.setSize(canvas.width, canvas.height);
 
-                camera.aspect = canvas.width / canvas.height;
-                camera.updateProjectionMatrix();
+              camera.aspect = canvas.width / canvas.height;
+              camera.updateProjectionMatrix();
 
-                $('#chat').offset({ top: $('nav').height() + 5 });
-                $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
-                $('#chat').height(window.innerHeight - $('nav').height() - 85);
+              $('#chat').offset({ top: $('nav').height() + 5 });
+              $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
+              $('#chat').height(window.innerHeight - $('nav').height() - 85);
 
+              if (!(localStorage.getItem('auto_chat')==='false'))
+              {
                 if(isBreakpoint('xs') || isBreakpoint('sm')) {
-                    hidechat();
-                    hidermenu();
+                  hidechat();
+                  hidermenu();
                 } else {
-                    showchat();
-                    showrmenu();
+                  showchat();
+                  showrmenu();
                 }
+              }
             }
 
             function animate() {
@@ -2404,6 +2559,35 @@
 
             function getZero(t) {
               return t<10?'0'+t:t;
+            }
+            
+            function checkboxDiagonalWalls() {
+              if (document.getElementById('wall-orientation').checked) {
+                localStorage.setItem('diagonal_walls', 'true');
+              } else {
+                localStorage.setItem('diagonal_walls', 'false');
+              }
+            }
+            
+            function checkboxAntialiasing() {
+              if (document.getElementById('antialiasing-checkbox').checked) {
+                localStorage.setItem('antialiasing_mode', 'true');
+              } else {
+                localStorage.setItem('antialiasing_mode', 'false');
+              }
+            }
+            
+            function checkboxAutoOpenChat() {
+              if (document.getElementById('autoopen-chat-checkbox').checked) {
+                localStorage.setItem('auto_chat', 'true');
+              } else {
+                localStorage.setItem('auto_chat', 'false');
+              }
+            }
+            
+            function sliderPieceSize(newSize) {
+              localStorage.setItem('piece_size', newSize);
+              document.getElementById('piece-size-display').innerHTML=newSize;
             }
 
             $(document).ready(function() {
