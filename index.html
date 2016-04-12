@@ -822,13 +822,9 @@
                             this.sq[i][j] = [];
                         }
                     }
-
-                    // update settings for board and pieces.
-                    this.diagonal_walls = localStorage.getItem('diagonal_walls')==='true';
-                    if (!localStorage.getItem('piece_size')===null)
-                    {
-                      piece_size = parseInt(localStorage.getItem('piece_size'));
-                    }
+                    
+                    // update the board settings for board and pieces.
+                    updateBoardSettings()
                     
                     this.addboard();
                     this.addpieces();
@@ -2378,6 +2374,15 @@
                 piece_size = parseInt(localStorage.getItem('piece_size'));
                 document.getElementById('piece-size-display').innerHTML = piece_size;
                 document.getElementById('piece-size-slider').value = piece_size;
+              }
+            }
+            
+            function updateBoardSettings() {
+              // update settings for pieces.
+              this.diagonal_walls = localStorage.getItem('diagonal_walls')==='true';
+              if (!(localStorage.getItem('piece_size')===null))
+              {
+                piece_size = parseInt(localStorage.getItem('piece_size'));
               }
             }
 
