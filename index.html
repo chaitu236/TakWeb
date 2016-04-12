@@ -1011,7 +1011,7 @@
                 updateBoardSettings: function () {
                   // update settings for pieces.
                   this.diagonal_walls = localStorage.getItem('diagonal_walls')==='true';
-                  if (!(localStorage.getItem('piece_size')===null))
+                  if (localStorage.getItem('piece_size')!==null)
                   {
                     piece_size = parseInt(localStorage.getItem('piece_size'));
                   }
@@ -2378,7 +2378,7 @@
               }
               
               // load the setting for piece size.
-              if(!(localStorage.getItem('piece_size')===null)) {
+              if(localStorage.getItem('piece_size')!==null) {
                 piece_size = parseInt(localStorage.getItem('piece_size'));
                 document.getElementById('piece-size-display').innerHTML = piece_size;
                 document.getElementById('piece-size-slider').value = piece_size;
@@ -2398,7 +2398,7 @@
               $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
               $('#chat').height(window.innerHeight - $('nav').height() - 85);
 
-              if (!(localStorage.getItem('auto_chat')==='false'))
+              if (localStorage.getItem('auto_chat')!=='false')
               {
                 if(isBreakpoint('xs') || isBreakpoint('sm')) {
                   hidechat();
