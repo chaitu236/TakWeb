@@ -824,7 +824,7 @@
                     }
                     
                     // update the board settings for board and pieces.
-                    updateBoardSettings()
+                    this.updateBoardSettings()
                     
                     this.addboard();
                     this.addpieces();
@@ -1007,6 +1007,14 @@
                         this.piece_objects.push(piece);
                         scene.add(piece);
                     }
+                },
+                updateBoardSettings: function () {
+                  // update settings for pieces.
+                  this.diagonal_walls = localStorage.getItem('diagonal_walls')==='true';
+                  if (!(localStorage.getItem('piece_size')===null))
+                  {
+                    piece_size = parseInt(localStorage.getItem('piece_size'));
+                  }
                 },
                 file: function (no) {
                     return String.fromCharCode('A'.charCodeAt(0) + no);
@@ -2374,15 +2382,6 @@
                 piece_size = parseInt(localStorage.getItem('piece_size'));
                 document.getElementById('piece-size-display').innerHTML = piece_size;
                 document.getElementById('piece-size-slider').value = piece_size;
-              }
-            }
-            
-            function updateBoardSettings() {
-              // update settings for pieces.
-              this.diagonal_walls = localStorage.getItem('diagonal_walls')==='true';
-              if (!(localStorage.getItem('piece_size')===null))
-              {
-                piece_size = parseInt(localStorage.getItem('piece_size'));
               }
             }
 
