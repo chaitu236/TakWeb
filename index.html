@@ -359,7 +359,11 @@
                                 <source src="audio/chime.mp3" type="audio/mpeg">
                             </audio>
                         </li>
-                        <li><a href="#" data-toggle="modal" data-target="#settings-modal">Settings</a></li>
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#settings-modal">
+                                <img id="settings-img" src="images/ic_settings_black_24px.svg" height="20" width="20"/>
+                            </a>
+                        </li>
                         <li>
                             <a href="#" title="Number of online players" >Online <span class="badge" id="onlineplayers">0</span></a>
                         </li>
@@ -599,7 +603,6 @@
                               Board and Pieces
                             </b>
                             <br/>
-                            <i>Changes to board and pieces will only take effect, once you watch or start a new game.</i><br/>
                           </p>
                           <form>
                             <input id="wall-orientation" type="checkbox" value="false" onClick="checkboxDiagonalWalls()"/>
@@ -607,7 +610,7 @@
                             <br/>
                             <br/>
                             Piece size
-                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)"/> 
+                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="updateBoard()"/> 
                             <span id="piece-size-display">88</span>
 
                           </form>
@@ -618,7 +621,7 @@
                               Interface
                             </b>
                             <br/>
-                            <i>Most changes to the interface will require the page to be reloaded.</i><br/>
+                            <i>Some changes to the interface will require the page to be reloaded.</i><br/>
                           </p>
                           <form>
                             <input id="antialiasing-checkbox" type="checkbox" value="false" onClick="checkboxAntialiasing()"/>
@@ -736,6 +739,7 @@
             // antialiasing must be disabled per default, so slower devices are not impaired.
             var antialiasing_mode = false;
             
+            var stack_dist = 105;
             var piece_size = 88;
             var piece_height = 15;
             var sq_size = 90;
@@ -745,6 +749,7 @@
             var stack_selection_height = 60;
             var border_size = 30;
             var letter_size = 12;
+            var diagonal_walls = false;
 
             var raycaster = new THREE.Raycaster();
             var highlighter;
@@ -774,7 +779,6 @@
                 boardside: "white",
                 result: "none",
                 observing: false,
-                diagonal_walls: false,
                 position: {x: 0, y: 0, endx: 0, endz: 0},
                 init: function (sz, col, scr, obs) {
                     this.size = sz;
@@ -822,9 +826,6 @@
                             this.sq[i][j] = [];
                         }
                     }
-                    
-                    // update the board settings for board and pieces.
-                    this.updateBoardSettings()
                     
                     this.addboard();
                     this.addpieces();
@@ -959,7 +960,7 @@
                         var piece;
 
                         piece = new THREE.Mesh(geometry, white_material);
-                        piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * (piece_size + 15));
+                        piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
                         piece.iswhitepiece = true;
                         piece.isstanding = false;
                         piece.onsquare = null;
@@ -970,7 +971,7 @@
                         scene.add(piece);
 
                         piece = new THREE.Mesh(geometry, black_material);
-                        piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * (piece_size + 15));
+                        piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
                         piece.iswhitepiece = false;
                         piece.isstanding = false;
                         piece.onsquare = null;
@@ -981,12 +982,12 @@
                         scene.add(piece);
                     }
                     for (i = 0; i < this.totcaps; i++) {
-                        var stackno = Math.floor(this.tottiles / 10) + i;
+                        var stackno = Math.ceil(this.tottiles / 10) + i;
                         var geometry = new THREE.CylinderGeometry(capstone_radius,
                                 capstone_radius, capstone_height, 30);
                         geometry.center();
                         var piece = new THREE.Mesh(geometry, white_cap_material);
-                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * (piece_size + 15));
+                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * stack_dist);
                         piece.iswhitepiece = true;
                         piece.isstanding = true;
                         piece.onsquare = null;
@@ -997,7 +998,7 @@
                         scene.add(piece);
 
                         piece = new THREE.Mesh(geometry, black_cap_material);
-                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * (piece_size + 15));
+                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * stack_dist);
                         piece.iswhitepiece = false;
                         piece.isstanding = true;
                         piece.onsquare = null;
@@ -1008,13 +1009,30 @@
                         scene.add(piece);
                     }
                 },
-                updateBoardSettings: function () {
-                  // update settings for pieces.
-                  this.diagonal_walls = localStorage.getItem('diagonal_walls')==='true';
-                  if (localStorage.getItem('piece_size')!==null)
-                  {
-                    piece_size = parseInt(localStorage.getItem('piece_size'));
-                  }
+                updatepieces: function () {
+                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
+                    var old_size = this.piece_objects[0].geometry.parameters.width;
+                    
+                    // for all pieces...
+                    for (i = 0; i < this.piece_objects.length; ++i) {
+                        if (this.piece_objects[i].iscapstone) {
+                        // <updates on the capstones will be made here>
+                        } else {
+                            // if standing, reset and reapply orientation.
+                            if (this.piece_objects[i].isstanding) {
+                                this.piece_objects[i].rotation.set(0, 0, 0);
+                                this.piece_objects[i].updateMatrix();
+                                this.piece_objects[i].position.y -= old_size / 2 - piece_height / 2;
+                                this.piece_objects[i].isstanding = false;
+                                this.standup(this.piece_objects[i]);
+                            }
+                            
+                            // reapply geometry.
+                            this.piece_objects[i].geometry = geometry;
+                            this.piece_objects[i].geometry = geometry;
+                            this.piece_objects[i].updateMatrix();
+                        }
+                    }
                 },
                 file: function (no) {
                     return String.fromCharCode('A'.charCodeAt(0) + no);
@@ -1570,7 +1588,7 @@
                     if (!piece.isstanding)
                         return;
                     piece.position.y -= piece_size / 2 - piece_height / 2;
-                    if (this.diagonal_walls)
+                    if (diagonal_walls)
                         piece.rotateZ(Math.PI / 4);
                     piece.rotateX(Math.PI / 2);
                     piece.isstanding = false;
@@ -1580,7 +1598,7 @@
                         return;
                     piece.position.y += piece_size / 2 - piece_height / 2;
                     piece.rotateX(-Math.PI / 2);
-                    if (this.diagonal_walls)
+                    if (diagonal_walls)
                         piece.rotateZ(-Math.PI / 4);
                     piece.isstanding = true;
                 },
@@ -2364,6 +2382,7 @@
               // load the setting for wall orientation.
               if(localStorage.getItem('diagonal_walls')==='true') {
                 document.getElementById('wall-orientation').checked = true;
+                diagonal_walls = true;
               }
               
               // load the setting for antialiasing.
@@ -2568,9 +2587,12 @@
             function checkboxDiagonalWalls() {
               if (document.getElementById('wall-orientation').checked) {
                 localStorage.setItem('diagonal_walls', 'true');
+                diagonal_walls = true;
               } else {
                 localStorage.setItem('diagonal_walls', 'false');
+                diagonal_walls = false;
               }
+              board.updatepieces();
             }
             
             function checkboxAntialiasing() {
@@ -2592,6 +2614,11 @@
             function sliderPieceSize(newSize) {
               localStorage.setItem('piece_size', newSize);
               document.getElementById('piece-size-display').innerHTML=newSize;
+              piece_size = parseInt(newSize);
+            }
+            
+            function updateBoard() {
+              board.updatepieces();
             }
 
             $(document).ready(function() {
