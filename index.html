@@ -1069,7 +1069,8 @@
                     var fields = this.size * this.size;
                     for (i = 0; i < fields; ++i) {
                         if (this.board_objects[i].isboard===true) {
-                            this.board_objects[i].material = (i % 2) ? white_material : black_material;
+                            this.board_objects[i].material = ((i + Math.floor(i / this.size)) % 2)
+                                ? white_material : black_material;
                         }
                     }
                 },
@@ -1975,6 +1976,7 @@
                         return;
                     }
                     var url = window.location.host;
+                    // if (url.indexOf("playtak") > -1)
                         url = 'playtak.com:3000';
                     var proto='ws://';
                     if (window.location.protocol === "https:")
