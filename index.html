@@ -1069,7 +1069,8 @@
                     var fields = this.size * this.size;
                     for (i = 0; i < fields; ++i) {
                         if (this.board_objects[i].isboard===true) {
-                            this.board_objects[i].material = ((i + Math.floor(i / this.size)) % 2)
+                            this.board_objects[i].material =
+                                ((i + Math.floor(i / this.size) * ((this.size - 1) % 2)) % 2)
                                 ? white_material : black_material;
                         }
                     }
