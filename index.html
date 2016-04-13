@@ -76,6 +76,13 @@
             #chat-server {
                 height:100%;
             }
+            #chat-toggle-text {
+            }
+            #notation-toggle-text {
+                position: absolute;
+                right: -17px;
+                top: 2px;
+            }
             .toggle-text {
                 border-radius: 2px;
                 border: 2px solid #404040;
@@ -142,12 +149,12 @@
               border-radius: 2px;
               box-shadow: 1px 1px 1px #ddd, 0px 0px 1px #fff;
             }
-            #chat-toggle-text {
+            .radio-list-item {
+              margin: 5px 5px 0 0;
             }
-            #notation-toggle-text {
-                position: absolute;
-                right: -17px;
-                top: 2px;
+            .radio-list-img {
+              margin-left: 8px;
+              border: 2px #555 solid;
             }
             .width-full {
                 margin: 0 auto;
@@ -156,6 +163,9 @@
             .height-full {
                 margin: 0 auto;
                 height: 100%;
+            }
+            .height-auto {
+                height: auto;
             }
             #status {
                 position: absolute;
@@ -423,12 +433,12 @@
             </a>
         </div>
         <div id="chat">
-                <div class="form-group height-full">
-                    <textarea class="form-control" id="chat-server" readonly></textarea>
-                </div>
-            <form role="form" onsubmit="server.chat(); return false;" class="height-full" autocomplete="off">
-                    <input type="text" class="form-control" id="chat-me"></textarea>
-                <button type="submit" class="btn btn-primary">Send</button>
+            <div class="form-group height-full">
+                <textarea class="form-control" id="chat-server" readonly></textarea>
+            </div>
+            <form role="form" onsubmit="server.chat(); return false;" class="height-auto" autocomplete="off">
+              <input type="text" class="form-control" id="chat-me">
+              <button id="send-button" type="submit" class="btn btn-primary">Send</button>
             </form>
         </div>
 
@@ -590,7 +600,7 @@
         </div>
 
         <div id="settings-modal" class="modal fade">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -605,14 +615,24 @@
                             <br/>
                           </p>
                           <form>
-                            <input id="wall-orientation" type="checkbox" value="false" onClick="checkboxDiagonalWalls()"/>
-                            Place standing stones diagonally
-                            <br/>
-                            <br/>
+                            <input id="wall-orientation" type="checkbox" onClick="checkboxDiagonalWalls()"/>
+                            Diagonal walls
+                          </form><br/>
+                          <form>
                             Piece size
                             <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="updateBoard()"/> 
                             <span id="piece-size-display">88</span>
-
+                          </form><br/>
+                          <form>
+                            Board Style<br/>
+                            <div class="radio-list-item">
+                              <input id="board-style-simple" type="radio" name="board-style" value="simple" onClick="radioBoardStyle(this.value)" checked/>
+                              <img src="images/board/board_simple.jpg" class="radio-list-img" height="100" width="200"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-ornate" type="radio" name="board-style" value="ornate" onClick="radioBoardStyle(this.value)"/>
+                              <img src="images/board/board_ornate.jpg" class="radio-list-img" height="100" width="200"/>
+                            </div>
                           </form>
                         </div>
                         <div class="split-container-right">
@@ -624,18 +644,26 @@
                             <i>Some changes to the interface will require the page to be reloaded.</i><br/>
                           </p>
                           <form>
-                            <input id="antialiasing-checkbox" type="checkbox" value="false" onClick="checkboxAntialiasing()"/>
-                            Activate Antialiasing (not reccomended for slower devices)
+                            <input id="antialiasing-checkbox" type="checkbox" onClick="checkboxAntialiasing()"/>
+                            Antialiasing (not reccomended for slower devices)
                             <br/>
                             <br/>
-                            <input id="autoopen-chat-checkbox" type="checkbox" value="true" onClick="checkboxAutoOpenChat()" checked/>
-                            Automatically show/hide the chat, if the window is resized.
+                            <input id="hide-send-checkbox" type="checkbox" onClick="checkboxHideSend()"/>
+                            Hide 'Send' button
+                            <br/>
+                            <br/>
+                            <input id="auto-open-chat-checkbox" type="checkbox" onClick="checkboxAutoOpenChat()" checked/>
+                            Show/Hide chat on window resize
+                            <br/>
+                            <br/>
+                            <input id="auto-rotate-checkbox" type="checkbox" onClick="checkboxAutoRotate()" checked/>
+                            Rotate board when player 2
                           </form>
                         </div>
                         
                         <br/>
-                        <p><i>
-                          The settings made in this dialog are stored local.
+                        <p><br/><i>
+                          Settings made in this dialog are stored local.
                           If you log in from another device, or if you delete your browser cache,
                           you will have to set this again.
                         </i><p/>
@@ -749,7 +777,14 @@
             var stack_selection_height = 60;
             var border_size = 30;
             var letter_size = 12;
+            var digit_adjustment = 2;
             var diagonal_walls = false;
+            var white_square_tex_name = 'images/board/board_simple_white.png';
+            var black_square_tex_name = 'images/board/board_simple_black.png';
+            var white_piece_tex_name = 'images/pieces/pieces_sandstone_white.png';
+            var black_piece_tex_name = 'images/pieces/pieces_simple_marble_black.png';
+            var white_caps_tex_name = 'images/pieces/caps_sandstone_white.png';
+            var black_caps_tex_name = 'images/pieces/caps_simple_marble_black.png';
 
             var raycaster = new THREE.Raycaster();
             var highlighter;
@@ -840,14 +875,14 @@
                         this.reverseboard();
                 },
                 addboard: function () {
-                    var white_texture = THREE.ImageUtils.loadTexture('images/whitesquare.png');
-                    var black_texture = THREE.ImageUtils.loadTexture('images/blacksquare.png');
+                    var white_texture = THREE.ImageUtils.loadTexture(white_square_tex_name);
+                    var black_texture = THREE.ImageUtils.loadTexture(black_square_tex_name);
+                    
+                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
+                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
 
                     var geometry = new THREE.BoxGeometry(sq_size, sq_height, sq_size);
                     geometry.center();
-
-                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
-                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
 
                     var startx = -(this.size * sq_size) / 2.0 + sq_size / 2;
                     var startz = -(this.size * sq_size) / 2.0;
@@ -911,7 +946,7 @@
                         letter = new THREE.Mesh(geometry, material);
                         letter.rotateX(-Math.PI / 2);
                         letter.position.set(this.position.x - sq_size / 2 - border_size / 2 - letter_size / 2, sq_height / 2,
-                                this.position.endz - border_size - sq_size / 2 - i * sq_size);
+                                this.position.endz - border_size - sq_size / 2 - letter_size / 2 - digit_adjustment - i * sq_size);
                         scene.add(letter);
                     }
                     for (var i = this.size - 1; i >= 0; i--) {
@@ -930,7 +965,7 @@
                         letter.rotateX(-Math.PI / 2);
                         letter.rotateZ(Math.PI);
                         letter.position.set(this.position.endx - sq_size / 2 + border_size / 2 + letter_size / 2, sq_height / 2,
-                                this.position.endz - border_size - sq_size / 2 - letter_size - i * sq_size);
+                                this.position.endz - border_size - sq_size / 2 - letter_size * 1.5 - digit_adjustment - i * sq_size);
                         scene.add(letter);
                     }
                     this.position.x -= border_size;
@@ -940,10 +975,10 @@
 
                 },
                 addpieces: function () {
-                    var white_texture = THREE.ImageUtils.loadTexture('images/whitetile2.png');
-                    var black_texture = THREE.ImageUtils.loadTexture('images/blacktile2.png');
-                    var white_cap_texture = THREE.ImageUtils.loadTexture('images/white_capstone.png');
-                    var black_cap_texture = THREE.ImageUtils.loadTexture('images/black_capstone.png');
+                    var white_texture = THREE.ImageUtils.loadTexture(white_piece_tex_name);
+                    var black_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
+                    var white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
+                    var black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
 
                     var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     geometry.center();
@@ -1007,6 +1042,22 @@
 
                         this.piece_objects.push(piece);
                         scene.add(piece);
+                    }
+                },
+                updateboard: function () {
+                    // reload textures.
+                    var white_texture = THREE.ImageUtils.loadTexture(white_square_tex_name);
+                    var black_texture = THREE.ImageUtils.loadTexture(black_square_tex_name);
+                    
+                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
+                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
+                    
+                    // the first size^2 board_pieces are the squares.
+                    var fields = this.size * this.size;
+                    for (i = 0; i < fields; ++i) {
+                        if (this.board_objects[i].isboard===true) {
+                            this.board_objects[i].material = (i % 2) ? white_material : black_material;
+                        }
                     }
                 },
                 updatepieces: function () {
@@ -1449,8 +1500,12 @@
                     return true;
                 },
                 reverseboard: function () {
-                    camera.position.z = -camera.position.z;
                     this.boardside = (this.boardside === "white") ? "black" : "white";
+                    if (localStorage.getItem('auto_rotate')!=='false')
+                    {
+                      camera.position.z = -camera.position.z;
+                      camera.position.x = -camera.position.x;
+                    }
                 },
                 setmovedir: function () {
                     var s1 = this.move.start;
@@ -2328,7 +2383,7 @@
                     this.send("Observe " + no);
                 }
             };
-            
+
             init();
             animate();
 
@@ -2377,32 +2432,6 @@
 
                 board.init(5, "white", true);
             }
-            
-            function loadSettings() {
-              // load the setting for wall orientation.
-              if(localStorage.getItem('diagonal_walls')==='true') {
-                document.getElementById('wall-orientation').checked = true;
-                diagonal_walls = true;
-              }
-              
-              // load the setting for antialiasing.
-              if(localStorage.getItem('antialiasing_mode')==='true') {
-                document.getElementById('antialiasing-checkbox').checked = true;
-                antialiasing_mode = true;
-              }
-              
-              // load the setting for automatically opening and closing the chat on window resize.
-              if(localStorage.getItem('auto_chat')==='false') {
-                document.getElementById('autoopen-chat-checkbox').checked = false;
-              }
-              
-              // load the setting for piece size.
-              if(localStorage.getItem('piece_size')!==null) {
-                piece_size = parseInt(localStorage.getItem('piece_size'));
-                document.getElementById('piece-size-display').innerHTML = piece_size;
-                document.getElementById('piece-size-slider').value = piece_size;
-              }
-            }
 
             function onWindowResize() {
               canvas.width = window.innerWidth;
@@ -2415,7 +2444,8 @@
 
               $('#chat').offset({ top: $('nav').height() + 5 });
               $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
-              $('#chat').height(window.innerHeight - $('nav').height() - 85);
+              $('#chat').height(window.innerHeight - $('nav').height() - 85
+                  + (localStorage.getItem('hide-send')==='true' ? 34 : 0));
 
               if (localStorage.getItem('auto_chat')!=='false')
               {
@@ -2584,6 +2614,63 @@
               return t<10?'0'+t:t;
             }
             
+            /**
+             * Settings loaded on initialization. Try to keep them in the order of the window.
+             * First the left-hand div, then the right-hand div.
+             */
+            function loadSettings() {
+              // load the setting for wall orientation.
+              if(localStorage.getItem('diagonal_walls')==='true') {
+                document.getElementById('wall-orientation').checked = true;
+                diagonal_walls = true;
+              }
+
+              // load the setting for piece size.
+              if(localStorage.getItem('piece_size')!==null) {
+                piece_size = parseInt(localStorage.getItem('piece_size'));
+                document.getElementById('piece-size-display').innerHTML = piece_size;
+                document.getElementById('piece-size-slider').value = piece_size;
+              }
+              
+              // load board style.
+              if(localStorage.getItem('board_style')!==null) {
+                var styleName = localStorage.getItem('board_style');
+                white_square_tex_name = 'images/board/board_' + styleName + '_white.png';
+                black_square_tex_name = 'images/board/board_' + styleName + '_black.png';
+                document.getElementById('board-style-' + styleName).checked = true;
+              } else {
+                document.getElementById('board-style-simple').checked = true;
+              }
+
+              // load the setting for antialiasing.
+              if(localStorage.getItem('antialiasing_mode')==='true') {
+                document.getElementById('antialiasing-checkbox').checked = true;
+                antialiasing_mode = true;
+              }
+              
+              // load whether or not the 'Send' button should be hidden.
+              if (localStorage.getItem('hide-send')==='true')
+              {
+                document.getElementById('hide-send-checkbox').checked = true;
+                document.getElementById('send-button').style.display = "none";
+                $('#chat').height(window.innerHeight - $('nav').height() - 51);
+              }
+
+              // load the setting for automatically opening and closing the chat on window resize.
+              if(localStorage.getItem('auto_chat')==='false') {
+                document.getElementById('auto-open-chat-checkbox').checked = false;
+              }
+
+              // load the setting for automatically rotating the board, when assigned player 2.
+              if(localStorage.getItem('auto_rotate')==='false') {
+                document.getElementById('auto-rotate-checkbox').checked = false;
+              }
+            }
+            
+            /**
+             * Notify checkbox change for checkbox:
+             *   Diagonal walls
+             */
             function checkboxDiagonalWalls() {
               if (document.getElementById('wall-orientation').checked) {
                 localStorage.setItem('diagonal_walls', 'true');
@@ -2595,6 +2682,31 @@
               board.updatepieces();
             }
             
+            /**
+             * Notify slider movement:
+             *   Piece size
+             */
+            function sliderPieceSize(newSize) {
+              localStorage.setItem('piece_size', newSize);
+              document.getElementById('piece-size-display').innerHTML=newSize;
+              piece_size = parseInt(newSize);
+            }
+            
+            /**
+             * Notify radio button check:
+             *   Board style
+             */
+            function radioBoardStyle(styleName) {
+              white_square_tex_name = 'images/board/board_' + styleName + '_white.png';
+              black_square_tex_name = 'images/board/board_' + styleName + '_black.png';
+              localStorage.setItem('board_style', styleName);
+              updateBoard();
+            }
+            
+            /**
+             * Notify checkbox change for checkbox:
+             *   Antialiasing
+             */
             function checkboxAntialiasing() {
               if (document.getElementById('antialiasing-checkbox').checked) {
                 localStorage.setItem('antialiasing_mode', 'true');
@@ -2603,21 +2715,53 @@
               }
             }
             
+            /**
+             * Notify checkbox change for checkbox:
+             *   Hide 'Send' button
+             */
+            function checkboxHideSend() {
+              if (document.getElementById('hide-send-checkbox').checked) {
+                localStorage.setItem('hide-send', 'true');
+                document.getElementById('send-button').style.display = "none";
+                $('#chat').height(window.innerHeight - $('nav').height() - 51);
+              } else {
+                localStorage.setItem('hide-send', 'false');
+                document.getElementById('send-button').style.display = "initial";
+                $('#chat').height(window.innerHeight - $('nav').height() - 85);
+              }
+              
+            }
+            
+            /**
+             * Notify checkbox change for checkbox:
+             *   Show/Hide chat on window resize
+             */
             function checkboxAutoOpenChat() {
-              if (document.getElementById('autoopen-chat-checkbox').checked) {
+              if (document.getElementById('auto-open-chat-checkbox').checked) {
                 localStorage.setItem('auto_chat', 'true');
               } else {
                 localStorage.setItem('auto_chat', 'false');
               }
             }
             
-            function sliderPieceSize(newSize) {
-              localStorage.setItem('piece_size', newSize);
-              document.getElementById('piece-size-display').innerHTML=newSize;
-              piece_size = parseInt(newSize);
+            /**
+             * Notify checkbox change for checkbox:
+             *   Rotate board when player 2
+             */
+            function checkboxAutoRotate() {
+              if (document.getElementById('auto-rotate-checkbox').checked) {
+                localStorage.setItem('auto_rotate', 'true');
+              } else {
+                localStorage.setItem('auto_rotate', 'false');
+              }
             }
             
+            /**
+             * Settings for board or pieces have changed.
+             * Update both.
+             */
             function updateBoard() {
+              board.updateboard();
               board.updatepieces();
             }
 
@@ -2638,7 +2782,6 @@
 
                 $('#chat').offset({ top: $('nav').height() + 5 });
                 $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
-                $('#chat').height(window.innerHeight - $('nav').height() - 85);
 
                 tour(false);
             })
