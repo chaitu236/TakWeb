@@ -920,7 +920,7 @@
                         var letter = new THREE.Mesh(geometry, material);
                         letter.rotateX(Math.PI / 2);
                         letter.rotateY(Math.PI);
-                        letter.position.set(this.position.x - letter_size / 2 + i * sq_size, sq_height / 2,
+                        letter.position.set(this.position.x + letter_size / 2 + i * sq_size, sq_height / 2,
                                 this.position.z - sq_size / 2 - border_size / 2 - letter_size / 2);
                         scene.add(letter);
 
