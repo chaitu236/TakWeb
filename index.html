@@ -150,10 +150,12 @@
               box-shadow: 1px 1px 1px #ddd, 0px 0px 1px #fff;
             }
             .radio-list-item {
-              margin: 5px 5px 0 0;
+              display: inline-block;
+              margin: 5px 4px 0 0;
+              width: auto;
             }
             .radio-list-img {
-              margin-left: 8px;
+              margin-left: 4px;
               border: 2px #555 solid;
             }
             .width-full {
@@ -624,14 +626,25 @@
                             <span id="piece-size-display">88</span>
                           </form><br/>
                           <form>
+                            Piece Style<br/>
+                            <div class="radio-list-item">
+                              <input id="piece-style-sandstone-simple" type="radio" name="piece-style" value="sandstone-simple" onClick="radioPieceStyle(this.value)" checked/>
+                              <img src="images/pieces/pieces_sandstone_simple.jpg" class="radio-list-img" height="50" width="100"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-coral-pietersite" type="radio" name="piece-style" value="coral-pietersite" onClick="radioPieceStyle(this.value)"/>
+                              <img src="images/pieces/pieces_coral_pietersite.jpg" class="radio-list-img" height="50" width="100"/>
+                            </div>
+                          </form><br/>
+                          <form>
                             Board Style<br/>
                             <div class="radio-list-item">
                               <input id="board-style-simple" type="radio" name="board-style" value="simple" onClick="radioBoardStyle(this.value)" checked/>
-                              <img src="images/board/board_simple.jpg" class="radio-list-img" height="100" width="200"/>
+                              <img src="images/board/board_simple.jpg" class="radio-list-img" height="50" width="100"/>
                             </div>
                             <div class="radio-list-item">
                               <input id="board-style-ornate" type="radio" name="board-style" value="ornate" onClick="radioBoardStyle(this.value)"/>
-                              <img src="images/board/board_ornate.jpg" class="radio-list-img" height="100" width="200"/>
+                              <img src="images/board/board_ornate.jpg" class="radio-list-img" height="50" width="100"/>
                             </div>
                           </form>
                         </div>
@@ -782,9 +795,9 @@
             var white_square_tex_name = 'images/board/board_simple_white.png';
             var black_square_tex_name = 'images/board/board_simple_black.png';
             var white_piece_tex_name = 'images/pieces/pieces_sandstone_white.png';
-            var black_piece_tex_name = 'images/pieces/pieces_simple_marble_black.png';
+            var black_piece_tex_name = 'images/pieces/pieces_simple_black.png';
             var white_caps_tex_name = 'images/pieces/caps_sandstone_white.png';
-            var black_caps_tex_name = 'images/pieces/caps_simple_marble_black.png';
+            var black_caps_tex_name = 'images/pieces/caps_simple_black.png';
 
             var raycaster = new THREE.Raycaster();
             var highlighter;
@@ -979,14 +992,14 @@
                     var black_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
                     var white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
                     var black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
-
-                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
-                    geometry.center();
-
+                    
                     var white_material = new THREE.MeshBasicMaterial({map: white_texture});
                     var black_material = new THREE.MeshBasicMaterial({map: black_texture});
                     var white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
                     var black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture});
+
+                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
+                    geometry.center();
 
                     for (i = 0; i < this.tottiles; i++) {
                         var stackno = Math.floor(i / 10);
@@ -1061,11 +1074,32 @@
                     }
                 },
                 updatepieces: function () {
+                    // reload textures
+                    var white_texture = THREE.ImageUtils.loadTexture(white_piece_tex_name);
+                    var black_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
+                    var white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
+                    var black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
+                    
+                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
+                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
+                    var white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
+                    var black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture});
+                    
                     var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     var old_size = this.piece_objects[0].geometry.parameters.width;
                     
                     // for all pieces...
                     for (i = 0; i < this.piece_objects.length; ++i) {
+                        // reapply texture.
+                        if (this.piece_objects[i].iscapstone)
+                        {
+                            this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
+                                ? white_cap_material : black_cap_material;
+                        } else {
+                            this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
+                                ? white_material : black_material;
+                        }
+                        
                         if (this.piece_objects[i].iscapstone) {
                         // <updates on the capstones will be made here>
                         } else {
@@ -1077,7 +1111,7 @@
                                 this.piece_objects[i].isstanding = false;
                                 this.standup(this.piece_objects[i]);
                             }
-                            
+
                             // reapply geometry.
                             this.piece_objects[i].geometry = geometry;
                             this.piece_objects[i].geometry = geometry;
@@ -2632,6 +2666,19 @@
                 document.getElementById('piece-size-slider').value = piece_size;
               }
               
+              // load piece style.
+              if(localStorage.getItem('piece_style')!==null) {
+                var styleName = localStorage.getItem('piece_style');
+                var texNames = styleName.split("-");
+                white_piece_tex_name = 'images/pieces/pieces_' + texNames[0].trim() + '_white.png';
+                black_piece_tex_name = 'images/pieces/pieces_' + texNames[1].trim() + '_black.png';
+                white_caps_tex_name = 'images/pieces/caps_' + texNames[0].trim() + '_white.png';
+                black_caps_tex_name = 'images/pieces/caps_' + texNames[1].trim() + '_black.png';
+                document.getElementById('piece-style-' + styleName).checked = true;
+              } else {
+                document.getElementById('piece-style-sandstone-simple').checked = true;
+              }
+              
               // load board style.
               if(localStorage.getItem('board_style')!==null) {
                 var styleName = localStorage.getItem('board_style');
@@ -2690,6 +2737,20 @@
               localStorage.setItem('piece_size', newSize);
               document.getElementById('piece-size-display').innerHTML=newSize;
               piece_size = parseInt(newSize);
+            }
+            
+            /**
+             * Notify radio button check:
+             *   Piece style
+             */
+            function radioPieceStyle(styleName) {
+              var texNames = styleName.split("-");
+              white_piece_tex_name = 'images/pieces/pieces_' + texNames[0].trim() + '_white.png';
+              black_piece_tex_name = 'images/pieces/pieces_' + texNames[1].trim() + '_black.png';
+              white_caps_tex_name = 'images/pieces/caps_' + texNames[0].trim() + '_white.png';
+              black_caps_tex_name = 'images/pieces/caps_' + texNames[1].trim() + '_black.png';
+              localStorage.setItem('piece_style', styleName);
+              updateBoard();
             }
             
             /**
