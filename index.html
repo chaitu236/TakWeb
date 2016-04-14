@@ -151,12 +151,19 @@
             }
             .radio-list-item {
               display: inline-block;
-              margin: 5px 4px 0 0;
+              margin: 0;
               width: auto;
             }
+            .radio-list-item input[type=radio] {
+              display: none;
+            }
             .radio-list-img {
-              margin-left: 4px;
-              border: 2px #555 solid;
+              margin: 0;
+              border: 2px #fff solid;
+              cursor: pointer;
+            }
+            .radio-list-item input[type=radio]:checked + .radio-list-img {
+              border: 2px #88d solid;
             }
             .width-full {
                 margin: 0 auto;
@@ -622,29 +629,115 @@
                           </form><br/>
                           <form>
                             Piece size
-                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="updateBoard()"/> 
+                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="board.updatepieces()"/> 
                             <span id="piece-size-display">88</span>
                           </form><br/>
                           <form>
-                            Piece Style<br/>
+                            White pieces<br/>
                             <div class="radio-list-item">
-                              <input id="piece-style-sandstone-simple" type="radio" name="piece-style" value="sandstone-simple" onClick="radioPieceStyle(this.value)" checked/>
-                              <img src="images/pieces/pieces_sandstone_simple.jpg" class="radio-list-img" height="50" width="100"/>
+                              <input id="piece-style-white-simple" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/white_simple_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleWhite('simple')"/>
                             </div>
                             <div class="radio-list-item">
-                              <input id="piece-style-coral-pietersite" type="radio" name="piece-style" value="coral-pietersite" onClick="radioPieceStyle(this.value)"/>
-                              <img src="images/pieces/pieces_coral_pietersite.jpg" class="radio-list-img" height="50" width="100"/>
+                              <input id="piece-style-white-coral" type="radio" name="piece-style"/>
+                              <img src="images/pieces/white_coral_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleWhite('coral')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-white-bone" type="radio" name="piece-style"/>
+                              <img src="images/pieces/white_bone_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleWhite('bone')"/>
                             </div>
                           </form><br/>
                           <form>
-                            Board Style<br/>
+                            Black pieces<br/>
                             <div class="radio-list-item">
-                              <input id="board-style-simple" type="radio" name="board-style" value="simple" onClick="radioBoardStyle(this.value)" checked/>
-                              <img src="images/board/board_simple.jpg" class="radio-list-img" height="50" width="100"/>
+                              <input id="piece-style-black-simple" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_simple_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('simple')"/>
                             </div>
                             <div class="radio-list-item">
-                              <input id="board-style-ornate" type="radio" name="board-style" value="ornate" onClick="radioBoardStyle(this.value)"/>
-                              <img src="images/board/board_ornate.jpg" class="radio-list-img" height="50" width="100"/>
+                              <input id="piece-style-black-jade" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_jade_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('jade')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-bluemarble" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_bluemarble_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('bluemarble')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-brownmarble" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_brownmarble_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('brownmarble')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-redmarble" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_redmarble_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('redmarble')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-pietersite" type="radio" name="piece-style"/>
+                              <img src="images/pieces/black_pietersite_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('pietersite')"/>
+                            </div>
+                          </form><br/>
+                          <form>
+                            White squares<br/>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-simple" type="radio" name="board-style" checked/>
+                              <img src="images/board/white_simple.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('simple')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/white_ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-beige-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/white_beige-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('beige-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-marble-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/white_marble-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('marble-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-blue-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/white_blue-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('blue-ornate')"/>
+                            </div>
+                          </form><br/>
+                          <form>
+                            Black squares<br/>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-simple" type="radio" name="board-style" checked/>
+                              <img src="images/board/black_simple.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('simple')" />
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-green-velvet" type="radio" name="board-style"/>
+                              <img src="images/board/black_green-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('green-velvet')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-blue-velvet" type="radio" name="board-style"/>
+                              <img src="images/board/black_blue-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('blue-velvet')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-dark-gem" type="radio" name="board-style"/>
+                              <img src="images/board/black_dark-gem.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('dark-gem')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-green-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_green-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('green-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-blue-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_blue-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('blue-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-black-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_black-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('black-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-red-velvet" type="radio" name="board-style"/>
+                              <img src="images/board/black_red-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('red-velvet')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-red-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_red-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('red-ornate')"/>
                             </div>
                           </form>
                         </div>
@@ -792,12 +885,12 @@
             var letter_size = 12;
             var digit_adjustment = 2;
             var diagonal_walls = false;
-            var white_square_tex_name = 'images/board/board_simple_white.png';
-            var black_square_tex_name = 'images/board/board_simple_black.png';
-            var white_piece_tex_name = 'images/pieces/pieces_sandstone_white.png';
-            var black_piece_tex_name = 'images/pieces/pieces_simple_black.png';
-            var white_caps_tex_name = 'images/pieces/caps_sandstone_white.png';
-            var black_caps_tex_name = 'images/pieces/caps_simple_black.png';
+            var white_square_tex_name = 'images/board/white_simple.png';
+            var black_square_tex_name = 'images/board/black_simple.png';
+            var white_piece_tex_name = 'images/pieces/white_simple_pieces.png';
+            var black_piece_tex_name = 'images/pieces/black_simple_pieces.png';
+            var white_caps_tex_name = 'images/pieces/white_simple_caps.png';
+            var black_caps_tex_name = 'images/pieces/black_simple_caps.png';
 
             var raycaster = new THREE.Raycaster();
             var highlighter;
@@ -2667,28 +2760,35 @@
                 document.getElementById('piece-size-display').innerHTML = piece_size;
                 document.getElementById('piece-size-slider').value = piece_size;
               }
-              
-              // load piece style.
-              if(localStorage.getItem('piece_style')!==null) {
-                var styleName = localStorage.getItem('piece_style');
-                var texNames = styleName.split("-");
-                white_piece_tex_name = 'images/pieces/pieces_' + texNames[0].trim() + '_white.png';
-                black_piece_tex_name = 'images/pieces/pieces_' + texNames[1].trim() + '_black.png';
-                white_caps_tex_name = 'images/pieces/caps_' + texNames[0].trim() + '_white.png';
-                black_caps_tex_name = 'images/pieces/caps_' + texNames[1].trim() + '_black.png';
-                document.getElementById('piece-style-' + styleName).checked = true;
-              } else {
-                document.getElementById('piece-style-sandstone-simple').checked = true;
+
+              // load white piece style.
+              if (localStorage.getItem('piece_style_white')!==null) {
+                var styleName = localStorage.getItem('piece_style_white');
+                white_piece_tex_name = 'images/pieces/white_' + styleName + '_pieces.png';
+                white_caps_tex_name = 'images/pieces/white_' + styleName + '_caps.png';
+                document.getElementById('piece-style-white-' + styleName).checked = true;
               }
               
-              // load board style.
-              if(localStorage.getItem('board_style')!==null) {
-                var styleName = localStorage.getItem('board_style');
-                white_square_tex_name = 'images/board/board_' + styleName + '_white.png';
-                black_square_tex_name = 'images/board/board_' + styleName + '_black.png';
-                document.getElementById('board-style-' + styleName).checked = true;
-              } else {
-                document.getElementById('board-style-simple').checked = true;
+              // load black piece style.
+              if (localStorage.getItem('piece_style_black')!==null) {
+                var styleName = localStorage.getItem('piece_style_black');
+                black_piece_tex_name = 'images/pieces/black_' + styleName + '_pieces.png';
+                black_caps_tex_name = 'images/pieces/black_' + styleName + '_caps.png';
+                document.getElementById('piece-style-black-' + styleName).checked = true;
+              }
+              
+              // load black board style.
+              if (localStorage.getItem('board_style_back')!==null) {
+                var styleName = localStorage.getItem('board_style_back');
+                black_square_tex_name = 'images/board/black_' + styleName + '.png';
+                document.getElementById('board-style-black-' + styleName).checked = true;
+              }
+              
+              // load white board style.
+              if (localStorage.getItem('board_style_white')!==null) {
+                var styleName = localStorage.getItem('board_style_white');
+                white_square_tex_name = 'images/board/white_' + styleName + '.png';
+                document.getElementById('board-style-white-' + styleName).checked = true;
               }
 
               // load the setting for antialiasing.
@@ -2743,27 +2843,48 @@
             
             /**
              * Notify radio button check:
-             *   Piece style
+             *   Piece style - white
              */
-            function radioPieceStyle(styleName) {
-              var texNames = styleName.split("-");
-              white_piece_tex_name = 'images/pieces/pieces_' + texNames[0].trim() + '_white.png';
-              black_piece_tex_name = 'images/pieces/pieces_' + texNames[1].trim() + '_black.png';
-              white_caps_tex_name = 'images/pieces/caps_' + texNames[0].trim() + '_white.png';
-              black_caps_tex_name = 'images/pieces/caps_' + texNames[1].trim() + '_black.png';
-              localStorage.setItem('piece_style', styleName);
-              updateBoard();
+            function radioPieceStyleWhite(styleName) {
+              document.getElementById('piece-style-white-' + styleName).checked = true;
+              white_piece_tex_name = 'images/pieces/white_' + styleName + '_pieces.png';
+              white_caps_tex_name = 'images/pieces/white_' + styleName + '_caps.png';
+              localStorage.setItem('piece_style_white', styleName);
+              board.updatepieces();
             }
             
             /**
              * Notify radio button check:
-             *   Board style
+             *   Piece style - black
              */
-            function radioBoardStyle(styleName) {
-              white_square_tex_name = 'images/board/board_' + styleName + '_white.png';
-              black_square_tex_name = 'images/board/board_' + styleName + '_black.png';
-              localStorage.setItem('board_style', styleName);
-              updateBoard();
+            function radioPieceStyleBlack(styleName) {
+              document.getElementById('piece-style-black-' + styleName).checked = true;
+              black_piece_tex_name = 'images/pieces/black_' + styleName + '_pieces.png';
+              black_caps_tex_name = 'images/pieces/black_' + styleName + '_caps.png';
+              localStorage.setItem('piece_style_black', styleName);
+              board.updatepieces();
+            }
+            
+            /**
+             * Notify radio button check:
+             *   Board style - black
+             */
+            function radioBoardStyleBlack(styleName) {
+              document.getElementById('board-style-black-' + styleName).checked = true;
+              black_square_tex_name = 'images/board/black_' + styleName + '.png';
+              localStorage.setItem('board_style_back', styleName);
+              board.updateboard();
+            }
+            
+            /**
+             * Notify radio button check:
+             *   Board style - white
+             */
+            function radioBoardStyleWhite(styleName) {
+              document.getElementById('board-style-white-' + styleName).checked = true;
+              white_square_tex_name = 'images/board/white_' + styleName + '.png';
+              localStorage.setItem('board_style_white', styleName);
+              board.updateboard();
             }
             
             /**
@@ -2817,15 +2938,6 @@
               } else {
                 localStorage.setItem('auto_rotate', 'false');
               }
-            }
-            
-            /**
-             * Settings for board or pieces have changed.
-             * Update both.
-             */
-            function updateBoard() {
-              board.updateboard();
-              board.updatepieces();
             }
 
             $(document).ready(function() {
