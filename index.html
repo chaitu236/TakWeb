@@ -74,7 +74,22 @@
                 height: 80%;
             }
             #chat-server {
+                background-color: #e7e7e9;
                 height:100%;
+                overflow-y: auto;
+            }
+            .chatname {
+              font-weight: bold;
+            }
+            .chattime {
+              font-weight: italic;
+            }
+            #chat-toggle-text {
+            }
+            #notation-toggle-text {
+                position: absolute;
+                right: -17px;
+                top: 2px;
             }
             .toggle-text {
                 border-radius: 2px;
@@ -92,12 +107,71 @@
             #help-modal ul li ul li {
               font-weight: normal;
             }
-            #chat-toggle-text {
+            #settings-modal ul li ul {
+              font-weight: bold;
             }
-            #notation-toggle-text {
-                position: absolute;
-                right: -17px;
-                top: 2px;
+            #settings-modal ul li ul li {
+              font-weight: normal;
+            }
+            .split-container-left {
+              display: inline-block;
+              overflow: hidden;
+              width: 49%;
+              padding-right: 15px;
+              padding-bottom: 10px;
+              vertical-align: top;
+            }
+            .split-container-right {
+              display: inline-block;
+              overflow: hidden;
+              width: 49%;
+              padding-left: 15px;
+              padding-bottom: 10px;
+              border-left: 1px solid #ddd;
+              vertical-align: top;
+            }
+            input[type=checkbox] {
+              vertical-align: middle;
+              line-height: 14px;
+              margin: 0px;
+            }
+            input[type=range] {
+              vertical-align: middle;
+              margin: 0px;
+              display: inline-block;
+              background: transparent;
+              width: 50%;
+            }
+            input[type=range]::-moz-range-track {
+              height: 4px;
+              border-radius: 2px;
+              box-shadow: 1px 1px 1px #ddd, 0px 0px 1px #fff;
+            }
+            input[type=range]::-ms-track {
+              height: 4px;
+              border-radius: 2px;
+              box-shadow: 1px 1px 1px #ddd, 0px 0px 1px #fff;
+            }
+            input[type=range]::-webkit-slider-runnable-track {
+              height: 4px;
+              border-radius: 2px;
+              box-shadow: 1px 1px 1px #ddd, 0px 0px 1px #fff;
+            }
+            .radio-list-item {
+              display: inline-block;
+              margin: 0;
+              width: auto;
+            }
+            .radio-list-item input[type=radio] {
+              display: none;
+            }
+            .radio-list-img {
+              margin: 0;
+              border: 2px #fff solid;
+              cursor: pointer;
+            }
+            .radio-list-item input[type=radio]:checked + .radio-list-img {
+              border: 2px #88d solid;
             }
             .width-full {
                 margin: 0 auto;
@@ -106,6 +180,9 @@
             .height-full {
                 margin: 0 auto;
                 height: 100%;
+            }
+            .height-auto {
+                height: auto;
             }
             #status {
                 position: absolute;
@@ -310,6 +387,11 @@
                             </audio>
                         </li>
                         <li>
+                            <a href="#" data-toggle="modal" data-target="#settings-modal">
+                                <img id="settings-img" src="images/ic_settings_black_24px.svg" height="20" width="20"/>
+                            </a>
+                        </li>
+                        <li>
                             <a href="#" title="Number of online players" >Online <span class="badge" id="onlineplayers">0</span></a>
                         </li>
                         <li>
@@ -367,13 +449,13 @@
                 </div>
             </a>
         </div>
-        <div id="chat"">
-                <div class="form-group height-full">
-                    <textarea class="form-control" id="chat-server" readonly></textarea>
-                </div>
-            <form role="form" onsubmit="server.chat(); return false;" class="height-full" autocomplete="off">
-                    <input type="text" class="form-control" id="chat-me"></textarea>
-                <button type="submit" class="btn btn-primary">Send</button>
+        <div id="chat">
+            <div class="form-group height-full">
+                <div id="chat-server"></div>
+            </div>
+            <form role="form" onsubmit="server.chat(); return false;" class="height-auto" autocomplete="off">
+              <input type="text" class="form-control" id="chat-me">
+              <button id="send-button" type="submit" class="btn btn-primary">Send</button>
             </form>
         </div>
 
@@ -533,6 +615,194 @@
 
             </div>
         </div>
+
+        <div id="settings-modal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Settings</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="split-container-left">
+                          <p>
+                            <b>
+                              Board and Pieces
+                            </b>
+                            <br/>
+                          </p>
+                          <form>
+                            <input id="wall-orientation" type="checkbox" onClick="checkboxDiagonalWalls()"/>
+                            Diagonal walls
+                          </form><br/>
+                          <form>
+                            Piece size
+                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="board.updatepieces()"/> 
+                            <span id="piece-size-display">88</span>
+                          </form><br/>
+                          <form>
+                            White pieces<br/>
+                            <div class="radio-list-item">
+                              <input id="piece-style-white-simple" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/white_simple_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleWhite('simple')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-white-coral" type="radio" name="piece-style"/>
+                              <img src="images/pieces/white_coral_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleWhite('coral')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-white-bone" type="radio" name="piece-style"/>
+                              <img src="images/pieces/white_bone_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleWhite('bone')"/>
+                            </div>
+                          </form><br/>
+                          <form>
+                            Black pieces<br/>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-simple" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_simple_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('simple')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-jade" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_jade_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('jade')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-bluemarble" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_bluemarble_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('bluemarble')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-brownmarble" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_brownmarble_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('brownmarble')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-redmarble" type="radio" name="piece-style" checked/>
+                              <img src="images/pieces/black_redmarble_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('redmarble')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="piece-style-black-pietersite" type="radio" name="piece-style"/>
+                              <img src="images/pieces/black_pietersite_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('pietersite')"/>
+                            </div>
+                          </form><br/>
+                          <form>
+                            White squares<br/>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-simple" type="radio" name="board-style" checked/>
+                              <img src="images/board/white_simple.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('simple')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-white-velvet" type="radio" name="board-style" checked/>
+                              <img src="images/board/white_white-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('white-velvet')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-gray-velvet" type="radio" name="board-style" checked/>
+                              <img src="images/board/white_gray-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('gray-velvet')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-sand-velvet" type="radio" name="board-style" checked/>
+                              <img src="images/board/white_sand-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('sand-velvet')"/>
+                            </div>
+                            
+                            <div class="radio-list-item">
+                              <input id="board-style-white-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/white_ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-beige-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/white_beige-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('beige-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-marble-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/white_marble-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('marble-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-white-blue-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/white_blue-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('blue-ornate')"/>
+                            </div>
+                          </form><br/>
+                          <form>
+                            Black squares<br/>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-simple" type="radio" name="board-style" checked/>
+                              <img src="images/board/black_simple.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('simple')" />
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-green-velvet" type="radio" name="board-style"/>
+                              <img src="images/board/black_green-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('green-velvet')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-blue-velvet" type="radio" name="board-style"/>
+                              <img src="images/board/black_blue-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('blue-velvet')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-dark-gem" type="radio" name="board-style"/>
+                              <img src="images/board/black_dark-gem.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('dark-gem')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-green-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_green-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('green-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-blue-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_blue-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('blue-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-black-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_black-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('black-ornate')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-red-velvet" type="radio" name="board-style"/>
+                              <img src="images/board/black_red-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('red-velvet')"/>
+                            </div>
+                            <div class="radio-list-item">
+                              <input id="board-style-black-red-ornate" type="radio" name="board-style"/>
+                              <img src="images/board/black_red-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('red-ornate')"/>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="split-container-right">
+                          <p>
+                            <b>
+                              Interface
+                            </b>
+                            <br/>
+                            <i>Some changes to the interface will require the page to be reloaded.</i><br/>
+                          </p>
+                          <form>
+                            <input id="antialiasing-checkbox" type="checkbox" onClick="checkboxAntialiasing()"/>
+                            Antialiasing (not reccomended for slower devices)
+                            <br/>
+                            <br/>
+                            <input id="hide-chat-time" type="checkbox" onClick="checkboxHideChatTime()"/>
+                            Hide chat time
+                            <br/>
+                            <br/>
+                            <input id="hide-send-checkbox" type="checkbox" onClick="checkboxHideSend()"/>
+                            Hide 'Send' button
+                            <br/>
+                            <br/>
+                            <input id="auto-open-chat-checkbox" type="checkbox" onClick="checkboxAutoOpenChat()" checked/>
+                            Show/Hide chat on window resize
+                            <br/>
+                            <br/>
+                            <input id="auto-rotate-checkbox" type="checkbox" onClick="checkboxAutoRotate()" checked/>
+                            Rotate board when player 2
+                          </form>
+                        </div>
+                        
+                        <br/>
+                        <p><br/><i>
+                          Settings made in this dialog are stored local.
+                          If you log in from another device, or if you delete your browser cache,
+                          you will have to set this again.
+                        </i><p/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="help-modal" class="modal fade">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -625,6 +895,10 @@
             }
             var camera, scene, renderer, light, canvas, controls = null;
 
+            // antialiasing must be disabled per default, so slower devices are not impaired.
+            var antialiasing_mode = false;
+            
+            var stack_dist = 105;
             var piece_size = 88;
             var piece_height = 15;
             var sq_size = 90;
@@ -634,6 +908,14 @@
             var stack_selection_height = 60;
             var border_size = 30;
             var letter_size = 12;
+            var digit_adjustment = 2;
+            var diagonal_walls = false;
+            var white_square_tex_name = 'images/board/white_simple.png';
+            var black_square_tex_name = 'images/board/black_simple.png';
+            var white_piece_tex_name = 'images/pieces/white_simple_pieces.png';
+            var black_piece_tex_name = 'images/pieces/black_simple_pieces.png';
+            var white_caps_tex_name = 'images/pieces/white_simple_caps.png';
+            var black_caps_tex_name = 'images/pieces/black_simple_caps.png';
 
             var raycaster = new THREE.Raycaster();
             var highlighter;
@@ -710,7 +992,7 @@
                             this.sq[i][j] = [];
                         }
                     }
-
+                    
                     this.addboard();
                     this.addpieces();
 
@@ -724,14 +1006,14 @@
                         this.reverseboard();
                 },
                 addboard: function () {
-                    var white_texture = THREE.ImageUtils.loadTexture('images/whitesquare.png');
-                    var black_texture = THREE.ImageUtils.loadTexture('images/blacksquare.png');
+                    var white_texture = THREE.ImageUtils.loadTexture(white_square_tex_name);
+                    var black_texture = THREE.ImageUtils.loadTexture(black_square_tex_name);
+                    
+                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
+                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
 
                     var geometry = new THREE.BoxGeometry(sq_size, sq_height, sq_size);
                     geometry.center();
-
-                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
-                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
 
                     var startx = -(this.size * sq_size) / 2.0 + sq_size / 2;
                     var startz = -(this.size * sq_size) / 2.0;
@@ -795,7 +1077,7 @@
                         letter = new THREE.Mesh(geometry, material);
                         letter.rotateX(-Math.PI / 2);
                         letter.position.set(this.position.x - sq_size / 2 - border_size / 2 - letter_size / 2, sq_height / 2,
-                                this.position.endz - border_size - sq_size / 2 - i * sq_size);
+                                this.position.endz - border_size - sq_size / 2 - letter_size / 2 - digit_adjustment - i * sq_size);
                         scene.add(letter);
                     }
                     for (var i = this.size - 1; i >= 0; i--) {
@@ -804,7 +1086,7 @@
                         var letter = new THREE.Mesh(geometry, material);
                         letter.rotateX(Math.PI / 2);
                         letter.rotateY(Math.PI);
-                        letter.position.set(this.position.x - letter_size / 2 + i * sq_size, sq_height / 2,
+                        letter.position.set(this.position.x + letter_size / 2 + i * sq_size, sq_height / 2,
                                 this.position.z - sq_size / 2 - border_size / 2 - letter_size / 2);
                         scene.add(letter);
 
@@ -814,7 +1096,7 @@
                         letter.rotateX(-Math.PI / 2);
                         letter.rotateZ(Math.PI);
                         letter.position.set(this.position.endx - sq_size / 2 + border_size / 2 + letter_size / 2, sq_height / 2,
-                                this.position.endz - border_size - sq_size / 2 - letter_size - i * sq_size);
+                                this.position.endz - border_size - sq_size / 2 - letter_size * 1.5 - digit_adjustment - i * sq_size);
                         scene.add(letter);
                     }
                     this.position.x -= border_size;
@@ -824,18 +1106,18 @@
 
                 },
                 addpieces: function () {
-                    var white_texture = THREE.ImageUtils.loadTexture('images/whitetile2.png');
-                    var black_texture = THREE.ImageUtils.loadTexture('images/blacktile2.png');
-                    var white_cap_texture = THREE.ImageUtils.loadTexture('images/white_capstone.png');
-                    var black_cap_texture = THREE.ImageUtils.loadTexture('images/black_capstone.png');
-
-                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
-                    geometry.center();
-
+                    var white_texture = THREE.ImageUtils.loadTexture(white_piece_tex_name);
+                    var black_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
+                    var white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
+                    var black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
+                    
                     var white_material = new THREE.MeshBasicMaterial({map: white_texture});
                     var black_material = new THREE.MeshBasicMaterial({map: black_texture});
                     var white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
                     var black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture});
+
+                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
+                    geometry.center();
 
                     for (i = 0; i < this.tottiles; i++) {
                         var stackno = Math.floor(i / 10);
@@ -844,7 +1126,7 @@
                         var piece;
 
                         piece = new THREE.Mesh(geometry, white_material);
-                        piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * (piece_size + 15));
+                        piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
                         piece.iswhitepiece = true;
                         piece.isstanding = false;
                         piece.onsquare = null;
@@ -855,7 +1137,7 @@
                         scene.add(piece);
 
                         piece = new THREE.Mesh(geometry, black_material);
-                        piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * (piece_size + 15));
+                        piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
                         piece.iswhitepiece = false;
                         piece.isstanding = false;
                         piece.onsquare = null;
@@ -866,12 +1148,12 @@
                         scene.add(piece);
                     }
                     for (i = 0; i < this.totcaps; i++) {
-                        var stackno = Math.floor(this.tottiles / 10) + i;
+                        var stackno = Math.ceil(this.tottiles / 10) + i;
                         var geometry = new THREE.CylinderGeometry(capstone_radius,
                                 capstone_radius, capstone_height, 30);
                         geometry.center();
                         var piece = new THREE.Mesh(geometry, white_cap_material);
-                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * (piece_size + 15));
+                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * stack_dist);
                         piece.iswhitepiece = true;
                         piece.isstanding = true;
                         piece.onsquare = null;
@@ -882,7 +1164,7 @@
                         scene.add(piece);
 
                         piece = new THREE.Mesh(geometry, black_cap_material);
-                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * (piece_size + 15));
+                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * stack_dist);
                         piece.iswhitepiece = false;
                         piece.isstanding = true;
                         piece.onsquare = null;
@@ -891,6 +1173,70 @@
 
                         this.piece_objects.push(piece);
                         scene.add(piece);
+                    }
+                },
+                updateboard: function () {
+                    // reload textures.
+                    var white_texture = THREE.ImageUtils.loadTexture(white_square_tex_name);
+                    var black_texture = THREE.ImageUtils.loadTexture(black_square_tex_name);
+                    
+                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
+                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
+                    
+                    // the first size^2 board_pieces are the squares.
+                    var fields = this.size * this.size;
+                    for (i = 0; i < fields; ++i) {
+                        if (this.board_objects[i].isboard===true) {
+                            this.board_objects[i].material =
+                                ((i + Math.floor(i / this.size) * ((this.size - 1) % 2)) % 2)
+                                ? white_material : black_material;
+                        }
+                    }
+                },
+                updatepieces: function () {
+                    // reload textures
+                    var white_texture = THREE.ImageUtils.loadTexture(white_piece_tex_name);
+                    var black_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
+                    var white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
+                    var black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
+                    
+                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
+                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
+                    var white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
+                    var black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture});
+                    
+                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
+                    var old_size = this.piece_objects[0].geometry.parameters.width;
+                    
+                    // for all pieces...
+                    for (i = 0; i < this.piece_objects.length; ++i) {
+                        // reapply texture.
+                        if (this.piece_objects[i].iscapstone)
+                        {
+                            this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
+                                ? white_cap_material : black_cap_material;
+                        } else {
+                            this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
+                                ? white_material : black_material;
+                        }
+                        
+                        if (this.piece_objects[i].iscapstone) {
+                        // <updates on the capstones will be made here>
+                        } else {
+                            // if standing, reset and reapply orientation.
+                            if (this.piece_objects[i].isstanding) {
+                                this.piece_objects[i].rotation.set(0, 0, 0);
+                                this.piece_objects[i].updateMatrix();
+                                this.piece_objects[i].position.y -= old_size / 2 - piece_height / 2;
+                                this.piece_objects[i].isstanding = false;
+                                this.standup(this.piece_objects[i]);
+                            }
+
+                            // reapply geometry.
+                            this.piece_objects[i].geometry = geometry;
+                            this.piece_objects[i].geometry = geometry;
+                            this.piece_objects[i].updateMatrix();
+                        }
                     }
                 },
                 file: function (no) {
@@ -1308,8 +1654,12 @@
                     return true;
                 },
                 reverseboard: function () {
-                    camera.position.z = -camera.position.z;
                     this.boardside = (this.boardside === "white") ? "black" : "white";
+                    if (localStorage.getItem('auto_rotate')!=='false')
+                    {
+                      camera.position.z = -camera.position.z;
+                      camera.position.x = -camera.position.x;
+                    }
                 },
                 setmovedir: function () {
                     var s1 = this.move.start;
@@ -1447,6 +1797,8 @@
                     if (!piece.isstanding)
                         return;
                     piece.position.y -= piece_size / 2 - piece_height / 2;
+                    if (diagonal_walls)
+                        piece.rotateZ(Math.PI / 4);
                     piece.rotateX(Math.PI / 2);
                     piece.isstanding = false;
                 },
@@ -1455,6 +1807,8 @@
                         return;
                     piece.position.y += piece_size / 2 - piece_height / 2;
                     piece.rotateX(-Math.PI / 2);
+                    if (diagonal_walls)
+                        piece.rotateZ(-Math.PI / 4);
                     piece.isstanding = true;
                 },
                 rightclick: function () {
@@ -2072,9 +2426,22 @@
                     }
                     else if (e.startsWith("Shout")) {
                         var msg = e.split("Shout ");
-                        console.log("received msg "+msg[1]);
+                        var name = msg[1].split('<')[1].split('>')[0];
+                        var txt = msg[1].split('<'+name+'>')[1];
+                        txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
                         var $cs = $('#chat-server');
-                        $cs.val($cs.val()+msg[1]+'\n');
+
+                        var now = new Date();
+                        var hours = now.getHours();
+                        var mins = now.getMinutes();
+                        var cls = 'chattime'
+                        if (localStorage.getItem('hide-chat-time')==='true') {
+                          cls = cls + ' hidden';
+                        }
+                        $cs.append('<span class="'+cls+'">['+getZero(hours)+':'+getZero(mins)+'] </span>');
+                        $cs.append('<span class="chatname">'+name+':</span>');
+                        $cs.append(txt+'<br>');
                         $cs.scrollTop($cs[0].scrollHeight);
                     }
                     //new seek
@@ -2188,6 +2555,9 @@
             animate();
 
             function init() {
+                // load the user settings.
+                loadSettings();
+                
                 canvas = document.getElementById("gamecanvas");
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
@@ -2198,7 +2568,8 @@
 
                 scene = new THREE.Scene();
 
-                renderer = new THREE.WebGLRenderer({canvas: canvas});
+                renderer = new THREE.WebGLRenderer({canvas: canvas,
+                    antialias: antialiasing_mode});
                 renderer.setPixelRatio(window.devicePixelRatio);
                 //renderer.setSize( window.innerWidth, window.innerHeight );
                 //renderer.setSize( 800, 640);
@@ -2230,25 +2601,29 @@
             }
 
             function onWindowResize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+              canvas.width = window.innerWidth;
+              canvas.height = window.innerHeight;
 
-                renderer.setSize(canvas.width, canvas.height);
+              renderer.setSize(canvas.width, canvas.height);
 
-                camera.aspect = canvas.width / canvas.height;
-                camera.updateProjectionMatrix();
+              camera.aspect = canvas.width / canvas.height;
+              camera.updateProjectionMatrix();
 
-                $('#chat').offset({ top: $('nav').height() + 5 });
-                $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
-                $('#chat').height(window.innerHeight - $('nav').height() - 85);
+              $('#chat').offset({ top: $('nav').height() + 5 });
+              $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
+              $('#chat').height(window.innerHeight - $('nav').height() - 85
+                  + (localStorage.getItem('hide-send')==='true' ? 34 : 0));
 
+              if (localStorage.getItem('auto_chat')!=='false')
+              {
                 if(isBreakpoint('xs') || isBreakpoint('sm')) {
-                    hidechat();
-                    hidermenu();
+                  hidechat();
+                  hidermenu();
                 } else {
-                    showchat();
-                    showrmenu();
+                  showchat();
+                  showrmenu();
                 }
+              }
             }
 
             function animate() {
@@ -2405,6 +2780,230 @@
             function getZero(t) {
               return t<10?'0'+t:t;
             }
+            
+            /**
+             * Settings loaded on initialization. Try to keep them in the order of the window.
+             * First the left-hand div, then the right-hand div.
+             */
+            function loadSettings() {
+              // load the setting for wall orientation.
+              if(localStorage.getItem('diagonal_walls')==='true') {
+                document.getElementById('wall-orientation').checked = true;
+                diagonal_walls = true;
+              }
+
+              // load the setting for piece size.
+              if(localStorage.getItem('piece_size')!==null) {
+                piece_size = parseInt(localStorage.getItem('piece_size'));
+                document.getElementById('piece-size-display').innerHTML = piece_size;
+                document.getElementById('piece-size-slider').value = piece_size;
+              }
+
+              // load white piece style.
+              if (localStorage.getItem('piece_style_white')!==null) {
+                var styleName = localStorage.getItem('piece_style_white');
+                white_piece_tex_name = 'images/pieces/white_' + styleName + '_pieces.png';
+                white_caps_tex_name = 'images/pieces/white_' + styleName + '_caps.png';
+                document.getElementById('piece-style-white-' + styleName).checked = true;
+              }
+              
+              // load black piece style.
+              if (localStorage.getItem('piece_style_black')!==null) {
+                var styleName = localStorage.getItem('piece_style_black');
+                black_piece_tex_name = 'images/pieces/black_' + styleName + '_pieces.png';
+                black_caps_tex_name = 'images/pieces/black_' + styleName + '_caps.png';
+                document.getElementById('piece-style-black-' + styleName).checked = true;
+              }
+              
+              // load black board style.
+              if (localStorage.getItem('board_style_back')!==null) {
+                var styleName = localStorage.getItem('board_style_back');
+                black_square_tex_name = 'images/board/black_' + styleName + '.png';
+                document.getElementById('board-style-black-' + styleName).checked = true;
+              }
+              
+              // load white board style.
+              if (localStorage.getItem('board_style_white')!==null) {
+                var styleName = localStorage.getItem('board_style_white');
+                white_square_tex_name = 'images/board/white_' + styleName + '.png';
+                document.getElementById('board-style-white-' + styleName).checked = true;
+              }
+
+              // load the setting for antialiasing.
+              if(localStorage.getItem('antialiasing_mode')==='true') {
+                document.getElementById('antialiasing-checkbox').checked = true;
+                antialiasing_mode = true;
+              }
+              
+              // load whether or not the 'Send' button should be hidden.
+              if (localStorage.getItem('hide-send')==='true')
+              {
+                document.getElementById('hide-send-checkbox').checked = true;
+                document.getElementById('send-button').style.display = "none";
+                $('#chat').height(window.innerHeight - $('nav').height() - 51);
+              }
+
+              //load setting for hide chat time
+              if (localStorage.getItem('hide-chat-time')==='true')
+              {
+                document.getElementById('hide-chat-time').checked = true;
+                $('.chattime').each(function(index) {
+                  $(this).addClass('hidden');
+                });
+              }
+
+              // load the setting for automatically opening and closing the chat on window resize.
+              if(localStorage.getItem('auto_chat')==='false') {
+                document.getElementById('auto-open-chat-checkbox').checked = false;
+              }
+
+              // load the setting for automatically rotating the board, when assigned player 2.
+              if(localStorage.getItem('auto_rotate')==='false') {
+                document.getElementById('auto-rotate-checkbox').checked = false;
+              }
+            }
+            
+            /**
+             * Notify checkbox change for checkbox:
+             *   Diagonal walls
+             */
+            function checkboxDiagonalWalls() {
+              if (document.getElementById('wall-orientation').checked) {
+                localStorage.setItem('diagonal_walls', 'true');
+                diagonal_walls = true;
+              } else {
+                localStorage.setItem('diagonal_walls', 'false');
+                diagonal_walls = false;
+              }
+              board.updatepieces();
+            }
+            
+            /**
+             * Notify slider movement:
+             *   Piece size
+             */
+            function sliderPieceSize(newSize) {
+              localStorage.setItem('piece_size', newSize);
+              document.getElementById('piece-size-display').innerHTML=newSize;
+              piece_size = parseInt(newSize);
+            }
+            
+            /**
+             * Notify radio button check:
+             *   Piece style - white
+             */
+            function radioPieceStyleWhite(styleName) {
+              document.getElementById('piece-style-white-' + styleName).checked = true;
+              white_piece_tex_name = 'images/pieces/white_' + styleName + '_pieces.png';
+              white_caps_tex_name = 'images/pieces/white_' + styleName + '_caps.png';
+              localStorage.setItem('piece_style_white', styleName);
+              board.updatepieces();
+            }
+            
+            /**
+             * Notify radio button check:
+             *   Piece style - black
+             */
+            function radioPieceStyleBlack(styleName) {
+              document.getElementById('piece-style-black-' + styleName).checked = true;
+              black_piece_tex_name = 'images/pieces/black_' + styleName + '_pieces.png';
+              black_caps_tex_name = 'images/pieces/black_' + styleName + '_caps.png';
+              localStorage.setItem('piece_style_black', styleName);
+              board.updatepieces();
+            }
+            
+            /**
+             * Notify radio button check:
+             *   Board style - black
+             */
+            function radioBoardStyleBlack(styleName) {
+              document.getElementById('board-style-black-' + styleName).checked = true;
+              black_square_tex_name = 'images/board/black_' + styleName + '.png';
+              localStorage.setItem('board_style_back', styleName);
+              board.updateboard();
+            }
+            
+            /**
+             * Notify radio button check:
+             *   Board style - white
+             */
+            function radioBoardStyleWhite(styleName) {
+              document.getElementById('board-style-white-' + styleName).checked = true;
+              white_square_tex_name = 'images/board/white_' + styleName + '.png';
+              localStorage.setItem('board_style_white', styleName);
+              board.updateboard();
+            }
+            
+            /**
+             * Notify checkbox change for checkbox:
+             *   Antialiasing
+             */
+            function checkboxAntialiasing() {
+              if (document.getElementById('antialiasing-checkbox').checked) {
+                localStorage.setItem('antialiasing_mode', 'true');
+              } else {
+                localStorage.setItem('antialiasing_mode', 'false');
+              }
+            }
+            
+            /**
+             * Notify checkbox change for checkbox:
+             *   Hide 'Send' button
+             */
+            function checkboxHideSend() {
+              if (document.getElementById('hide-send-checkbox').checked) {
+                localStorage.setItem('hide-send', 'true');
+                document.getElementById('send-button').style.display = "none";
+                $('#chat').height(window.innerHeight - $('nav').height() - 51);
+              } else {
+                localStorage.setItem('hide-send', 'false');
+                document.getElementById('send-button').style.display = "initial";
+                $('#chat').height(window.innerHeight - $('nav').height() - 85);
+              }
+              
+            }
+
+            /**
+             * Notify checkbox change for checkbox:
+             * Hide chat time
+             */
+            function checkboxHideChatTime() {
+              if (document.getElementById('hide-chat-time').checked) {
+                localStorage.setItem('hide-chat-time', 'true');
+                $('.chattime').each(function(index) {
+                  $(this).addClass('hidden');
+                });
+              } else {
+                localStorage.setItem('hide-chat-time', 'false');
+                $('.chattime').each(function(index) {
+                  $(this).removeClass('hidden');
+                });
+              }
+            }
+            
+            /**
+             * Notify checkbox change for checkbox:
+             *   Show/Hide chat on window resize
+             */
+            function checkboxAutoOpenChat() {
+              if (document.getElementById('auto-open-chat-checkbox').checked) {
+                localStorage.setItem('auto_chat', 'true');
+              } else {
+                localStorage.setItem('auto_chat', 'false');
+              }
+            }
+            
+            /**
+             * Notify checkbox change for checkbox:
+             *   Rotate board when player 2
+             */
+            function checkboxAutoRotate() {
+              if (document.getElementById('auto-rotate-checkbox').checked) {
+                localStorage.setItem('auto_rotate', 'true');
+              } else {
+                localStorage.setItem('auto_rotate', 'false');
+              }
+            }
 
             $(document).ready(function() {
                 if(localStorage.getItem('sound')==='flase') {
@@ -2423,7 +3022,6 @@
 
                 $('#chat').offset({ top: $('nav').height() + 5 });
                 $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
-                $('#chat').height(window.innerHeight - $('nav').height() - 85);
 
                 tour(false);
             })
