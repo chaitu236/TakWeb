@@ -34,6 +34,8 @@
         <script src="js/three.min.js"></script>
         <script src="js/OrbitControls.min.js"></script>
         <script src="js/helvetiker_regular.typeface.js"></script>
+        <script src="js/linkify.min.js"></script>
+        <script src="js/linkify-string.min.js"></script>
 
 <!--        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
@@ -2443,7 +2445,8 @@
                         }
                         $cs.append('<span class="'+cls+'">['+getZero(hours)+':'+getZero(mins)+'] </span>');
                         $cs.append('<span class="chatname">'+name+':</span>');
-                        $cs.append(txt+'<br>');
+                        var options = {/* ... */};
+                        $cs.append(txt.linkify(options)+'<br>');
                         $cs.scrollTop($cs[0].scrollHeight);
                     }
                     //new seek
