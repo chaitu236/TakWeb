@@ -74,7 +74,14 @@
                 height: 80%;
             }
             #chat-server {
+                background-color: #e7e7e9;
                 height:100%;
+            }
+            .chatname {
+              font-weight: bold;
+            }
+            .chattime {
+              font-weight: italic;
             }
             #chat-toggle-text {
             }
@@ -443,7 +450,7 @@
         </div>
         <div id="chat">
             <div class="form-group height-full">
-                <textarea class="form-control" id="chat-server" readonly></textarea>
+                <div id="chat-server"></div>
             </div>
             <form role="form" onsubmit="server.chat(); return false;" class="height-auto" autocomplete="off">
               <input type="text" class="form-control" id="chat-me">
@@ -765,6 +772,10 @@
                           <form>
                             <input id="antialiasing-checkbox" type="checkbox" onClick="checkboxAntialiasing()"/>
                             Antialiasing (not reccomended for slower devices)
+                            <br/>
+                            <br/>
+                            <input id="hide-chat-time" type="checkbox" onClick="checkboxHideChatTime()"/>
+                            Hide chat time
                             <br/>
                             <br/>
                             <input id="hide-send-checkbox" type="checkbox" onClick="checkboxHideSend()"/>
@@ -2083,7 +2094,7 @@
                         return;
                     }
                     var url = window.location.host;
-                    // if (url.indexOf("playtak") > -1)
+                    if (url.indexOf("playtak") > -1)
                         url = 'playtak.com:3000';
                     var proto='ws://';
                     if (window.location.protocol === "https:")
@@ -2414,9 +2425,22 @@
                     }
                     else if (e.startsWith("Shout")) {
                         var msg = e.split("Shout ");
-                        console.log("received msg "+msg[1]);
+                        var name = msg[1].split('<')[1].split('>')[0];
+                        var txt = msg[1].split('<'+name+'>')[1];
+                        txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
                         var $cs = $('#chat-server');
-                        $cs.val($cs.val()+msg[1]+'\n');
+
+                        var now = new Date();
+                        var hours = now.getHours();
+                        var mins = now.getMinutes();
+                        var cls = 'chattime'
+                        if (localStorage.getItem('hide-chat-time')==='true') {
+                          cls = cls + ' hidden';
+                        }
+                        $cs.append('<span class="'+cls+'">['+getZero(hours)+':'+getZero(mins)+'] </span>');
+                        $cs.append('<span class="chatname">'+name+':</span>');
+                        $cs.append(txt+'<br>');
                         $cs.scrollTop($cs[0].scrollHeight);
                     }
                     //new seek
@@ -2818,6 +2842,15 @@
                 $('#chat').height(window.innerHeight - $('nav').height() - 51);
               }
 
+              //load setting for hide chat time
+              if (localStorage.getItem('hide-chat-time')==='true')
+              {
+                document.getElementById('hide-chat-time').checked = true;
+                $('.chattime').each(function(index) {
+                  $(this).addClass('hidden');
+                });
+              }
+
               // load the setting for automatically opening and closing the chat on window resize.
               if(localStorage.getItem('auto_chat')==='false') {
                 document.getElementById('auto-open-chat-checkbox').checked = false;
@@ -2927,6 +2960,24 @@
                 $('#chat').height(window.innerHeight - $('nav').height() - 85);
               }
               
+            }
+
+            /**
+             * Notify checkbox change for checkbox:
+             * Hide chat time
+             */
+            function checkboxHideChatTime() {
+              if (document.getElementById('hide-chat-time').checked) {
+                localStorage.setItem('hide-chat-time', 'true');
+                $('.chattime').each(function(index) {
+                  $(this).addClass('hidden');
+                });
+              } else {
+                localStorage.setItem('hide-chat-time', 'false');
+                $('.chattime').each(function(index) {
+                  $(this).removeClass('hidden');
+                });
+              }
             }
             
             /**
