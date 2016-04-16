@@ -35,7 +35,7 @@
         <script src="js/OrbitControls.min.js"></script>
         <script src="js/helvetiker_regular.typeface.js"></script>
         <script src="js/linkify.min.js"></script>
-        <script src="js/linkify-html.min.js"></script>
+        <script src="js/linkify-string.min.js"></script>
 
 <!--        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
@@ -2434,7 +2434,6 @@
                         var msg = e.split("Shout ");
                         var name = msg[1].split('<')[1].split('>')[0];
                         var txt = msg[1].split('<'+name+'>')[1];
-                        txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
                         var $cs = $('#chat-server');
 
@@ -2448,7 +2447,7 @@
                         $cs.append('<span class="'+cls+'">['+getZero(hours)+':'+getZero(mins)+'] </span>');
                         $cs.append('<span class="chatname">'+name+':</span>');
                         var options = {/* ... */};
-                        $cs.append(linkifyHtml(txt, options)+'<br>');
+                        $cs.append(txt.linkify(options)+'<br>');
                         $cs.scrollTop($cs[0].scrollHeight);
                     }
                     //new seek
