@@ -86,6 +86,7 @@
               font-weight: bold;
             }
             .ircname {
+              color: #8C6F65;
             }
             .chattime {
               color: #7D7D7D;
@@ -2434,6 +2435,13 @@
                         var msg = e.split("Shout ");
                         var name = msg[1].split('<')[1].split('>')[0];
                         var txt = msg[1].split('<'+name+'>')[1];
+                        var clsname = 'chatname';
+
+                        if (name=='IRC') {
+                          name = txt.split('<')[1].split('>')[0];
+                          txt = txt.split('<'+name+'>')[1];
+                          clsname = clsname + ' ircname';
+                        }
 
                         var $cs = $('#chat-server');
 
@@ -2445,7 +2453,7 @@
                           cls = cls + ' hidden';
                         }
                         $cs.append('<span class="'+cls+'">['+getZero(hours)+':'+getZero(mins)+'] </span>');
-                        $cs.append('<span class="chatname">'+name+':</span>');
+                        $cs.append('<span class="'+clsname+'">'+name+':</span>');
                         var options = {/* ... */};
                         $cs.append(txt.linkify(options)+'<br>');
                         $cs.scrollTop($cs[0].scrollHeight);
