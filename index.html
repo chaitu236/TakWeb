@@ -1589,7 +1589,7 @@
                 },
                 setmovedir: function () {
                     var s1 = this.move.start;
-                    var s2 = this.move.squares[1];
+                    var s2 = this.move.squares[this.move.squares.length - 1];
                     if (s1.file === s2.file && s1.rank === s2.rank)
                         return;
 
