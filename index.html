@@ -321,6 +321,11 @@
               margin: 2px;
               border : 2px solid black;
             }
+            .scrollable-menu {
+              height: auto;
+              max-height: 280px;
+              overflow-x: hidden;
+            }
         </style>
 
     </head>
@@ -370,7 +375,7 @@
                                title="Accept a seek" aria-haspopup="true" aria-expanded="false"> Join game
                                 <span class="badge" id="seekcount">0</span>
                                 <span class="caret"></span></a>
-                            <ul id="seeklist" class="dropdown-menu">
+                            <ul id="seeklist" class="dropdown-menu scrollable-menu">
                             </ul>
                         </li>
                         <li class="dropdown">
@@ -378,7 +383,7 @@
                                title="Observe a game" aria-haspopup="true" aria-expanded="false"> Watch
                                 <span class="badge" id="gamecount">0</span>
                                 <span class="caret"></span></a>
-                            <ul id="gamelist" class="dropdown-menu">
+                            <ul id="gamelist" class="dropdown-menu scrollable-menu">
                             </ul>
                         </li>
                     </ul>
@@ -2025,7 +2030,7 @@
                         return;
                     }
                     var url = window.location.host;
-                    //if (url.indexOf("playtak") > -1)
+                    if (url.indexOf("playtak") > -1)
                         url = 'playtak.com:3000';
                     var proto='ws://';
                     if (window.location.protocol === "https:")
