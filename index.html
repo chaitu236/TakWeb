@@ -85,6 +85,9 @@
             .chatname {
               font-weight: bold;
             }
+            .playername {
+              font-weight: bold;
+            }
             .ircname {
               color: #8C6F65;
             }
@@ -2022,7 +2025,7 @@
                         return;
                     }
                     var url = window.location.host;
-                    if (url.indexOf("playtak") > -1)
+                    //if (url.indexOf("playtak") > -1)
                         url = 'playtak.com:3000';
                     var proto='ws://';
                     if (window.location.protocol === "https:")
@@ -2164,15 +2167,27 @@
                     else if (e.startsWith("GameList Add Game#")) {
                         //GameList Add Game#1 player1 vs player2, 4x4, 180, 0 half-moves played, player1 to move
                         var spl = e.split(" ");
+
+                        var no = spl[2].split("Game#")[1];
+
                         var t = Number(spl[7].split(",")[0]);
                         var m = parseInt(t/60);
                         var s = getZero(parseInt(t%60));
 
-                        var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6].split(",")[0] + " " + m+':'+s;
-                        var $li = $('<li/>').appendTo($('#gamelist'));
-                        $('<a/>').text(val).
-                                click(function() {server.observegame(spl[2].split("Game#")[1]);}).
-                                    appendTo($li);
+                        var p1 = spl[3];
+                        var p2 = spl[5].split(",")[0];
+                        var sz = spl[6].split(",")[0];
+
+                        p1 = "<span class='playername'>"+p1+"</span>";
+                        p2 = "<span class='playername'>"+p2+"</span>";
+                        sz = "<span class='badge'>"+sz+"</span>";
+
+                        //var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6].split(",")[0] + " " + m+':'+s;
+                        var val = p1 + " vs " + p2 + " " + sz + " " + m+":"+s;
+
+                        var li = $('<li/>').addClass('game'+no).appendTo($('#gamelist'));
+                        $('<a/>').append(val).click(function() {server.observegame(spl[2].split("Game#")[1]);}).
+                                              appendTo(li);
 
                         var op = document.getElementById("gamecount");
                         op.innerHTML = Number(op.innerHTML)+1;
@@ -2180,16 +2195,9 @@
                     else if (e.startsWith("GameList Remove Game#")) {
                         //GameList Remove Game#1 player1 vs player2, 4x4, 180, 0 half-moves played, player1 to move
                         var spl = e.split(" ");
-                        var t = Number(spl[7].split(",")[0]);
-                        var m = parseInt(t/60);
-                        var s = getZero(parseInt(t%60));
 
-                        var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6].split(",")[0] + " " + m+':'+s;
-                        $('#gamelist').children().each(function() {
-                            if($(this).find('a')[0].innerHTML === val) {
-                                this.remove();
-                            }
-                        });
+                        var no = spl[2].split("Game#")[1];
+                        $('.game'+no).remove();
 
                         var op = document.getElementById("gamecount");
                         op.innerHTML = Number(op.innerHTML)-1;
@@ -2383,14 +2391,20 @@
                         //Seek new 1 chaitu 5 180
                         var spl = e.split(" ");
 
+                        var no = spl[2];
                         var t = Number(spl[5]);
                         var m = parseInt(t/60);
                         var s = getZero(parseInt(t%60));
 
-                        var $li = $('<li/>').appendTo($('#seeklist'));
-                        $('<a/>').text(spl[3]+' - '+spl[4]+'x'+spl[4]+' - '+m+':'+s).
-                                click(function() {server.acceptseek(spl[2])}).
-                                    appendTo($li);
+                        var p = spl[3];
+                        var sz = spl[4]+'x'+spl[4];
+
+                        p = "<span class='playername'>"+p+"</span>";
+                        sz = "<span class='badge'>"+sz+"</span>";
+
+                        var li = $('<li/>').addClass('seek'+no).appendTo($('#seeklist'));
+                        $('<a/>').append(p + " " + sz + " " + m+":"+s).click(function() {server.acceptseek(spl[2])}).
+                                    appendTo(li);
 
                         var op = document.getElementById("seekcount");
                         op.innerHTML = Number(op.innerHTML)+1;
@@ -2400,16 +2414,8 @@
                         //Seek remove 1 chaitu 5 15
                         var spl = e.split(" ");
 
-                        var t = Number(spl[5]);
-                        var m = parseInt(t/60);
-                        var s = getZero(parseInt(t%60));
-
-                        var val = spl[3]+' - '+spl[4]+'x'+spl[4]+' - '+m+':'+s;
-                        $('#seeklist').children().each(function() {
-                            if($(this).find('a')[0].innerHTML === val) {
-                                this.remove();
-                            }
-                        });
+                        var no = spl[2];
+                        $('.seek'+no).remove();
 
                         var op = document.getElementById("seekcount");
                         op.innerHTML = Number(op.innerHTML)-1;
