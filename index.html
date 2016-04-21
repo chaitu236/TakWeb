@@ -2278,7 +2278,10 @@
                               type = "resignation";
 
                             if(spl[2] === "R-0" || spl[2] === "F-0" || spl[2] === "1-0") {
-                              if(board.mycolor === "white") {
+                              if(board.observing === true) {
+                                msg += "White wins by "+type;
+                              }
+                              else if(board.mycolor === "white") {
                                 msg += "You win by "+type;
                               } else {
                                 msg += "Your opponent wins by "+type;
@@ -2286,7 +2289,10 @@
                             } else if (spl[2] === "1/2-1/2") {
                               msg += "The game is a draw!";
                             } else {//black wins
-                              if(board.mycolor === "white") {
+                              if(board.observing === true) {
+                                msg += "Black wins by "+type;
+                              }
+                              else if(board.mycolor === "white") {
                                 msg += "Your opponent wins by "+type;
                               } else {
                                 msg += "You win by "+type;
