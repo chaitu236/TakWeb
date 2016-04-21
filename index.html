@@ -85,6 +85,9 @@
             .chatname {
               font-weight: bold;
             }
+            .chatmyname {
+              color: red;
+            }
             .playername {
               font-weight: bold;
             }
@@ -2432,7 +2435,17 @@
                         $cs.append('<span class="'+cls+'">['+getZero(hours)+':'+getZero(mins)+'] </span>');
                         $cs.append('<span class="'+clsname+'">'+name+':</span>');
                         var options = {/* ... */};
-                        $cs.append(txt.linkify(options)+'<br>');
+
+                        txt = txt.linkify(options);
+
+                        //someone said our name
+                        if(txt.indexOf(this.myname) > -1) {
+                          var tmp = txt.split(this.myname);
+                          txt = tmp[0] + '<span class="chatmyname">'+this.myname+'</span>' + tmp[1];
+                        }
+
+                        $cs.append(txt+'<br>');
+
                         $cs.scrollTop($cs[0].scrollHeight);
                     }
                     //new seek
