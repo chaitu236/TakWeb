@@ -88,6 +88,9 @@
             .playername {
               font-weight: bold;
             }
+            .bold {
+              font-weight: bold;
+            }
             .ircname {
               color: #8C6F65;
             }
@@ -558,7 +561,7 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-sm-6 center" id="gameoveralert-text">
+                            <div class="col-sm-12 center" id="gameoveralert-text">
                             </div>
                         </div>
                         <div class="modal-footer center">
@@ -2263,7 +2266,33 @@
                             board.scratch = true;
                             board.notate(spl[2]);
 
-                            var msg = "Game over " + spl[2];
+                            var msg = "Game over <span class='bold'>" + spl[2] + "</span><br>";
+                            var res;
+                            var type;
+
+                            if(spl[2] === "R-0" || spl[2] === "0-R")
+                              type = "making a road";
+                            else if (spl[2] === "F-0" || spl[2] === "0-F")
+                              type = "having more flats";
+                            else if (spl[2] === "1-0" || spl[2] === "0-1")
+                              type = "resignation";
+
+                            if(spl[2] === "R-0" || spl[2] === "F-0" || spl[2] === "1-0") {
+                              if(board.mycolor === "white") {
+                                msg += "You win by "+type;
+                              } else {
+                                msg += "Your opponent wins by "+type;
+                              }
+                            } else if (spl[2] === "1/2-1/2") {
+                              msg += "The game is a draw!";
+                            } else {//black wins
+                              if(board.mycolor === "white") {
+                                msg += "Your opponent wins by "+type;
+                              } else {
+                                msg += "You win by "+type;
+                              }
+                            }
+
                             alert("info", msg);
                             document.getElementById("scratchsize").disabled = false;
                             stopTime();
@@ -2278,7 +2307,12 @@
                             document.title = "Tak";
                             board.scratch = true;
 
-                            var msg = "Game abandoned by " + spl[2];
+                            if(board.mycolor === "white")
+                              board.notate("1-0");
+                            else
+                              board.notate("0-1");
+
+                            var msg = "Game abandoned by " + spl[2] + ". You win!";
                             alert("info", msg);
                             document.getElementById("scratchsize").disabled = false;
                             stopTime();
