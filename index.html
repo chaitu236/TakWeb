@@ -753,7 +753,8 @@
                                     <li>White goes first</li>
                                     <li>On first move, each player must place his opponent's tile</li>
                                     <li>Create a path with flat stones and capstones between any two opposite ends of the board</li>
-                                    <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/sites/default/files/TakBetaRules3-10-16.pdf">here</a> [PDF].</li>
+                                    <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/sites/default/files/TakBetaRules3-10-16.pdf">here</a> [PDF]</li>
+                                    <li>You can learn about the game notation <a target="_blank" href="https://www.reddit.com/r/Tak/wiki/portable_tak_notation">here</a></li>
                                 </ul></li>
                             <li><ul>Controls:
                                     <li>Left click-drag (or touch-drag) to rotate board</li>
@@ -2318,7 +2319,10 @@
                             else
                               board.notate("0-1");
 
-                            var msg = "Game abandoned by " + spl[2] + ". You win!";
+                            var msg = "Game abandoned by " + spl[2] + ".";
+                            if(!board.observing)
+                              msg += " You win!";
+
                             alert("info", msg);
                             document.getElementById("scratchsize").disabled = false;
                             stopTime();
@@ -2329,7 +2333,7 @@
                       }
                     }
                     else if (e.startsWith("Login or Register")) {
-                        server.send("Client " + "TakWeb-16.04.18");
+                        server.send("Client " + "TakWeb-16.04.21");
 
                         if(localStorage.getItem('keeploggedin')==='true' && this.tries<3) {
                           var uname = localStorage.getItem('usr');
