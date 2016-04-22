@@ -1,3 +1,24 @@
+// settings
+var antialiasing_mode = false;
+var stack_dist = 105;
+var piece_size = 88;
+var piece_height = 15;
+var sq_size = 90;
+var sq_height = 15;
+var capstone_height = 70;
+var capstone_radius = 30;
+var stack_selection_height = 60;
+var border_size = 30;
+var letter_size = 12;
+var digit_adjustment = 2;
+var diagonal_walls = false;
+var white_square_tex_name = 'images/board/white_simple.png';
+var black_square_tex_name = 'images/board/black_simple.png';
+var white_piece_tex_name = 'images/pieces/white_simple_pieces.png';
+var black_piece_tex_name = 'images/pieces/black_simple_pieces.png';
+var white_caps_tex_name = 'images/pieces/white_simple_caps.png';
+var black_caps_tex_name = 'images/pieces/black_simple_caps.png';
+
 /*
  * Settings loaded on initialization. Try to keep them in the order of the window.
  * First the left-hand div, then the right-hand div.
