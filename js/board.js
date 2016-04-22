@@ -1165,3 +1165,30 @@ var board = {
         }
     }
 };
+
+function startTime(fromFn) {
+  if(typeof fromFn === 'undefined' && !server.timervar)
+    return;
+  var now = new Date();
+  var t = now.getHours()*60*60 + now.getMinutes()*60+now.getSeconds();
+  var elapsed = t-lastTimeUpdate;
+
+  if(board.movecount%2 === 0) {
+    t1 = lastWt - elapsed;
+    $('.player1-time:first').html(parseInt(t1/60)+':'+getZero(t1%60));
+  } else {
+    t2 = lastBt - elapsed;
+    $('.player2-time:first').html(parseInt(t2/60)+':'+getZero(t2%60));
+  }
+
+  server.timervar = setTimeout(startTime, 500);
+}
+
+function stopTime() {
+  clearTimeout(server.timervar);
+  server.timervar = null;
+}
+
+function getZero(t) {
+  return t<10?'0'+t:t;
+}
