@@ -94,6 +94,10 @@
             .bold {
               font-weight: bold;
             }
+            .cmdreply {
+              font-style: italic;
+              color: blue;
+            }
             .ircname {
               color: #8C6F65;
             }
@@ -2448,6 +2452,13 @@
 
                         $cs.scrollTop($cs[0].scrollHeight);
                     }
+                    else if (e.startsWith("CmdReply")) {
+                        var msg = e.split("CmdReply ")[1];
+                        var $cs = $('#chat-server');
+
+                        $cs.append('<span class="cmdreply">'+msg+'</span><br>');
+                        $cs.scrollTop($cs[0].scrollHeight);
+                    }
                     //new seek
                     else if (e.startsWith("Seek new")) {
                         //Seek new 1 chaitu 5 180
@@ -2491,7 +2502,10 @@
                 chat: function () {
                     var msg = $('#chat-me').val();
                     console.log('msg= '+msg);
-                    this.send('Shout '+msg);
+                    if(msg.startsWith('.'))
+                      this.send(msg.slice(1));
+                    else
+                      this.send('Shout '+msg);
                     $('#chat-me').val('');
                 },
                 send: function (e) {
