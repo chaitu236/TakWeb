@@ -2569,14 +2569,16 @@
 
             init();
             animate();
+            var window_width;
+            var window_height;
 
             function init() {
                 // load the user settings.
                 loadSettings();
                 
                 canvas = document.getElementById("gamecanvas");
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+                canvas.width = window_width = window.innerWidth;
+                canvas.height = window_height = window.innerHeight;
 
                 camera = new THREE.PerspectiveCamera(70, canvas.width / canvas.height, 1, 2000);
                 camera.position.set(0, canvas.width / 2, canvas.height / 2);
@@ -2617,8 +2619,12 @@
             }
 
             function onWindowResize() {
-              canvas.width = window.innerWidth;
-              canvas.height = window.innerHeight;
+              //only height changed, possibly due to virtual keyboard
+              if(window.innerWidth == window_width) {
+                return;
+              }
+              canvas.width = window_width = window.innerWidth;
+              canvas.height = window_height = window.innerHeight;
 
               renderer.setSize(canvas.width, canvas.height);
 
