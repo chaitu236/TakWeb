@@ -2359,18 +2359,17 @@
                         op.innerHTML = Number(op.innerHTML)-1;
                     }
                     else if (e.startsWith("Game#")) {
+                      var spl = e.split(" ");
                       var gameno = Number(e.split("Game#")[1].split(" ")[0]);
                       console.log("game no "+gameno+" "+board.gameno);
                       //Game#1 ...
                       if(gameno === board.gameno) {
                         //Game#1 P A4 (C|W)
-                        if (e.indexOf(" P ") > -1) {
-                            var spl = e.split(" ");
+                        if (spl[1] === "P") {
                             board.serverPmove(spl[2].charAt(0), Number(spl[2].charAt(1)), spl[3]);
                         }
                         //Game#1 M A2 A5 2 1
-                        else if (e.indexOf(" M ") > -1) {
-                            var spl = e.split(" ");
+                        else if (spl[1] === "M") {
                             var nums = [];
                             for (i = 4; i < spl.length; i++)
                                 nums.push(Number(spl[i]));
@@ -2379,8 +2378,7 @@
                                     nums);
                         }
                         //Game#1 Time 170 200
-                        else if (e.indexOf(" Time ") > -1) {
-                          var spl = e.split(" ");
+                        else if (spl[1] === "Time") {
                           var wt = Number(spl[2]);
                           var bt = Number(spl[3]);
                           lastWt = wt;
@@ -2398,19 +2396,18 @@
                           }
                         }
                         //Game#1 OfferDraw
-                        else if (e.indexOf("OfferDraw") > -1) {
+                        else if (spl[1] === "OfferDraw") {
                             document.getElementById("draw").src = "images/hand-other-offered.png";
                             alert("info", "Draw is offered by your opponent");
                         }
                         //Game#1 RemoveDraw
-                        else if (e.indexOf("RemoveDraw") > -1) {
+                        else if (spl[1] === "RemoveDraw") {
                             document.getElementById("draw").src = "images/offer-hand.png";
                             alert("info", "Draw offer is taken back by your opponent");
                         }
                         //Game#1 Over result
-                        else if (e.indexOf("Over") > -1) {
+                        else if (spl[1] === "Over") {
                             document.title = "Tak";
-                            var spl = e.split(" ");
                             board.scratch = true;
                             board.result = spl[2];
                             board.notate(spl[2]);
@@ -2454,10 +2451,9 @@
                             $('#gameoveralert-text').html(msg);
                             $('#gameoveralert').modal('show');
                         }
-                        //Abandoned
-                        else if (e.indexOf("Abandoned") > -1) {
+                        //Game#1 Abandoned
+                        else if (spl[1] === "Abandoned") {
                             //Game#1 Abandoned. name quit
-                            var spl = e.split(" ");
                             document.title = "Tak";
                             board.scratch = true;
 
