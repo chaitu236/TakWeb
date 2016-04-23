@@ -2592,7 +2592,7 @@
             };
 
             init();
-            animate();
+            $(window).on("load", animate);
 
             function init() {
                 // load the user settings.
