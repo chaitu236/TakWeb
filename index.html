@@ -82,6 +82,14 @@
                 height:100%;
                 overflow-y: auto;
             }
+            .optlist a {
+              margin-top: 2px;
+              margin-bottom: 2px;
+
+              margin-left: 5px;
+              margin-right: 5px;
+              padding: 0px;
+            }
             .chatname {
               font-weight: bold;
             }
@@ -256,6 +264,10 @@
                 display: table;
                 width: 150px;
             }
+            #moveslist a {
+              color: inherit;
+              text-decoration: none;
+            }
             .center {
                 text-align: center;
             }
@@ -329,6 +341,11 @@
               border-radius : 20px;
               padding: 5px;
               margin: 2px;
+              border : 2px solid black;
+            }
+            .curmove {
+              padding-left: 4px;
+              padding-right: 4px;
               border : 2px solid black;
             }
             .scrollable-menu {
@@ -445,10 +462,15 @@
                     </div>
                     <div id="player-opp-time" class="player1-time">0:00</div>
                 </li>
-                <li class="center">
-                    <!--<a href="#" title="Reverse board" onclick="board.reverseboard()"><img src="images/ic_screen_rotation_black_24px.svg" width="25 height=25"></a>-->
-                    <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()"><img id="draw" src="images/offer-hand.png" width="25" height="25"></a>
-                    <a href="#" title="Resign" class="btn" onclick="server.resign()"><img src="images/flag.svg" width="25" height="20"></a>
+                <li class="optlist center">
+                <a id="download_notation" href="#" title="Download notation" class="btn" onclick="downloadNotation();">
+                  <img src="images/ic_file_download_black_24px.svg" width="25" height="25"></a>
+                <a href="#" title="Undo" class="btn" onclick="undoButton()">
+                  <img id="undo" src="images/requestundo.svg" width="25" height="25"></a>
+                <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()">
+                  <img id="draw" src="images/offer-hand.png" width="25" height="25"></a>
+                <a href="#" title="Resign" class="btn" onclick="server.resign()">
+                  <img src="images/flag.svg" width="25" height="20"></a>
                 </li>
                 <li>
                     <div title="Notation for current game appears here" id="notationbar">
@@ -456,6 +478,16 @@
                         <table id="moveslist">
                         </table>
                     </div>
+                </li>
+                <li class="optlist center">
+                <a href="#" title="First move" class="btn" onclick="fastrewind()">
+                  <img src="images/ic_fast_rewind_black_24px.svg" width="25" height="25"></a>
+                <a href="#" title="Step back" class="btn" onclick="stepback()">
+                  <img src="images/ic_keyboard_arrow_left_black_24px.svg" width="25" height="25"></a>
+                <a href="#" title="Step forward" class="btn" onclick="stepforward()">
+                  <img src="images/ic_keyboard_arrow_right_black_24px.svg" width="25" height="25"></a>
+                <a href="#" title="Current move" class="btn" onclick="fastforward()">
+                  <img src="images/ic_fast_forward_black_24px.svg" width="25" height="25"></a>
                 </li>
                 <li class="center">
                     <div id="player-me">
@@ -750,6 +782,26 @@
             </div>
         </div>
 
+        <div id="privacy-modal" class="modal fade">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Privacy Policy</h4>
+                    </div>
+                    <div class="modal-body">
+                        <ul>
+                          <li>All online games played after <b>23 April 5:00 PM GMT</b> will be released into public domain</li>
+                          <li>Player names will be released along with the game notation and player stats</li>
+                          <li>Games played before that time will be stripped off of player names and released</li>
+                          <li>Only email addresses and passwords will remain private on the server</li>
+                          <li>This policy is adopted in the hopes that people and AIs can study games and improve Tak</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="help-modal" class="modal fade">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -759,6 +811,7 @@
                     </div>
                     <div class="modal-body">
                         <ul>
+                            <li><ul> <a href="#" onclick="showPrivacyPolicy();"> Privacy Policy</a><br> </li></ul>
                             <li><ul> Rules - the short version:
                                     <li>White goes first</li>
                                     <li>On first move, each player must place his opponent's tile</li>
@@ -788,7 +841,7 @@
                             <li><ul>About the game:
                                     <li>Rules for TAK are made by <a target="_blank" href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a target="_blank" href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
                                     <li>Back the <b><a target="_blank" href="https://www.kickstarter.com/projects/cheapassgames/tak-a-beautiful-game">Tak Kickstarter!</a></b></li>
-                                    <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">Chaitanya Vadrevu (me)</a></li>
+                                    <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">Chaitanya Vadrevu</a> with the help of other volunteers</li>
                                     <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a>,
                                     backend code <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
                                     <li>Check out <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">these </a>
@@ -879,6 +932,7 @@
                 blackpiecesleft: 0,
                 mycolor: "white",
                 movecount: 0,
+                moveshown: 0,
                 scratch: true,
                 sq: [],
                 board_objects: [],
@@ -892,9 +946,11 @@
                 server: null,
                 gameno: 0,
                 boardside: "white",
-                result: "none",
+                result: "",
                 observing: false,
                 position: {x: 0, y: 0, endx: 0, endz: 0},
+                board_history: [],
+                timer_started: false,
                 init: function (sz, col, scr, obs) {
                     this.size = sz;
 
@@ -923,6 +979,7 @@
                     this.mycolor = col;
                     this.sq = [];
                     this.movecount = 0;
+                    this.moveshown = 0;
                     this.scratch = scr;
                     this.board_objects = [];
                     this.piece_objects = [];
@@ -931,22 +988,24 @@
                     this.selectedStack = null;
                     this.gameno = 0;
                     this.move = {start: null, end: null, dir: 'U', squares: []};
-                    this.result = "none";
+                    this.result = "";
                     this.observing = typeof obs !== 'undefined' ? obs : false;
                     this.ismymove = this.checkifmymove();
+                    this.board_history = [];
+                    this.timer_started = false;
 
-                    for (i = 0; i < this.size; i++) {
+                    var bp = [];
+                    for (var i = 0; i < this.size; i++) {
                         this.sq[i] = [];
-                        for (j = 0; j < this.size; j++) {
+                        for (var j = 0; j < this.size; j++) {
                             this.sq[i][j] = [];
+                            bp.push([]);
                         }
                     }
-                    
+                    this.board_history.push(bp);
+
                     this.addboard();
                     this.addpieces();
-
-                    var material = new THREE.LineBasicMaterial({color: 0x0000f0});
-                    var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
 
                     document.getElementById("player-opp").className = "selectplayer";
                     document.getElementById("player-me").className = "";
@@ -1067,62 +1126,79 @@
 
                     var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     geometry.center();
-
+                    var piece;
+                    var whitePieces = [];
+                    var whiteCaps = [];
+                    var blackPieces = [];
+                    var blackCaps = [];
                     for (i = 0; i < this.tottiles; i++) {
-                        var stackno = Math.floor(i / 10);
-                        var stackheight = i % 10;
-
-                        var piece;
-
                         piece = new THREE.Mesh(geometry, white_material);
-                        piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
                         piece.iswhitepiece = true;
                         piece.isstanding = false;
                         piece.onsquare = null;
                         piece.isboard = false;
                         piece.iscapstone = false;
-
                         this.piece_objects.push(piece);
-                        scene.add(piece);
+                        whitePieces.push(piece);
 
                         piece = new THREE.Mesh(geometry, black_material);
-                        piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
                         piece.iswhitepiece = false;
                         piece.isstanding = false;
                         piece.onsquare = null;
                         piece.isboard = false;
                         piece.iscapstone = false;
-
                         this.piece_objects.push(piece);
-                        scene.add(piece);
+                        blackPieces.push(piece);
                     }
+                    var geometry = new THREE.CylinderGeometry(capstone_radius,
+                                                    capstone_radius, capstone_height, 30);
+                    geometry.center();
                     for (i = 0; i < this.totcaps; i++) {
-                        var stackno = Math.ceil(this.tottiles / 10) + i;
-                        var geometry = new THREE.CylinderGeometry(capstone_radius,
-                                capstone_radius, capstone_height, 30);
-                        geometry.center();
-                        var piece = new THREE.Mesh(geometry, white_cap_material);
-                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * stack_dist);
+                        piece = new THREE.Mesh(geometry, white_cap_material);
                         piece.iswhitepiece = true;
                         piece.isstanding = true;
                         piece.onsquare = null;
                         piece.isboard = false;
                         piece.iscapstone = true;
-
                         this.piece_objects.push(piece);
-                        scene.add(piece);
+                        whiteCaps.push(piece);
 
                         piece = new THREE.Mesh(geometry, black_cap_material);
-                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * stack_dist);
                         piece.iswhitepiece = false;
                         piece.isstanding = true;
                         piece.onsquare = null;
                         piece.isboard = false;
                         piece.iscapstone = true;
-
                         this.piece_objects.push(piece);
-                        scene.add(piece);
+                        blackCaps.push(piece);
                     }
+                    this.arrangepieces(whitePieces, whiteCaps, blackPieces, blackCaps);
+                },
+                arrangepieces: function(whitePieces, whiteCaps, blackPieces, blackCaps) {
+                  var piece;
+                  for (i = 0; i < this.tottiles; i++) {
+                    var stackno = Math.floor(i / 10);
+                    var stackheight = i % 10;
+                    piece = whitePieces[i];
+                    piece.position.set(this.position.endx + 50, stackheight * piece_height,
+                        this.position.endz - piece_size - stackno * stack_dist);
+                    scene.add(piece);
+                    piece = blackPieces[i];
+                    piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height,
+                        this.position.z + stackno * stack_dist);
+                    scene.add(piece);
+                  }
+                  for (i = 0; i < this.totcaps; i++) {
+                    var stackno = Math.ceil(this.tottiles / 10) + i;
+                    piece = whiteCaps[i];
+                    piece.position.set(this.position.endx + 50, (capstone_height - sq_height) / 2,
+                        this.position.endz - piece_size - stackno * stack_dist);
+                    scene.add(piece);
+                    piece = blackCaps[i];
+                    piece.position.set(this.position.x - 50 - piece_size, (capstone_height - sq_height) / 2,
+                        this.position.z + stackno * stack_dist);
+                    scene.add(piece);
+                  }
                 },
                 updateboard: function () {
                     // reload textures.
@@ -1199,15 +1275,17 @@
                     return this.sq[file][this.size - 1 - rank].board_object;
                 },
                 incmovecnt: function () {
+                    this.save_board_pos();
+                    if(this.moveshown === this.movecount) {
+                      this.moveshown++;
+                      $('.curmove:first').removeClass('curmove');
+                      $('.moveno'+this.movecount+':first').addClass('curmove');
+                    }
                     this.movecount++;
                     document.getElementById("move-sound").play();
 
                     $('#player-me').toggleClass('selectplayer');
                     $('#player-opp').toggleClass('selectplayer');
-                    /*v1 = document.getElementById("player-opp");
-                    v1.className = (v1.className === "") ? "selectplayer" : "";
-                    v2 = document.getElementById("player-me");
-                    v2.className = (v2.className === "") ? "selectplayer" : "";*/
 
                     if (this.scratch) {
                         if (this.mycolor === "white")
@@ -1217,6 +1295,57 @@
                     }
 
                     this.ismymove = this.checkifmymove();
+                    $('#undo').attr('src', 'images/requestundo.svg');
+                },
+                save_board_pos: function() {
+                  var bp = [];
+                  //for all squares, convert stack info to board position info
+                  for(var i=0;i<this.size;i++) {
+                    for(var j=0;j<this.size;j++) {
+                      var bp_sq = [];
+                      var stk = this.sq[i][j];
+
+                      //if(stk.length===0)
+                      //  bp_sq.push('.');
+                      for(var s=0;s<stk.length;s++) {
+                        var pc = stk[s];
+                        var c = 'p';
+                        if(pc.iscapstone)
+                          c = 'c';
+                        else if (pc.isstanding)
+                          c = 'w';
+
+                        if(pc.iswhitepiece)
+                          c = c.charAt(0).toUpperCase();
+
+                        bp_sq.push(c);
+                      }
+                      bp.push(bp_sq);
+                    }
+                  }
+                  this.board_history.push(bp);
+                },
+                //pos is a single dim. array of size*size containing arrays of piece types
+                apply_board_pos: function(pos) {
+                  for(var i=0;i<this.size;i++) {//file
+                    for(var j=0;j<this.size;j++) {//rank
+                      var sq = this.get_board_obj(i, j);
+                      var sqpos = pos[i*this.size + j];
+
+                      for(var s=0;s<sqpos.length;s++) {
+                        var pc = sqpos[s];
+                        var iscap = (pc==='c' || pc==='C');
+                        var iswall = (pc==='w' || pc==='W');
+                        var iswhite = (pc===pc.charAt(0).toUpperCase());
+
+                        var pc = this.getfromstack(iscap, iswhite);
+                        if(iswall)
+                          this.standup(pc);
+
+                        this.push(sq, pc);
+                      }
+                    }
+                  }
                 },
                 leftclick: function () {
                     this.remove_total_highlight();
@@ -1410,6 +1539,7 @@
                 },
                 //move the server sends
                 serverPmove: function (file, rank, caporwall) {
+                    fastforward();
                     var obj = this.getfromstack((caporwall === 'C'), this.is_white_piece_to_move());
 
                     if (!obj) {
@@ -1429,6 +1559,7 @@
                 },
                 //Move move the server sends
                 serverMmove: function (f1, r1, f2, r2, nums) {
+                    fastforward();
                     var s1 = this.get_board_obj(f1.charCodeAt(0) - 'A'.charCodeAt(0), r1 - 1);
                     var fi = 0, ri = 0;
                     if (f1 === f2)
@@ -1629,18 +1760,35 @@
                     }
                 },
                 notate: function (txt) {
+                    var res=false;
+                    if(txt==='R-0'||txt==='0-R'||txt==='F=0'||txt==='0-F'||txt==='1-0'||txt==='0-1'||txt==='1/2-1/2') {
+                        var ol = document.getElementById("moveslist");
+                        var row = ol.insertRow();
+                        var cell0 = row.insertCell(0);
+                        cell0.innerHTML = '';
+
+                        var cell1 = row.insertCell(1);
+                        row.insertCell(2);
+                        cell1.innerHTML = txt;
+
+                        $('#notationbar').scrollTop($('#moveslist tr:last').position().top);
+                        return;
+                    }
+
                     if (this.movecount !== 0 && this.movecount % 2 === 1) {
                         var om = document.getElementById("moveslist");
                         var col = om.rows[om.rows.length - 1].cells[2];
-                        col.innerHTML = txt;
+                        col.innerHTML = '<a href="#" onclick="board.showmove('+(this.movecount+1)+');"><span class=moveno'+this.movecount+'>'+txt+'</span></a>';
                     } else {
                         var ol = document.getElementById("moveslist");
                         var row = ol.insertRow();
                         var cell0 = row.insertCell(0);
                         cell0.innerHTML = Math.floor(this.movecount / 2 + 1) + '.';
+
                         var cell1 = row.insertCell(1);
                         row.insertCell(2);
-                        cell1.innerHTML = txt;
+                        //cell1.innerHTML = '<span class=moveno'+this.movecount+'>'+txt+'</span>';
+                        cell1.innerHTML = '<a href="#" onclick="board.showmove('+(this.movecount+1)+');"><span class=moveno'+this.movecount+'>'+txt+'</span></a>';
                     }
                     $('#notationbar').scrollTop($('#moveslist tr:last').position().top);
                 },
@@ -1743,7 +1891,7 @@
                         this.standup(piece);
                 },
                 flatten: function (piece) {
-                    if (!piece.isstanding)
+                    if (!piece.isstanding || piece.iscapstone)
                         return;
                     piece.position.y -= piece_size / 2 - piece_height / 2;
                     if (diagonal_walls)
@@ -1802,6 +1950,122 @@
                     console.log('right up');
                     this.remove_total_highlight();
                 },
+                //bring pieces to original positions
+                resetpieces: function() {
+                    this.highlighted = null;
+                    this.selected = null;
+                    this.selectedStack = null;
+                    this.move = {start: null, end: null, dir: 'U', squares: []};
+
+                    //reset stacks
+                    var piece;
+                    var whitePieces = [];
+                    var whiteCaps = [];
+                    var blackPieces = [];
+                    var blackCaps = [];
+                    while (piece = this.piece_objects.pop())
+                    {
+                      if (piece.onsquare)
+                        continue;
+                      this.flatten(piece);
+                      if (piece.iswhitepiece) {
+                        if (piece.iscapstone)
+                          whiteCaps.push(piece);
+                        else
+                          whitePieces.push(piece);
+                      }
+                      else {
+                        if (piece.iscapstone)
+                          blackCaps.push(piece);
+                        else
+                          blackPieces.push(piece);
+                      }
+                    }
+                    for (var i = 0; i < this.size; i++) {
+                        for (var j = 0; j < this.size; j++) {
+                            while (piece = this.sq[i][j].pop()) {
+                                piece.onsquare = false;
+                                this.flatten(piece);
+                                if (piece.iswhitepiece) {
+                                  if (piece.iscapstone)
+                                    whiteCaps.push(piece);
+                                  else
+                                    whitePieces.push(piece);
+                                }
+                                else {
+                                  if (piece.iscapstone)
+                                    blackCaps.push(piece);
+                                  else
+                                    blackPieces.push(piece);
+                                }
+                            }
+                        }
+                    }
+                    for (var i = 0; i < whitePieces.length; ++i) {
+                      this.piece_objects.push(whitePieces[i]);
+                    }
+                    for (var i = 0; i < blackPieces.length; ++i) {
+                      this.piece_objects.push(blackPieces[i]);
+                    }
+                    for (var i = 0; i < whiteCaps.length; ++i) {
+                      this.piece_objects.push(whiteCaps[i]);
+                    }
+                    for (var i = 0; i < blackCaps.length; ++i) {
+                      this.piece_objects.push(blackCaps[i]);
+                    }
+                    this.arrangepieces(whitePieces, whiteCaps, blackPieces, blackCaps);
+                },
+                showmove: function(no) {
+                  if(this.movecount <= 0 || no>this.movecount || no<=0 || this.moveshown === no)
+                      return;
+
+                  console.log('showmove '+no);
+                  this.moveshown = no;
+                  this.resetpieces();
+                  this.apply_board_pos(this.board_history[no]);
+                  $('.curmove:first').removeClass('curmove');
+                  $('.moveno'+(no-1)+':first').addClass('curmove');
+                },
+                undo: function() {
+                  if(this.movecount <= 0)
+                    return;
+
+                  this.resetpieces();
+                  this.apply_board_pos(this.board_history[this.movecount-1]);
+                  this.board_history.pop();
+                  this.movecount--;
+                  this.moveshown = this.movecount;
+
+                  $('#player-me').toggleClass('selectplayer');
+                  $('#player-opp').toggleClass('selectplayer');
+
+                  if (this.scratch) {
+                      if (this.mycolor === "white")
+                          this.mycolor = "black";
+                      else
+                          this.mycolor = "white";
+                  }
+                  this.ismymove = this.checkifmymove();
+
+                  //fix notation
+                  var ml = document.getElementById("moveslist");
+                  var lr = ml.rows[ml.rows.length - 1];
+                  var txt = lr.cells[1].innerHTML;
+                  if(txt==='R-0'||txt==='0-R'||txt==='F=0'||txt==='0-F'||txt==='1-0'||txt==='0-1'||txt==='1/2-1/2') {
+                    ml.deleteRow(ml.rows.length - 1);
+                    lr = ml.rows[ml.rows.length - 1];
+                  }
+
+                  if(this.movecount % 2 == 0) {
+                      ml.deleteRow(ml.rows.length - 1);
+                  } else {
+                      lr.cells[2].innerHTML="";
+                  }
+
+                  $('.curmove:first').removeClass('curmove');
+                  $('.moveno'+(this.movecount-1)+':first').addClass('curmove');
+                },
+                //remove all scene objects, reset player names, stop time, etc
                 clear: function () {
                     for (var i = scene.children.length - 1; i >= 0; i--) {
                         scene.remove(scene.children[i]);
@@ -2222,18 +2486,17 @@
                         op.innerHTML = Number(op.innerHTML)-1;
                     }
                     else if (e.startsWith("Game#")) {
+                      var spl = e.split(" ");
                       var gameno = Number(e.split("Game#")[1].split(" ")[0]);
                       console.log("game no "+gameno+" "+board.gameno);
                       //Game#1 ...
                       if(gameno === board.gameno) {
                         //Game#1 P A4 (C|W)
-                        if (e.indexOf(" P ") > -1) {
-                            var spl = e.split(" ");
+                        if (spl[1] === "P") {
                             board.serverPmove(spl[2].charAt(0), Number(spl[2].charAt(1)), spl[3]);
                         }
                         //Game#1 M A2 A5 2 1
-                        else if (e.indexOf(" M ") > -1) {
-                            var spl = e.split(" ");
+                        else if (spl[1] === "M") {
                             var nums = [];
                             for (i = 4; i < spl.length; i++)
                                 nums.push(Number(spl[i]));
@@ -2242,8 +2505,7 @@
                                     nums);
                         }
                         //Game#1 Time 170 200
-                        else if (e.indexOf(" Time ") > -1) {
-                          var spl = e.split(" ");
+                        else if (spl[1] === "Time") {
                           var wt = Number(spl[2]);
                           var bt = Number(spl[3]);
                           lastWt = wt;
@@ -2256,25 +2518,42 @@
                           $('.player1-time:first').html(parseInt(wt/60)+':'+getZero(wt%60));
                           $('.player2-time:first').html(parseInt(bt/60)+':'+getZero(bt%60));
 
-                          if(board.movecount > 0) {
+                          if(!board.timer_started) {
+                            board.timer_started = true;
                             startTime(true);
                           }
                         }
+                        //Game#1 RequestUndo
+                        else if (spl[1] === "RequestUndo") {
+                          alert("info", "Your opponent requests to undo the last move");
+                          $('#undo').attr('src', 'images/otherrequestedundo.svg');
+                        }
+                        //Game#1 RemoveUndo
+                        else if (spl[1] === "RemoveUndo") {
+                          alert("info", "Your opponent removes undo request");
+                          $('#undo').attr('src', 'images/requestundo.svg');
+                        }
+                        //Game#1 Undo
+                        else if (spl[1] === "Undo") {
+                          board.undo();
+                          alert("info", "Game has been UNDOed by 1 move");
+                          $('#undo').attr('src', 'images/requestundo.svg');
+                        }
                         //Game#1 OfferDraw
-                        else if (e.indexOf("OfferDraw") > -1) {
+                        else if (spl[1] === "OfferDraw") {
                             document.getElementById("draw").src = "images/hand-other-offered.png";
                             alert("info", "Draw is offered by your opponent");
                         }
                         //Game#1 RemoveDraw
-                        else if (e.indexOf("RemoveDraw") > -1) {
+                        else if (spl[1] === "RemoveDraw") {
                             document.getElementById("draw").src = "images/offer-hand.png";
                             alert("info", "Draw offer is taken back by your opponent");
                         }
                         //Game#1 Over result
-                        else if (e.indexOf("Over") > -1) {
+                        else if (spl[1] === "Over") {
                             document.title = "Tak";
-                            var spl = e.split(" ");
                             board.scratch = true;
+                            board.result = spl[2];
                             board.notate(spl[2]);
 
                             var msg = "Game over <span class='bold'>" + spl[2] + "</span><br>";
@@ -2286,7 +2565,7 @@
                             else if (spl[2] === "F-0" || spl[2] === "0-F")
                               type = "having more flats";
                             else if (spl[2] === "1-0" || spl[2] === "0-1")
-                              type = "resignation";
+                              type = "resignation or time";
 
                             if(spl[2] === "R-0" || spl[2] === "F-0" || spl[2] === "1-0") {
                               if(board.observing === true) {
@@ -2310,30 +2589,30 @@
                               }
                             }
 
-                            alert("info", msg);
                             document.getElementById("scratchsize").disabled = false;
                             stopTime();
 
                             $('#gameoveralert-text').html(msg);
                             $('#gameoveralert').modal('show');
                         }
-                        //Abandoned
-                        else if (e.indexOf("Abandoned") > -1) {
+                        //Game#1 Abandoned
+                        else if (spl[1] === "Abandoned.") {
                             //Game#1 Abandoned. name quit
-                            var spl = e.split(" ");
                             document.title = "Tak";
                             board.scratch = true;
 
-                            if(board.mycolor === "white")
+                            if(board.mycolor === "white") {
                               board.notate("1-0");
-                            else
+                              board.result = "1-0";
+                            } else {
                               board.notate("0-1");
+                              board.result = "1-0";
+                            }
 
                             var msg = "Game abandoned by " + spl[2] + ".";
                             if(!board.observing)
                               msg += " You win!";
 
-                            alert("info", msg);
                             document.getElementById("scratchsize").disabled = false;
                             stopTime();
 
@@ -2548,6 +2827,25 @@
                         this.send("Game#" + board.gameno + " OfferDraw");
                     }
                 },
+                undo: function() {
+                  if(board.observing)
+                    return;
+
+                  var img = document.getElementById("undo");
+                  if(img.src.match('requestundo')) {//request undo
+                    this.send("Game#" + board.gameno + " RequestUndo");
+                    img.src = 'images/irequestedundo.svg';
+                    alert('info', 'Undo request sent');
+
+                  } else if (img.src.match('otherrequestedundo')) {//accept request
+                    this.send("Game#" + board.gameno + " RequestUndo");
+
+                  } else if (img.src.match('irequestedundo')) {//remove request
+                    this.send("Game#" + board.gameno + " RemoveUndo");
+                    img.src = 'images/requestundo.svg';
+                    alert('info', 'Undo request removed');
+                  }
+                },
                 resign: function() {
                     if(board.scratch)
                       return;
@@ -2571,7 +2869,7 @@
             };
 
             init();
-            animate();
+            $(window).on("load", animate);
 
             function init() {
                 // load the user settings.
@@ -2620,7 +2918,7 @@
             }
 
             function onWindowResize() {
-              canvas.width = window.innerWidth;
+              /*canvas.width = window.innerWidth;
               canvas.height = window.innerHeight;
 
               renderer.setSize(canvas.width, canvas.height);
@@ -2642,7 +2940,7 @@
                   showchat();
                   showrmenu();
                 }
-              }
+              }*/
             }
 
             function animate() {
@@ -2671,6 +2969,9 @@
                 var y = e.clientY - canvas.offsetTop;
                 mouse.x = (x / canvas.width) * 2 - 1;
                 mouse.y = -(y / canvas.height) * 2 + 1;
+
+                if(board.movecount !== board.moveshown)
+                  return;
 
                 if (e.button === 2)
                     board.rightclick();
@@ -3024,6 +3325,73 @@
               }
             }
 
+            function showPrivacyPolicy() {
+                $('#help-modal').modal('hide');
+                $('#privacy-modal').modal('show');
+            }
+
+            function getHeader(key, val) {
+              return '['+key+' "'+val+'"]\r\n';
+            }
+            function downloadNotation() {
+                var p1 = $('.player1-name:first').html();
+                var p2 = $('.player2-name:first').html();
+                var now = new Date();
+                var dt = (now.getYear()-100)+'.'+now.getMonth()+'.'+now.getDate()+' '+now.getHours()+'.'+getZero(now.getMinutes());
+
+                $('#download_notation').attr('download', p1+' vs '+p2+' '+dt+'.ptn');
+
+                var res='';
+                res += getHeader('Site', 'PlayTak.com');
+                res += getHeader('Date', '20'+(now.getYear()-100)+'.'+now.getMonth()+'.'+now.getDate());
+                res += getHeader('Player1', p1);
+                res += getHeader('Player2', p2);
+                res += getHeader('Size', board.size);
+                res += getHeader('Result', board.result);
+                res += '\r\n';
+
+                var count=1;
+
+                $('#moveslist tr').each(function() {
+                  $('td', this).each(function() {
+                    var val = $(this).text();
+                    res += val;
+
+                    if(count%3 === 0)
+                      res += '\r\n';
+                    else
+                      res += ' ';
+
+                    count++;
+                  })
+                });
+                $('#download_notation').attr('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(res));
+                console.log('res='+res);
+            }
+
+            function undoButton() {
+                if(board.scratch)
+                  board.undo();
+                else
+                  server.undo();
+            }
+
+            function fastrewind() {
+              board.showmove(1);
+            }
+
+            function stepback() {
+              board.showmove(board.moveshown-1);
+            }
+
+            function stepforward() {
+              board.showmove(board.moveshown+1);
+            }
+
+            function fastforward() {
+              board.showmove(board.movecount);
+            }
+
             $(document).ready(function() {
                 if(localStorage.getItem('sound')==='flase') {
                     volume_change();
@@ -3042,6 +3410,7 @@
                 $('#chat').offset({ top: $('nav').height() + 5 });
                 $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
 
+                $('#chat-server').append('<a href="#" onclick="showPrivacyPolicy();"> Privacy Policy</a><br>');
                 tour(false);
             })
         </script>
