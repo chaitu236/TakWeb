@@ -446,7 +446,8 @@
                     <div id="player-opp-time" class="player1-time">0:00</div>
                 </li>
                 <li class="center">
-                    <!--<a href="#" title="Reverse board" onclick="board.reverseboard()"><img src="images/ic_screen_rotation_black_24px.svg" width="25 height=25"></a>-->
+                    <a href="#" title="Undo" class="btn" onclick="board.undo()"><img src="images/ic_undo_black_24px.svg" width="25"
+                      height="25"></a>
                     <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()"><img id="draw" src="images/offer-hand.png" width="25" height="25"></a>
                     <a href="#" title="Resign" class="btn" onclick="server.resign()"><img src="images/flag.svg" width="25" height="20"></a>
                 </li>
@@ -920,6 +921,7 @@
                 result: "",
                 observing: false,
                 position: {x: 0, y: 0, endx: 0, endz: 0},
+                board_history: [],
                 init: function (sz, col, scr, obs) {
                     this.size = sz;
 
@@ -959,19 +961,20 @@
                     this.result = "";
                     this.observing = typeof obs !== 'undefined' ? obs : false;
                     this.ismymove = this.checkifmymove();
+                    this.board_history = [];
 
-                    for (i = 0; i < this.size; i++) {
+                    var bp = [];
+                    for (var i = 0; i < this.size; i++) {
                         this.sq[i] = [];
-                        for (j = 0; j < this.size; j++) {
+                        for (var j = 0; j < this.size; j++) {
                             this.sq[i][j] = [];
+                            bp.push([]);
                         }
                     }
-                    
+                    this.board_history.push(bp);
+
                     this.addboard();
                     this.addpieces();
-
-                    var material = new THREE.LineBasicMaterial({color: 0x0000f0});
-                    var pyramid = new THREE.CylinderGeometry(0, 50, 50, 3, false);
 
                     document.getElementById("player-opp").className = "selectplayer";
                     document.getElementById("player-me").className = "";
@@ -1224,15 +1227,12 @@
                     return this.sq[file][this.size - 1 - rank].board_object;
                 },
                 incmovecnt: function () {
+                    this.save_board_pos();
                     this.movecount++;
                     document.getElementById("move-sound").play();
 
                     $('#player-me').toggleClass('selectplayer');
                     $('#player-opp').toggleClass('selectplayer');
-                    /*v1 = document.getElementById("player-opp");
-                    v1.className = (v1.className === "") ? "selectplayer" : "";
-                    v2 = document.getElementById("player-me");
-                    v2.className = (v2.className === "") ? "selectplayer" : "";*/
 
                     if (this.scratch) {
                         if (this.mycolor === "white")
@@ -1242,6 +1242,56 @@
                     }
 
                     this.ismymove = this.checkifmymove();
+                },
+                save_board_pos: function() {
+                  var bp = [];
+                  //for all squares, convert stack info to board position info
+                  for(var i=0;i<this.size;i++) {
+                    for(var j=0;j<this.size;j++) {
+                      var bp_sq = [];
+                      var stk = this.sq[i][j];
+
+                      //if(stk.length===0)
+                      //  bp_sq.push('.');
+                      for(var s=0;s<stk.length;s++) {
+                        var pc = stk[s];
+                        var c = 'p';
+                        if(pc.iscapstone)
+                          c = 'c';
+                        else if (pc.isstanding)
+                          c = 'w';
+
+                        if(pc.iswhitepiece)
+                          c = c.charAt(0).toUpperCase();
+
+                        bp_sq.push(c);
+                      }
+                      bp.push(bp_sq);
+                    }
+                  }
+                  this.board_history.push(bp);
+                },
+                //pos is a single dim. array of size*size containing arrays of piece types
+                apply_board_pos: function(pos) {
+                  for(var i=0;i<this.size;i++) {//file
+                    for(var j=0;j<this.size;j++) {//rank
+                      var sq = this.get_board_obj(i, j);
+                      var sqpos = pos[i*this.size + j];
+
+                      for(var s=0;s<sqpos.length;s++) {
+                        var pc = sqpos[s];
+                        var iscap = (pc==='c' || pc==='C');
+                        var iswall = (pc==='w' || pc==='W');
+                        var iswhite = (pc===pc.charAt(0).toUpperCase());
+
+                        var pc = this.getfromstack(iscap, iswhite);
+                        if(iswall)
+                          this.standup(pc);
+
+                        this.push(sq, pc);
+                      }
+                    }
+                  }
                 },
                 leftclick: function () {
                     this.remove_total_highlight();
@@ -1843,6 +1893,52 @@
                     console.log('right up');
                     this.remove_total_highlight();
                 },
+                //bring pieces to original positions
+                resetpieces: function() {
+                    for (var i = scene.children.length - 1; i >= 0; i--) {
+                        scene.remove(scene.children[i]);
+                    }
+
+                    this.sq = [];
+                    this.board_objects = [];
+                    this.piece_objects = [];
+                    this.highlighted = null;
+                    this.selected = null;
+                    this.selectedStack = null;
+                    this.move = {start: null, end: null, dir: 'U', squares: []};
+
+                    //reset stacks
+                    for (var i = 0; i < this.size; i++) {
+                        this.sq[i] = [];
+                        for (var j = 0; j < this.size; j++) {
+                            this.sq[i][j] = [];
+                        }
+                    }
+
+                    this.addboard();
+                    this.addpieces();
+                },
+                undo: function() {
+                  if(this.movecount <= 0)
+                    return;
+
+                  this.resetpieces();
+                  this.apply_board_pos(this.board_history[this.movecount-1]);
+                  this.board_history.pop();
+                  this.movecount--;
+
+                  $('#player-me').toggleClass('selectplayer');
+                  $('#player-opp').toggleClass('selectplayer');
+
+                  if (this.scratch) {
+                      if (this.mycolor === "white")
+                          this.mycolor = "black";
+                      else
+                          this.mycolor = "white";
+                  }
+                  this.ismymove = this.checkifmymove();
+                },
+                //remove all scene objects, reset player names, stop time, etc
                 clear: function () {
                     for (var i = scene.children.length - 1; i >= 0; i--) {
                         scene.remove(scene.children[i]);
