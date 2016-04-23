@@ -458,6 +458,10 @@
                     </div>
                 </li>
                 <li class="center">
+                <a id="download_notation" href="#" title="Download notation" class="btn" onclick="downloadNotation();">
+                  <img src="images/ic_file_download_black_24px.svg" width="25" height="25"></a>
+                </li>
+                <li class="center">
                     <div id="player-me">
                     <img id="player-me-img" src="images/player-black.png" height="20" width="20">
                     <div id="player-me-name" class="player2-name">You</div>
@@ -913,7 +917,7 @@
                 server: null,
                 gameno: 0,
                 boardside: "white",
-                result: "none",
+                result: "",
                 observing: false,
                 position: {x: 0, y: 0, endx: 0, endz: 0},
                 init: function (sz, col, scr, obs) {
@@ -952,7 +956,7 @@
                     this.selectedStack = null;
                     this.gameno = 0;
                     this.move = {start: null, end: null, dir: 'U', squares: []};
-                    this.result = "none";
+                    this.result = "";
                     this.observing = typeof obs !== 'undefined' ? obs : false;
                     this.ismymove = this.checkifmymove();
 
@@ -1650,6 +1654,21 @@
                     }
                 },
                 notate: function (txt) {
+                    var res=false;
+                    if(txt==='R-0'||txt==='0-R'||txt==='F=0'||txt==='0-F'||txt==='1-0'||txt==='0-1'||txt==='1/2-1/2') {
+                        var ol = document.getElementById("moveslist");
+                        var row = ol.insertRow();
+                        var cell0 = row.insertCell(0);
+                        cell0.innerHTML = '';
+
+                        var cell1 = row.insertCell(1);
+                        row.insertCell(2);
+                        cell1.innerHTML = txt;
+
+                        $('#notationbar').scrollTop($('#moveslist tr:last').position().top);
+                        return;
+                    }
+
                     if (this.movecount !== 0 && this.movecount % 2 === 1) {
                         var om = document.getElementById("moveslist");
                         var col = om.rows[om.rows.length - 1].cells[2];
@@ -1659,6 +1678,7 @@
                         var row = ol.insertRow();
                         var cell0 = row.insertCell(0);
                         cell0.innerHTML = Math.floor(this.movecount / 2 + 1) + '.';
+
                         var cell1 = row.insertCell(1);
                         row.insertCell(2);
                         cell1.innerHTML = txt;
@@ -2296,6 +2316,7 @@
                             document.title = "Tak";
                             var spl = e.split(" ");
                             board.scratch = true;
+                            board.result = spl[2];
                             board.notate(spl[2]);
 
                             var msg = "Game over <span class='bold'>" + spl[2] + "</span><br>";
@@ -2345,10 +2366,13 @@
                             document.title = "Tak";
                             board.scratch = true;
 
-                            if(board.mycolor === "white")
+                            if(board.mycolor === "white") {
                               board.notate("1-0");
-                            else
+                              board.result = "1-0";
+                            } else {
                               board.notate("0-1");
+                              board.result = "1-0";
+                            }
 
                             var msg = "Game abandoned by " + spl[2] + ".";
                             if(!board.observing)
@@ -3048,6 +3072,45 @@
             function showPrivacyPolicy() {
                 $('#help-modal').modal('hide');
                 $('#privacy-modal').modal('show');
+            }
+
+            function getHeader(key, val) {
+              return '['+key+' "'+val+'"]\r\n';
+            }
+            function downloadNotation() {
+                var p1 = $('.player1-name:first').html();
+                var p2 = $('.player2-name:first').html();
+                var now = new Date();
+                var dt = (now.getYear()-100)+'.'+now.getMonth()+'.'+now.getDate()+' '+now.getHours()+'.'+getZero(now.getMinutes());
+
+                $('#download_notation').attr('download', p1+' vs '+p2+' '+dt+'.ptn');
+
+                var res='';
+                res += getHeader('Site', 'PlayTak.com');
+                res += getHeader('Date', '20'+(now.getYear()-100)+'.'+now.getMonth()+'.'+now.getDate());
+                res += getHeader('Player1', p1);
+                res += getHeader('Player2', p2);
+                res += getHeader('Size', board.size);
+                res += getHeader('Result', board.result);
+                res += '\r\n';
+
+                var count=1;
+
+                $('#moveslist tr').each(function() {
+                  $('td', this).each(function() {
+                    var val = $(this).text();
+                    res += val;
+
+                    if(count%3 === 0)
+                      res += '\r\n';
+                    else
+                      res += ' ';
+
+                    count++;
+                  })
+                });
+                $('#download_notation').attr('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(res));
+                console.log('res='+res);
             }
 
             $(document).ready(function() {
