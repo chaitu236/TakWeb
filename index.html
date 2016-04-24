@@ -1942,6 +1942,21 @@
                           this.mycolor = "white";
                   }
                   this.ismymove = this.checkifmymove();
+
+                  //fix notation
+                  var ml = document.getElementById("moveslist");
+                  var lr = ml.rows[ml.rows.length - 1];
+                  var txt = lr.cells[1].innerHTML;
+                  if(txt==='R-0'||txt==='0-R'||txt==='F=0'||txt==='0-F'||txt==='1-0'||txt==='0-1'||txt==='1/2-1/2') {
+                    ml.deleteRow(ml.rows.length - 1);
+                    lr = ml.rows[ml.rows.length - 1];
+                  }
+
+                  if(this.movecount % 2 == 0) {
+                      ml.deleteRow(ml.rows.length - 1);
+                  } else {
+                      lr.deleteCell(-1);
+                  }
                 },
                 //remove all scene objects, reset player names, stop time, etc
                 clear: function () {
@@ -2712,6 +2727,7 @@
                   if(img.src.match('requestundo')) {//request undo
                     this.send("Game#" + board.gameno + " RequestUndo");
                     img.src = 'images/irequestedundo.svg';
+                    alert('info', 'Undo request sent');
 
                   } else if (img.src.match('otherrequestedundo')) {//accept request
                     this.send("Game#" + board.gameno + " RequestUndo");
@@ -2719,6 +2735,7 @@
                   } else if (img.src.match('irequestedundo')) {//remove request
                     this.send("Game#" + board.gameno + " RemoveUndo");
                     img.src = 'images/requestundo.svg';
+                    alert('info', 'Undo request removed');
                   }
                 },
                 resign: function() {
