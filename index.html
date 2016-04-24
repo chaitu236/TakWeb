@@ -2921,13 +2921,13 @@
                 mouse.x = (x / canvas.width) * 2 - 1;
                 mouse.y = -(y / canvas.height) * 2 + 1;
 
-                if(board.movecount !== board.moveshown)
-                  return;
-
                 if (e.button === 2)
                     board.rightclick();
-                else
-                    board.leftclick();
+                else {
+                  if(board.movecount !== board.moveshown)
+                    return;
+                  board.leftclick();
+                }
             }
             function onDocumentMouseUp(e) {
                 if (e.button === 2)
