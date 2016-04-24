@@ -1522,7 +1522,7 @@
                 },
                 //move the server sends
                 serverPmove: function (file, rank, caporwall) {
-                    board.fastforward();
+                    fastforward();
                     var obj = this.getfromstack((caporwall === 'C'), this.is_white_piece_to_move());
 
                     if (!obj) {
@@ -1542,7 +1542,7 @@
                 },
                 //Move move the server sends
                 serverMmove: function (f1, r1, f2, r2, nums) {
-                    board.fastforward();
+                    fastforward();
                     var s1 = this.get_board_obj(f1.charCodeAt(0) - 'A'.charCodeAt(0), r1 - 1);
                     var fi = 0, ri = 0;
                     if (f1 === f2)
