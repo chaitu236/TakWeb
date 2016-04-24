@@ -446,10 +446,12 @@
                     <div id="player-opp-time" class="player1-time">0:00</div>
                 </li>
                 <li class="center">
-                    <a href="#" title="Undo" class="btn" onclick="board.undo()"><img src="images/ic_undo_black_24px.svg" width="25"
-                      height="25"></a>
-                    <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()"><img id="draw" src="images/offer-hand.png" width="25" height="25"></a>
-                    <a href="#" title="Resign" class="btn" onclick="server.resign()"><img src="images/flag.svg" width="25" height="20"></a>
+                <a href="#"title="Undo" class="btn" onclick="undoButton()">
+                  <img id="undo" src="images/requestundo.svg" width="25" height="25"></a>
+                <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()">
+                  <img id="draw" src="images/offer-hand.png" width="25" height="25"></a>
+                <a href="#" title="Resign" class="btn" onclick="server.resign()">
+                  <img src="images/flag.svg" width="25" height="20"></a>
                 </li>
                 <li>
                     <div title="Notation for current game appears here" id="notationbar">
@@ -922,6 +924,7 @@
                 observing: false,
                 position: {x: 0, y: 0, endx: 0, endz: 0},
                 board_history: [],
+                timer_started: false,
                 init: function (sz, col, scr, obs) {
                     this.size = sz;
 
@@ -962,6 +965,7 @@
                     this.observing = typeof obs !== 'undefined' ? obs : false;
                     this.ismymove = this.checkifmymove();
                     this.board_history = [];
+                    this.timer_started = false;
 
                     var bp = [];
                     for (var i = 0; i < this.size; i++) {
@@ -1242,6 +1246,7 @@
                     }
 
                     this.ismymove = this.checkifmymove();
+                    $('#undo').attr('src', 'images/requestundo.svg');
                 },
                 save_board_pos: function() {
                   var bp = [];
@@ -2391,9 +2396,25 @@
                           $('.player1-time:first').html(parseInt(wt/60)+':'+getZero(wt%60));
                           $('.player2-time:first').html(parseInt(bt/60)+':'+getZero(bt%60));
 
-                          if(board.movecount > 0) {
+                          if(!board.timer_started) {
+                            board.timer_started = true;
                             startTime(true);
                           }
+                        }
+                        //Game#1 RequestUndo
+                        else if (spl[1] === "RequestUndo") {
+                          alert("info", "Your opponent requests to undo the last move");
+                          $('#undo').attr('src', 'images/otherrequestedundo.svg');
+                        }
+                        //Game#1 RemoveUndo
+                        else if (spl[1] === "RemoveUndo") {
+                          alert("info", "Your opponent removes undo request");
+                          $('#undo').attr('src', 'images/requestundo.svg');
+                        }
+                        //Game#1 Undo
+                        else if (spl[1] === "Undo") {
+                          board.undo();
+                          $('#undo').attr('src', 'images/requestundo.svg');
                         }
                         //Game#1 OfferDraw
                         else if (spl[1] === "OfferDraw") {
@@ -2421,7 +2442,7 @@
                             else if (spl[2] === "F-0" || spl[2] === "0-F")
                               type = "having more flats";
                             else if (spl[2] === "1-0" || spl[2] === "0-1")
-                              type = "resignation";
+                              type = "resignation or time";
 
                             if(spl[2] === "R-0" || spl[2] === "F-0" || spl[2] === "1-0") {
                               if(board.observing === true) {
@@ -2452,7 +2473,7 @@
                             $('#gameoveralert').modal('show');
                         }
                         //Game#1 Abandoned
-                        else if (spl[1] === "Abandoned") {
+                        else if (spl[1] === "Abandoned.") {
                             //Game#1 Abandoned. name quit
                             document.title = "Tak";
                             board.scratch = true;
@@ -2682,6 +2703,23 @@
                     } else {//accept the offer
                         this.send("Game#" + board.gameno + " OfferDraw");
                     }
+                },
+                undo: function() {
+                  if(board.observing)
+                    return;
+
+                  var img = document.getElementById("undo");
+                  if(img.src.match('requestundo')) {//request undo
+                    this.send("Game#" + board.gameno + " RequestUndo");
+                    img.src = 'images/irequestedundo.svg';
+
+                  } else if (img.src.match('otherrequestedundo')) {//accept request
+                    this.send("Game#" + board.gameno + " RequestUndo");
+
+                  } else if (img.src.match('irequestedundo')) {//remove request
+                    this.send("Game#" + board.gameno + " RemoveUndo");
+                    img.src = 'images/requestundo.svg';
+                  }
                 },
                 resign: function() {
                     if(board.scratch)
@@ -3201,6 +3239,13 @@
                 });
                 $('#download_notation').attr('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(res));
                 console.log('res='+res);
+            }
+
+            function undoButton() {
+                if(board.scratch)
+                  board.undo();
+                else
+                  server.undo();
             }
 
             $(document).ready(function() {
