@@ -1955,7 +1955,7 @@
                   if(this.movecount % 2 == 0) {
                       ml.deleteRow(ml.rows.length - 1);
                   } else {
-                      lr.deleteCell(-1);
+                      lr.cells[1].innerHTML="";
                   }
                 },
                 //remove all scene objects, reset player names, stop time, etc
@@ -2429,6 +2429,7 @@
                         //Game#1 Undo
                         else if (spl[1] === "Undo") {
                           board.undo();
+                          alert("info", "Game has been UNDOed by 1 move");
                           $('#undo').attr('src', 'images/requestundo.svg');
                         }
                         //Game#1 OfferDraw
