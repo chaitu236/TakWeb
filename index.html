@@ -99,6 +99,15 @@
             .playername {
               font-weight: bold;
             }
+            .shoutmessage {
+              color: #000000;
+            }
+            .observermessage {
+              color: #866e40;
+            }
+            .playermessage {
+              color: #864040;
+            }
             .bold {
               font-weight: bold;
             }
@@ -514,7 +523,7 @@
                 <div id="chat-server"></div>
             </div>
             <form role="form" onsubmit="server.chat(); return false;" class="height-auto" autocomplete="off">
-              <input type="text" class="form-control" id="chat-me">
+              <input type="text" class="form-control" id="chat-me" oninput="checkChatMode();">
               <button id="send-button" type="submit" class="btn btn-primary">Send</button>
             </form>
         </div>
@@ -896,7 +905,8 @@
                 });
             }
             var camera, scene, renderer, light, canvas, controls = null;
-
+            var chat_mode = "Shout";
+            
             // antialiasing must be disabled per default, so slower devices are not impaired.
             var antialiasing_mode = false;
             
@@ -2570,6 +2580,42 @@
                             $('#gameoveralert-text').html(msg);
                             $('#gameoveralert').modal('show');
                         }
+                        else if (spl[1] === "ObserverChat" || spl[1] === "PlayerChat") {
+                          var msg = "";
+                          for (var i = 2; i < spl.length; ++i)
+                          {
+                            msg = msg + " " + spl[i];
+                          }
+                          var name = msg.split('<')[1].split('>')[0];
+                          var txt = msg.split('<' + name + '>')[1];
+                          var clsname = 'chatname';
+                          var chatmode = (spl[1] === "ObserverChat" ? "observermessage" : "playermessage");
+
+                          var $cs = $('#chat-server');
+
+                          var now = new Date();
+                          var hours = now.getHours();
+                          var mins = now.getMinutes();
+                          var cls = 'chattime'
+                          if (localStorage.getItem('hide-chat-time')==='true') {
+                            cls = cls + ' hidden';
+                          }
+                          $cs.append('<span class="' + cls + '">[' + getZero(hours) + ':' + getZero(mins) + '] </span>');
+                          $cs.append('<span class="' + clsname + ' ' + chatmode + '">' + name + ':</span>');
+                          var options = {/* ... */};
+
+                          txt = txt.linkify(options);
+
+                          //someone said our name
+                          if(txt.indexOf(this.myname) > -1) {
+                            var tmp = txt.split(this.myname);
+                            txt = tmp[0] + '<span class="chatmyname">'+this.myname+'</span>' + tmp[1];
+                          }
+
+                          $cs.append(txt+'<br>');
+
+                          $cs.scrollTop($cs[0].scrollHeight);
+                        }
                       }
                     }
                     else if (e.startsWith("Login or Register")) {
@@ -2670,7 +2716,7 @@
                           cls = cls + ' hidden';
                         }
                         $cs.append('<span class="'+cls+'">['+getZero(hours)+':'+getZero(mins)+'] </span>');
-                        $cs.append('<span class="'+clsname+'">'+name+':</span>');
+                        $cs.append('<span class="'+clsname+' shoutmessage">'+name+':</span>');
                         var options = {/* ... */};
 
                         txt = txt.linkify(options);
@@ -2734,11 +2780,22 @@
                 },
                 chat: function () {
                     var msg = $('#chat-me').val();
-                    console.log('msg= '+msg);
-                    if(msg.startsWith('.'))
-                      this.send(msg.slice(1));
-                    else
-                      this.send('Shout '+msg);
+                    if (msg.startsWith('/a ') || msg.startsWith('/s ')
+                      || msg.startsWith('/g ') || msg.startsWith('/i ')) {
+                        msg = msg.substring(3);
+                    }
+                    switch (chat_mode) {
+                      case "Shout":
+                          console.log('msg= '+msg);
+                          if(msg.startsWith('.'))
+                            this.send(msg.slice(1));
+                          else
+                            this.send('Shout '+msg);
+                      break;
+                      case "Ingame":
+                            this.send('Game#' + board.gameno + " Chat " + msg);
+                      break;
+                    }
                     $('#chat-me').val('');
                 },
                 send: function (e) {
@@ -3021,6 +3078,15 @@
                 $('#chat-toggle-button').css('right', 0);
                 $('#chat-toggle-text').html('<<<br>c<br>h<br>a<br>t');
                 $('#chat').addClass('hidden');
+            }
+            function checkChatMode() {
+                var msg = $('#chat-me').val();
+                if (msg.startsWith('/s ') || msg.startsWith('/a ')) {
+                    chat_mode = "Shout";
+                }
+                else if (msg.startsWith('/g ') || msg.startsWith('/i ')) {
+                    chat_mode = "Ingame";
+                }
             }
             function isBreakpoint( alias ) {
                 return $('.device-' + alias).is(':hidden');
