@@ -1532,6 +1532,7 @@
                       oldpos = board.moveshown;
                     }
 
+                    dontanimate = true;
                     fastforward();
                     var obj = this.getfromstack((caporwall === 'C'), this.is_white_piece_to_move());
 
@@ -1552,6 +1553,8 @@
 
                     if(oldpos !== -1)
                       board.showmove(oldpos);
+
+                    dontanimate = false;
                 },
                 //Move move the server sends
                 serverMmove: function (f1, r1, f2, r2, nums) {
@@ -1560,6 +1563,7 @@
                       oldpos = board.moveshown;
                     }
 
+                    dontanimate = true;
                     fastforward();
                     var s1 = this.get_board_obj(f1.charCodeAt(0) - 'A'.charCodeAt(0), r1 - 1);
                     var fi = 0, ri = 0;
@@ -1586,8 +1590,11 @@
                     this.notateMmove(f1.charCodeAt(0) - 'A'.charCodeAt(0), Number(r1) - 1,
                             f2.charCodeAt(0) - 'A'.charCodeAt(0), Number(r2) - 1, nums);
                     this.incmovecnt();
+
                     if(oldpos !== -1)
                       board.showmove(oldpos);
+
+                    dontanimate = false;
                 },
                 gameover: function () {
                     console.log('gameover ' + this.result);
@@ -1985,12 +1992,17 @@
                   if(this.movecount <= 0 || no>this.movecount || no<=0 || this.moveshown === no)
                       return;
 
+                  var prevdontanim = dontanimate;
+                  dontanimate = false;
+
                   console.log('showmove '+no);
                   this.moveshown = no;
                   this.resetpieces();
                   this.apply_board_pos(this.board_history[no]);
                   $('.curmove:first').removeClass('curmove');
                   $('.moveno'+(no-1)+':first').addClass('curmove');
+
+                  dontanimate = prevdontanim;
                 },
                 undo: function() {
                   if(this.movecount <= 0)
@@ -2909,9 +2921,11 @@
               }*/
             }
 
+            var dontanimate=false;
             function animate() {
                 setTimeout(function () {
-                    requestAnimationFrame(animate);
+                    if(!dontanimate)
+                      requestAnimationFrame(animate);
                 }, 1000 / 30);
 
                 renderer.render(scene, camera);
