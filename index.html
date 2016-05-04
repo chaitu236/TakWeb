@@ -1721,7 +1721,7 @@
                         }
                     }
                     if (whitewin && blackwin)
-                        this.result = "1/2-1/2";
+                        this.result = (this.movecount%2 == 0)?"R-0":"0-R";
                     else if (whitewin)
                         this.result = "R-0";
                     else if (blackwin)
