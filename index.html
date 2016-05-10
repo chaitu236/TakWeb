@@ -1141,15 +1141,29 @@
                     var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     geometry.center();
 
+                    var stackno;
                     for (i = 0; i < this.tottiles; i++) {
-                        var stackno = Math.floor(i / 10);
+                        // we put the flat stones in stacks of 10
+                        stackno = Math.floor(i / 10);
                         var stackheight = i % 10;
 
                         var piece;
 
-                        piece = new THREE.Mesh(geometry, white_material);
-                        piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
-                        piece.iswhitepiece = true;
+                        if (i < this.tottiles - 1) {
+                            piece = new THREE.Mesh(geometry, white_material);
+                            piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
+                            piece.iswhitepiece = true;
+                            piece.isfirstpiece = false;
+                        } else {
+                            if (stackheight != 0) {
+                                stackno++;
+                                stackheight = 0;
+                            }
+                            piece = new THREE.Mesh(geometry, black_material);
+                            piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
+                            piece.iswhitepiece = false;
+                            piece.isfirstpiece = true;
+                        }
                         piece.isstanding = false;
                         piece.onsquare = null;
                         piece.isboard = false;
@@ -1158,9 +1172,21 @@
                         this.piece_objects.push(piece);
                         scene.add(piece);
 
-                        piece = new THREE.Mesh(geometry, black_material);
-                        piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
-                        piece.iswhitepiece = false;
+                        if (i < this.tottiles - 1) {
+                            piece = new THREE.Mesh(geometry, black_material);
+                            piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
+                            piece.iswhitepiece = false;
+                            piece.isfirstpiece = false;
+                        } else {
+                            if (stackheight != 0) {
+                                stackno++;
+                                stackheight = 0;
+                            }
+                            piece = new THREE.Mesh(geometry, white_material);
+                            piece.iswhitepiece = true;
+                            piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
+                            piece.isfirstpiece = true;
+                        }
                         piece.isstanding = false;
                         piece.onsquare = null;
                         piece.isboard = false;
@@ -1170,7 +1196,8 @@
                         scene.add(piece);
                     }
                     for (i = 0; i < this.totcaps; i++) {
-                        var stackno = Math.ceil(this.tottiles / 10) + i;
+                        // each capstone goes in it's own stack
+                        stackno++;
                         var geometry = new THREE.CylinderGeometry(capstone_radius,
                                 capstone_radius, capstone_height, 30);
                         geometry.center();
@@ -1476,6 +1503,12 @@
                         var obj = intersects[0].object;
 
                         if (!obj.isboard && !obj.onsquare && !this.isPlayEnded) {
+                            // if this is the player's first move, then they can only
+                            // pickup one of the pieces labelled to be a 'first piece'
+                            if ((this.movecount === 0 || this.movecount === 1) &&
+                                    obj.isfirstpiece == false)
+                                return;
+                            
                             // these must match to pick up this obj
                             if (obj.iswhitepiece !== this.is_white_piece_to_move())
                                 return;
@@ -2580,7 +2613,7 @@
                         return;
                     }
                     var url = window.location.host;
-                    if (url.indexOf("playtak") > -1)
+                    // if (url.indexOf("playtak") > -1)
                         url = 'playtak.com:3000';
                     var proto='ws://';
                     if (window.location.protocol === "https:")
