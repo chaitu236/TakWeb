@@ -1832,7 +1832,7 @@
                         return;
                     }
 
-                    if (txt === 'init') {
+                    if (txt === 'load') {
                         // If movecount is odd, then this initial position goes
                         // in the left column and the next move will go in the right column.
                         // If movecount is even, then the left column will be empty, and
@@ -2411,7 +2411,7 @@
                     document.getElementById("player-opp").className = (this.mycolor === "white" ? "selectplayer" : "");
                     document.getElementById("player-me").className = (this.mycolor === "black" ? "selectplayer" : "");
 
-                    this.notate("init");
+                    this.notate("load");
                     this.whitepiecesleft = this.tottiles + this.totcaps - p1Cnt;
                     this.blackpiecesleft = this.tottiles + this.totcaps - p2Cnt;
                     if (this.whitepiecesleft <=0 && this.blackpiecesleft <=0) {
