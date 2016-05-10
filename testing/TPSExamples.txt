@@ -1,0 +1,100 @@
+// TPS Examples for testing the loadTPN function
+
+// Empty Boards
+[TPS "x8/x8/x8/x8/x8/x8/x8/x8 1 1"]
+[TPS "x7/x7/x7/x7/x7/x7/x7 1 1"]
+[TPS "x6/x6/x6/x6/x6/x6 1 1"]
+[TPS "x5/x5/x5/x5/x5 1 1"]
+[TPS "x4/x4/x4/x4 1 1"]
+[TPS "x3/x3/x3 1 1"]
+
+// Upper left corner
+[TPS "2,x3/x4/x4/x4 2 1"]
+// Upper right corner
+[TPS "x3,2/x4/x4/x4 2 1"]
+
+
+// Four corners
+[TPS "1,x2,2/x4/x4/2,x2,1 1 1"]
+[TPS "2,x2,1/x4/x4/1,x,x,2 1 1"]
+
+// Four centers
+[TPS "x6/x6/x2,1,2/x2,2,1/x6/x6 1 1"]
+
+// one capstone each
+[TPS "1C,2C,x/x5/x5/x5/x5 1 1"]
+
+// Complicated Example
+[TPS "x3,12,2S/x,22S,22C,11,21/121,212,12,1121C,1212S/21S,1,21,211S,12S/x,21S,2,x2 1 26"]
+
+// Advanced Move Count
+[TPS "1,2,x/x3/x3 2 1"]
+[TPS "1,2,x/2,1,x/1,x2 2 2"]
+
+// One piece left
+[TPS "11111,22222,x/x,1111,2222/x3 2 1"]
+[TPS "1111,22222,1/1,111,2222/x3 2 1"]
+
+// All pieces used up
+[TPS "11111,22222,x/x,11111,2222/x3 2 1"]
+[TPS "11111,22222,x/x,1111,22222/x3 1 1"]
+[TPS "1111111111,22222,x/x,2222,x/x3 2 1"]
+[TPS "111111,2222222222,x/x3/x3 1 1"]
+
+// ------------------------------------------------------------------------------------
+// Allowed variations from TPS
+
+// x1 (for a single empty cell) is not explicitly disallowed in TPS, but never mentioned
+[TPS "x1,1,2/x3/2,x1,1 1 1"]
+
+// Anomalous Empty Boards
+[TPS "x/x/x 1 1"]
+[TPS "x5/x3/x5/x,x,x/x1 1 1"]
+
+// hyphen for moveNumber
+[TPS "1/22/x3 1 -"]
+
+// missing move/turn
+[TPS "x3/x3/x3"]
+
+//missing quotes
+[TPS x3/x3/x3  1  1]
+
+// missing TPS tagname
+["x3/x3/x3 1 1"]
+
+//minimal valid TPS
+[x/x/x/x]
+
+
+
+// ------------------------------------------------------------------------------------
+// Invalid TPS
+
+// meaningless cell descriptor
+[TPS "x3/x,3,x/x3   1   1"]
+
+// too many empty cells
+[TPS "x3/x3/1,x3  1   1"]
+[TPS "x5/x3/x3  1   1"]
+
+// bad player number
+[TPS "1,x2/x2,2/2,x   4   1"]
+
+// too many pieces
+[TPS "11111,22222,x/x,11111,22222/1,2,x 1 1"]
+
+// too many capstones
+[TPS "1C,2C,x/x3/x3 1 1"]
+[TPS "1C,2C,x/x5/x5/x5/2C,1C,x3 1 1"]
+
+// bad start move, white piece
+[TPS "1,x2/x3/x3   2   1"]
+
+// wrong player to move
+[TPS "x3/x,2,x/x3 1 1"]
+
+// all pieces used up by both players
+[TPS "11111,22222,x/x,11111,22222/x3 1 1"]
+
+
