@@ -1188,9 +1188,9 @@
                         this.makePieceAndPositionIt(2,i);
                     }
                    
-                    for (var c = 0; c < this.totcaps; c++) {
-                        this.makeCapAndPositionIt(1,c);
-                        this.makeCapAndPositionIt(2,c);
+                    for (var i=0; i < this.totcaps; i++) {
+                        this.makeCapAndPositionIt(1,i);
+                        this.makeCapAndPositionIt(2,i);
                     }
                 },
                 makePieceAndPositionIt: function(playerNum,pieceNum) {
@@ -1210,6 +1210,7 @@
                             piece.position.set(this.position.x, 0, this.position.z - piece_size - rowOffsetFromBorder);
                         }
                     } else {
+                        // we don't count the 1st piece in our stacks
                         pieceNum = pieceNum - 1;
                         var stackno = Math.floor(pieceNum / 10);
                         var stackheight = pieceNum % 10;
@@ -1222,12 +1223,10 @@
                             piece.position.set(this.position.x - rowOffsetFromBorder - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
                         }
                     }
-
                     piece.isstanding = false;
                     piece.onsquare = null;
                     piece.isboard = false;
                     piece.iscapstone = false;
-
                     this.piece_objects.push(piece);
                     scene.add(piece);
                 },
@@ -1248,7 +1247,6 @@
                     piece.onsquare = null;
                     piece.isboard = false;
                     piece.iscapstone = true;
-
                     this.piece_objects.push(piece);
                     scene.add(piece);
                 },
