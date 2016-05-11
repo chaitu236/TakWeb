@@ -3130,13 +3130,16 @@
                 acceptseek: function (e) {
                     this.send("Accept " + e);
                 },
+                unobserve: function() {
+                    if(board.gameno !== 0)
+                        this.send("Unobserve " + board.gameno);
+                },
                 observegame: function (no) {
                     if (board.observing === false && board.scratch === false) //don't observe game while playing another
                         return;
                     if (no === board.gameno)
                         return;
-                    else
-                        this.send("Unobserve " + board.gameno);
+                    this.unobserve();
                     this.send("Observe " + no);
                 }
             };
@@ -3303,6 +3306,7 @@
                 var tps = window.prompt("Paste TPS here", "");
                 if (!tps)
                     return;
+                server.unobserve();
                 board.loadtps(tps);
             }
             function statusclick() {
