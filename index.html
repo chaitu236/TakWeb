@@ -924,6 +924,24 @@
             var mouse = new THREE.Vector2();
             var offset = new THREE.Vector3();
 
+            // we'll reuse these textures and materials
+            var white_piece_texture;
+            var black_piece_texture;
+            var white_cap_texture;
+            var black_cap_texture;    
+            var white_sqr_texture;
+            var black_sqr_texture; 
+            var white_piece_material;
+            var black_piece_material;
+            var white_cap_material;
+            var black_cap_material;
+            var white_sqr_material;
+            var black_sqr_material;
+            var border_material = new THREE.MeshBasicMaterial({color: 0x6f4734}); ;
+            var letter_material = new THREE.MeshBasicMaterial({color: 0xFFF5B5});
+            var pieceGeometry;
+            var capGeometry;
+
             var board = {
                 size: 0,
                 totcaps: 0,
@@ -1027,14 +1045,9 @@
                 },
                 // addboard: draws the empty board in the scene
                 addboard: function () {
-                    var white_texture = THREE.ImageUtils.loadTexture(white_square_tex_name);
-                    var black_texture = THREE.ImageUtils.loadTexture(black_square_tex_name);
-                    
-                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
-                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
-
-                    var geometry = new THREE.BoxGeometry(sq_size, sq_height, sq_size);
-                    geometry.center();
+                    this.updateBoardMaterials();
+                    var squareGeometry = new THREE.BoxGeometry(sq_size, sq_height, sq_size);
+                    squareGeometry.center();
 
                     var startx = -(this.size * sq_size) / 2.0 + sq_size / 2;
                     var startz = -(this.size * sq_size) / 2.0;
@@ -1044,76 +1057,79 @@
                     this.position.endx = startx + this.size * sq_size;
                     this.position.endz = startz + this.size * sq_size;
 
+                    // draw the squares
+                    var square;
                     for (i = 0; i < this.size; i++) {
                         for (j = 0; j < this.size; j++) {
-                            piece = new THREE.Mesh(geometry, ((i + j) % 2) ? white_material : black_material);
-                            piece.position.set(startx + i * sq_size, 0, startz + j * sq_size);
+                            square = new THREE.Mesh(squareGeometry, ((i + j) % 2) ? white_sqr_material : black_sqr_material);
+                            square.position.set(startx + i * sq_size, 0, startz + j * sq_size);
 
-                            piece.file = i;//String.fromCharCode('A'.charCodeAt(0)+i);
-                            piece.rank = this.size - 1 - j;
-                            piece.isboard = true;
+                            square.file = i;//String.fromCharCode('A'.charCodeAt(0)+i);
+                            square.rank = this.size - 1 - j;
+                            square.isboard = true;
 
-                            this.board_objects.push(piece);
-                            this.sq[i][j].board_object = piece;
-                            scene.add(piece);
+                            this.board_objects.push(square);
+                            this.sq[i][j].board_object = square;
+                            scene.add(square);
                         }
                     }
 
-                    var border_material = new THREE.MeshBasicMaterial({color: 0x6f4734});
-                    geometry = new THREE.BoxGeometry(this.size * sq_size + 2 * border_size, piece_height, border_size);
-
-                    var border = new THREE.Mesh(geometry, border_material);
+                    // draw the border around the squares
+                    // ... the top and bottom borders
+                    var borderGeometry = new THREE.BoxGeometry(this.size * sq_size + 2 * border_size, piece_height, border_size);
+                    var border = new THREE.Mesh(borderGeometry, border_material);
                     border.position.set(0, 0, startz - sq_size / 2 - border_size / 2);
                     scene.add(border);
-
-                    border = new THREE.Mesh(geometry, border_material);
+                    border = new THREE.Mesh(borderGeometry, border_material);
                     border.rotateY(Math.PI);
                     border.position.set(0, 0, this.position.endz - sq_size / 2 + border_size / 2);
                     scene.add(border);
-
-                    geometry = new THREE.BoxGeometry(this.size * sq_size, piece_height, border_size);
-                    border = new THREE.Mesh(geometry, border_material);
+                    
+                    // ... the left and right borders
+                    borderGeometry = new THREE.BoxGeometry(this.size * sq_size, piece_height, border_size);
+                    border = new THREE.Mesh(borderGeometry, border_material);
                     border.rotateY(Math.PI / 2);
                     border.position.set(this.position.x - sq_size / 2 - border_size / 2, 0, -sq_size / 2);
                     scene.add(border);
-
-                    border = new THREE.Mesh(geometry, border_material);
+                    border = new THREE.Mesh(borderGeometry, border_material);
                     border.rotateY(-Math.PI / 2);
                     border.position.set(this.position.endx - border_size, 0, -sq_size / 2);
                     scene.add(border);
 
-                    var material = new THREE.MeshBasicMaterial({color: 0xFFF5B5});
+                    // add the letters and numbers on the bottom and left borders
+                    var letterGeometry;
+                    var letter;
                     for (var i = 0; i < this.size; i++) {
-                        geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
+                        letterGeometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-
-                        var letter = new THREE.Mesh(geometry, material);
+                        letter = new THREE.Mesh(letterGeometry, letter_material);
                         letter.rotateX(-Math.PI / 2);
                         letter.position.set(this.position.x - letter_size / 2 + i * sq_size, sq_height / 2,
                                 this.position.endz - border_size / 2 - letter_size);
                         scene.add(letter);
 
-                        geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
+                        letterGeometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        letter = new THREE.Mesh(geometry, material);
+                        letter = new THREE.Mesh(letterGeometry, letter_material);
                         letter.rotateX(-Math.PI / 2);
                         letter.position.set(this.position.x - sq_size / 2 - border_size / 2 - letter_size / 2, sq_height / 2,
                                 this.position.endz - border_size - sq_size / 2 - letter_size / 2 - digit_adjustment - i * sq_size);
                         scene.add(letter);
                     }
+                    // add the letters and numbers on the top and right borders
                     for (var i = this.size - 1; i >= 0; i--) {
-                        geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
+                        letterGeometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        var letter = new THREE.Mesh(geometry, material);
+                        letter = new THREE.Mesh(letterGeometry, letter_material);
                         letter.rotateX(Math.PI / 2);
                         letter.rotateY(Math.PI);
                         letter.position.set(this.position.x + letter_size / 2 + i * sq_size, sq_height / 2,
                                 this.position.z - sq_size / 2 - border_size / 2 - letter_size / 2);
                         scene.add(letter);
 
-                        geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
+                        letterGeometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        letter = new THREE.Mesh(geometry, material);
+                        letter = new THREE.Mesh(letterGeometry, letter_material);
                         letter.rotateX(-Math.PI / 2);
                         letter.rotateZ(Math.PI);
                         letter.position.set(this.position.endx - sq_size / 2 + border_size / 2 + letter_size / 2, sq_height / 2,
@@ -1124,137 +1140,123 @@
                     this.position.z -= border_size;
                     this.position.endx += border_size;
                     this.position.endz += border_size;
-
                 },
                 // addpieces: add the pieces to the scene, not on the board
                 addpieces: function () {
-                    var white_texture = THREE.ImageUtils.loadTexture(white_piece_tex_name);
-                    var black_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
-                    var white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
-                    var black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
-                    
-                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
-                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
-                    var white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
-                    var black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture});
-
-                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
-                    geometry.center();
-
+                    this.updatePieceMaterials();
                     var stackno;
-                    for (i = 0; i < this.tottiles; i++) {
+                    for (var i = 0; i < this.tottiles; i++) {
                         // we put the flat stones in stacks of 10
                         stackno = Math.floor(i / 10);
                         var stackheight = i % 10;
-
-                        var piece;
-
-                        if (i < this.tottiles - 1) {
-                            piece = new THREE.Mesh(geometry, white_material);
-                            piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
-                            piece.iswhitepiece = true;
-                            piece.isfirstpiece = false;
-                        } else {
-                            if (stackheight != 0) {
-                                stackno++;
-                                stackheight = 0;
-                            }
-                            piece = new THREE.Mesh(geometry, black_material);
-                            piece.position.set(this.position.endx + 50, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
-                            piece.iswhitepiece = false;
-                            piece.isfirstpiece = true;
-                        }
-                        piece.isstanding = false;
-                        piece.onsquare = null;
-                        piece.isboard = false;
-                        piece.iscapstone = false;
-
-                        this.piece_objects.push(piece);
-                        scene.add(piece);
-
-                        if (i < this.tottiles - 1) {
-                            piece = new THREE.Mesh(geometry, black_material);
-                            piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
-                            piece.iswhitepiece = false;
-                            piece.isfirstpiece = false;
-                        } else {
-                            if (stackheight != 0) {
-                                stackno++;
-                                stackheight = 0;
-                            }
-                            piece = new THREE.Mesh(geometry, white_material);
-                            piece.iswhitepiece = true;
-                            piece.position.set(this.position.x - 50 - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
-                            piece.isfirstpiece = true;
-                        }
-                        piece.isstanding = false;
-                        piece.onsquare = null;
-                        piece.isboard = false;
-                        piece.iscapstone = false;
-
-                        this.piece_objects.push(piece);
-                        scene.add(piece);
+                        this.makePieceAndPositionIt(1,i,stackno,stackheight);
+                        this.makePieceAndPositionIt(2,i,stackno,stackheight);
                     }
-                    for (i = 0; i < this.totcaps; i++) {
-                        // each capstone goes in it's own stack
+                   
+                    for (var i = 0; i < this.totcaps; i++) {
+                        // each capstone goes in its own stack
                         stackno++;
-                        var geometry = new THREE.CylinderGeometry(capstone_radius,
-                                capstone_radius, capstone_height, 30);
-                        geometry.center();
-                        var piece = new THREE.Mesh(geometry, white_cap_material);
-                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * stack_dist);
-                        piece.iswhitepiece = true;
-                        piece.isstanding = true;
-                        piece.onsquare = null;
-                        piece.isboard = false;
-                        piece.iscapstone = true;
-
-                        this.piece_objects.push(piece);
-                        scene.add(piece);
-
-                        piece = new THREE.Mesh(geometry, black_cap_material);
-                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * stack_dist);
-                        piece.iswhitepiece = false;
-                        piece.isstanding = true;
-                        piece.onsquare = null;
-                        piece.isboard = false;
-                        piece.iscapstone = true;
-
-                        this.piece_objects.push(piece);
-                        scene.add(piece);
+                        this.makeCapAndPositionIt(1,stackno);
+                        this.makeCapAndPositionIt(2,stackno);
                     }
                 },
+                makePieceAndPositionIt: function(playerNum,pieceNum,stackno,stackheight) {
+                    var materialMine = (playerNum == 1 ? white_piece_material : black_piece_material);
+                    var materialOpp = (playerNum == 1 ? black_piece_material : white_piece_material);
+                    var pieceOffsetFromBorder = 50;
+                    
+                    var piece;
+                    if (pieceNum < this.tottiles - 1) {
+                        piece = new THREE.Mesh(pieceGeometry, materialMine);
+                        piece.iswhitepiece = (playerNum == 1);
+                        piece.isfirstpiece = false;
+                        if (playerNum == 1) {
+                            piece.position.set(this.position.endx + pieceOffsetFromBorder, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
+                        } else {
+                            piece.position.set(this.position.x - pieceOffsetFromBorder - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
+                        }
+                    } else {
+                        // for the last piece give each player one piece of the other player's
+                        piece = new THREE.Mesh(pieceGeometry, materialOpp);
+                        piece.iswhitepiece = (playerNum != 1);
+                        piece.isfirstpiece = true;
+                        if (playerNum == 1) {
+                            piece.position.set(this.position.endx - piece_size, 0, this.position.endz + pieceOffsetFromBorder);
+                            //piece.position.set(this.position.endx, 0, this.position.endz);
+                        } else {
+                            piece.position.set(this.position.x, 0, this.position.z - piece_size - pieceOffsetFromBorder);
+                            //piece.position.set(this.position.x-piece_size, 0, this.position.z - piece_size);
+                        }
+                    }
+
+                    piece.isstanding = false;
+                    piece.onsquare = null;
+                    piece.isboard = false;
+                    piece.iscapstone = false;
+
+                    this.piece_objects.push(piece);
+                    scene.add(piece);
+                },
+                makeCapAndPositionIt: function(playerNum,stackno) {
+                    var piece;
+                    if ( playerNum == 1) {
+                        piece = new THREE.Mesh(capGeometry, white_cap_material);
+                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * stack_dist);
+                        piece.iswhitepiece = true;
+                    } else {
+                        piece = new THREE.Mesh(capGeometry, black_cap_material);
+                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * stack_dist);
+                        piece.iswhitepiece = false;
+                    }
+                    piece.isstanding = true;
+                    piece.onsquare = null;
+                    piece.isboard = false;
+                    piece.iscapstone = true;
+
+                    this.piece_objects.push(piece);
+                    scene.add(piece);
+                },
+                // this is done again whenever we need to create a board in case the user
+                // has changed the textures
+                updateBoardMaterials: function() {
+                    white_sqr_texture = THREE.ImageUtils.loadTexture(white_square_tex_name);
+                    black_sqr_texture = THREE.ImageUtils.loadTexture(black_square_tex_name);
+                   
+                    white_sqr_material = new THREE.MeshBasicMaterial({map: white_sqr_texture});
+                    black_sqr_material = new THREE.MeshBasicMaterial({map: black_sqr_texture});
+                },
+                updatePieceMaterials: function() {
+                    white_piece_texture = THREE.ImageUtils.loadTexture(white_piece_tex_name);
+                    black_piece_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
+                    white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
+                    black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
+                    
+                    white_piece_material = new THREE.MeshBasicMaterial({map: white_piece_texture});
+                    black_piece_material = new THREE.MeshBasicMaterial({map: black_piece_texture});
+                    white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
+                    black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture}); 
+                    
+                    pieceGeometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
+                    pieceGeometry.center();
+                    capGeometry = new THREE.CylinderGeometry(capstone_radius, capstone_radius, capstone_height, 30);
+                    capGeometry.center();
+                },
+                // called if the user changes the texture of the board
                 updateboard: function () {
-                    // reload textures.
-                    var white_texture = THREE.ImageUtils.loadTexture(white_square_tex_name);
-                    var black_texture = THREE.ImageUtils.loadTexture(black_square_tex_name);
-                    
-                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
-                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
-                    
-                    // the first size^2 board_pieces are the squares.
+                    this.updateBoardMaterials();
                     var fields = this.size * this.size;
                     for (i = 0; i < fields; ++i) {
                         if (this.board_objects[i].isboard===true) {
                             this.board_objects[i].material =
                                 ((i + Math.floor(i / this.size) * ((this.size - 1) % 2)) % 2)
-                                ? white_material : black_material;
+                                ? white_sqr_material : black_sqr_material;
                         }
                     }
                 },
+                // called if the user changes the texture or size of the pieces
                 updatepieces: function () {
-                    // reload textures
-                    var white_texture = THREE.ImageUtils.loadTexture(white_piece_tex_name);
-                    var black_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
-                    var white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
-                    var black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
-                    
-                    var white_material = new THREE.MeshBasicMaterial({map: white_texture});
-                    var black_material = new THREE.MeshBasicMaterial({map: black_texture});
-                    var white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
-                    var black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture});
-                    
-                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
+                    this.updatePieceMaterials();
+                    var pieceGeometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     var old_size = this.piece_objects[0].geometry.parameters.width;
                     
                     // for all pieces...
@@ -1266,7 +1268,7 @@
                                 ? white_cap_material : black_cap_material;
                         } else {
                             this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
-                                ? white_material : black_material;
+                                ? white_piece_material : black_piece_material;
                         }
                         
                         if (this.piece_objects[i].iscapstone) {
@@ -1277,13 +1279,13 @@
                                 this.piece_objects[i].rotation.set(0, 0, 0);
                                 this.piece_objects[i].updateMatrix();
                                 this.piece_objects[i].position.y -= old_size / 2 - piece_height / 2;
+                                this.piece_objects[i].position.y -= old_size / 2;
                                 this.piece_objects[i].isstanding = false;
                                 this.standup(this.piece_objects[i]);
                             }
 
                             // reapply geometry.
-                            this.piece_objects[i].geometry = geometry;
-                            this.piece_objects[i].geometry = geometry;
+                            this.piece_objects[i].geometry = pieceGeometry;
                             this.piece_objects[i].updateMatrix();
                         }
                     }
@@ -1377,7 +1379,7 @@
 
                                 // get an available piece
                                 var pc = this.getfromstack(iscap, iswhite);
-                                // DJL what if there is not a piece available? Maybe that
+                                // what if there is not a piece available? Maybe that
                                 // is not possible, because when we first created the board
                                 // we know that there were enough pieces.
                                 if(iswall)
@@ -2464,9 +2466,6 @@
                     }
 
                     this.showmove(this.moveshown);
-                    if (this.mycolor !== this.boardside) {
-                        this.reverseboard();
-                    }
                     alert('info', infoMsg + " " + playMsg);
                 },
                 // assumes that the movecount and movestart have been initialized meaningfully
@@ -2510,6 +2509,9 @@
                     // know what it was before                
                     this.layoutFromTPS(rowDescriptors);
                     
+                    if (this.mycolor !== this.boardside)
+                        this.reverseboard();
+
                     document.getElementById("player-opp").className = "selectplayer";
                     document.getElementById("player-me").className = "";
                 },
@@ -2613,7 +2615,7 @@
                         return;
                     }
                     var url = window.location.host;
-                    // if (url.indexOf("playtak") > -1)
+                    if (url.indexOf("playtak") > -1)
                         url = 'playtak.com:3000';
                     var proto='ws://';
                     if (window.location.protocol === "https:")
