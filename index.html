@@ -956,6 +956,14 @@
                 getBlackCapTextureName: function() {
                      return this.pieces_texture_path + 'black_' + this.black_cap_style_name + '_caps.png';
                 },
+                // updateBoardMaterials after the user changes the board styles
+                updateBoardMaterials: function() {
+                    this.white_sqr = new THREE.MeshBasicMaterial(
+                        {map: THREE.ImageUtils.loadTexture(this.getWhiteSquareTextureName())});
+                    this.black_sqr = new THREE.MeshBasicMaterial(
+                        {map: THREE.ImageUtils.loadTexture(this.getBlackSquareTextureName())});
+                },
+                // updatePieceMaterials after the user changes the piece styles
                 updatePieceMaterials: function() {
                     this.white_piece = new THREE.MeshBasicMaterial(
                         {map: THREE.ImageUtils.loadTexture(this.getWhitePieceTextureName())});
