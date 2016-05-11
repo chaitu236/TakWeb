@@ -1183,48 +1183,43 @@
                 // addpieces: add the pieces to the scene, not on the board
                 addpieces: function () {
                     materials.updatePieceMaterials();
-                    var stackno;
-                    for (var i = 0; i < this.tottiles; i++) {
-                        // we put the flat stones in stacks of 10
-                        stackno = Math.floor(i / 10);
-                        var stackheight = i % 10;
-                        this.makePieceAndPositionIt(1,i,stackno,stackheight);
-                        this.makePieceAndPositionIt(2,i,stackno,stackheight);
+                    for (var i=0; i < this.tottiles; i++) {
+                        this.makePieceAndPositionIt(1,i);
+                        this.makePieceAndPositionIt(2,i);
                     }
                    
-                    for (var i = 0; i < this.totcaps; i++) {
-                        // each capstone goes in its own stack
-                        stackno++;
-                        this.makeCapAndPositionIt(1,stackno);
-                        this.makeCapAndPositionIt(2,stackno);
+                    for (var c = 0; c < this.totcaps; c++) {
+                        this.makeCapAndPositionIt(1,c);
+                        this.makeCapAndPositionIt(2,c);
                     }
                 },
-                makePieceAndPositionIt: function(playerNum,pieceNum,stackno,stackheight) {
+                makePieceAndPositionIt: function(playerNum,pieceNum) {
                     var materialMine = (playerNum == 1 ? materials.white_piece : materials.black_piece);
                     var materialOpp = (playerNum == 1 ? materials.black_piece : materials.white_piece);
-                    var pieceOffsetFromBorder = 50;
+                    var rowOffsetFromBorder = 50;
                     
                     var piece;
-                    if (pieceNum < this.tottiles - 1) {
-                        piece = new THREE.Mesh(materials.piece_geometry, materialMine);
-                        piece.iswhitepiece = (playerNum == 1);
-                        piece.isfirstpiece = false;
-                        if (playerNum == 1) {
-                            piece.position.set(this.position.endx + pieceOffsetFromBorder, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
-                        } else {
-                            piece.position.set(this.position.x - pieceOffsetFromBorder - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
-                        }
-                    } else {
-                        // for the last piece give each player one piece of the other player's
+                    if (pieceNum == 0) {
+                        // for the first piece give each player one piece of the other player's
                         piece = new THREE.Mesh(materials.piece_geometry, materialOpp);
                         piece.iswhitepiece = (playerNum != 1);
                         piece.isfirstpiece = true;
                         if (playerNum == 1) {
-                            piece.position.set(this.position.endx - piece_size, 0, this.position.endz + pieceOffsetFromBorder);
-                            //piece.position.set(this.position.endx, 0, this.position.endz);
+                            piece.position.set(this.position.endx - piece_size, 0, this.position.endz + rowOffsetFromBorder);
                         } else {
-                            piece.position.set(this.position.x, 0, this.position.z - piece_size - pieceOffsetFromBorder);
-                            //piece.position.set(this.position.x-piece_size, 0, this.position.z - piece_size);
+                            piece.position.set(this.position.x, 0, this.position.z - piece_size - rowOffsetFromBorder);
+                        }
+                    } else {
+                        pieceNum = pieceNum - 1;
+                        var stackno = Math.floor(pieceNum / 10);
+                        var stackheight = pieceNum % 10;
+                        piece = new THREE.Mesh(materials.piece_geometry, materialMine);
+                        piece.iswhitepiece = (playerNum == 1);
+                        piece.isfirstpiece = false;
+                        if (playerNum == 1) {
+                            piece.position.set(this.position.endx + rowOffsetFromBorder, stackheight * piece_height, this.position.endz - piece_size - stackno * stack_dist);
+                        } else {
+                            piece.position.set(this.position.x - rowOffsetFromBorder - piece_size, stackheight * piece_height, this.position.z + stackno * stack_dist);
                         }
                     }
 
@@ -1236,18 +1231,20 @@
                     this.piece_objects.push(piece);
                     scene.add(piece);
                 },
-                makeCapAndPositionIt: function(playerNum,stackno) {
+                makeCapAndPositionIt: function(playerNum,capNum) {
+                    var rowOffsetFromBorder = 50;
                     var piece;
+                    // the capstones go at the other end of the row
                     if ( playerNum == 1) {
                         piece = new THREE.Mesh(materials.cap_geometry, materials.white_cap);
-                        piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * stack_dist);
+                        piece.position.set(this.position.endx + rowOffsetFromBorder, capstone_height / 2, this.position.z + capNum * stack_dist);
                         piece.iswhitepiece = true;
                     } else {
                         piece = new THREE.Mesh(materials.cap_geometry, materials.black_cap);
-                        piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * stack_dist);
+                        piece.position.set(this.position.x - piece_size - rowOffsetFromBorder, capstone_height / 2, this.position.endz -piece_size - capNum * stack_dist);
                         piece.iswhitepiece = false;
                     }
-                    piece.isstanding = true;
+                    piece.isstanding = false;
                     piece.onsquare = null;
                     piece.isboard = false;
                     piece.iscapstone = true;
@@ -1257,7 +1254,7 @@
                 },
                 // called if the user changes the texture of the board
                 updateboard: function () {
-                    this.updateBoardMaterials();
+                    materials.updateBoardMaterials();
                     var fields = this.size * this.size;
                     for (i = 0; i < fields; ++i) {
                         if (this.board_objects[i].isboard===true) {
@@ -1269,7 +1266,7 @@
                 },
                 // called if the user changes the texture or size of the pieces
                 updatepieces: function () {
-                    this.updatePieceMaterials();
+                    materials.updatePieceMaterials();
                     var old_size = this.piece_objects[0].geometry.parameters.width;
                     
                     // for all pieces...
