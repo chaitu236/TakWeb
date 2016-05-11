@@ -912,35 +912,66 @@
             var letter_size = 12;
             var digit_adjustment = 2;
             var diagonal_walls = false;
-            var white_square_tex_name = 'images/board/white_simple.png';
-            var black_square_tex_name = 'images/board/black_simple.png';
-            var white_piece_tex_name = 'images/pieces/white_simple_pieces.png';
-            var black_piece_tex_name = 'images/pieces/black_simple_pieces.png';
-            var white_caps_tex_name = 'images/pieces/white_simple_caps.png';
-            var black_caps_tex_name = 'images/pieces/black_simple_caps.png';
-
+            
             var raycaster = new THREE.Raycaster();
             var highlighter;
             var mouse = new THREE.Vector2();
             var offset = new THREE.Vector3();
 
-            // we'll reuse these textures and materials
-            var white_piece_texture;
-            var black_piece_texture;
-            var white_cap_texture;
-            var black_cap_texture;    
-            var white_sqr_texture;
-            var black_sqr_texture; 
-            var white_piece_material;
-            var black_piece_material;
-            var white_cap_material;
-            var black_cap_material;
-            var white_sqr_material;
-            var black_sqr_material;
-            var border_material = new THREE.MeshBasicMaterial({color: 0x6f4734}); ;
-            var letter_material = new THREE.MeshBasicMaterial({color: 0xFFF5B5});
-            var pieceGeometry;
-            var capGeometry;
+            var materials = {
+                board_texture_path: 'images/board/',
+                pieces_texture_path: 'images/pieces/',
+                white_sqr_style_name: 'simple',
+                black_sqr_style_name: 'simple',
+                white_piece_style_name: 'simple',
+                black_piece_style_name: 'simple',
+                white_cap_style_name: 'simple',
+                black_cap_style_name: 'simple',
+                white_piece: null,
+                black_piece: null,
+                white_cap: null,
+                black_cap: null,
+                white_sqr: null,
+                black_sqr: null,
+                border: new THREE.MeshBasicMaterial({color: 0x6f4734}),
+                letter: new THREE.MeshBasicMaterial({color: 0xFFF5B5}),
+                piece_geometry: null,
+                cap_geometry: null,
+
+                getWhiteSquareTextureName: function() {
+                    return this.board_texture_path + 'white_' + this.white_sqr_style_name + '.png';
+                },
+                getBlackSquareTextureName: function(styleName) {
+                     return this.board_texture_path + 'black_' + this.black_sqr_style_name + '.png';
+                },
+                getWhitePieceTextureName: function() {
+                    return this.pieces_texture_path + 'white_' + this.white_piece_style_name + '_pieces.png';
+                },
+                getBlackPieceTextureName: function() {
+                     return this.pieces_texture_path + 'black_' + this.black_piece_style_name + '_pieces.png';
+                },
+                getWhiteCapTextureName: function() {
+                    return this.pieces_texture_path + 'white_' + this.white_cap_style_name + '_caps.png';
+                },
+                getBlackCapTextureName: function() {
+                     return this.pieces_texture_path + 'black_' + this.black_cap_style_name + '_caps.png';
+                },
+                updatePieceMaterials: function() {
+                    this.white_piece = new THREE.MeshBasicMaterial(
+                        {map: THREE.ImageUtils.loadTexture(this.getWhitePieceTextureName())});
+                    this.black_piece = new THREE.MeshBasicMaterial(
+                        {map: THREE.ImageUtils.loadTexture(this.getBlackPieceTextureName())});
+                    this.white_cap = new THREE.MeshBasicMaterial(
+                        {map: THREE.ImageUtils.loadTexture(this.getWhiteCapTextureName())});
+                    this.black_cap = new THREE.MeshBasicMaterial(
+                        {map: THREE.ImageUtils.loadTexture(this.getBlackCapTextureName())}); 
+                    
+                    this.piece_geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
+                    this.piece_geometry.center();
+                    this.cap_geometry = new THREE.CylinderGeometry(capstone_radius, capstone_radius, capstone_height, 30);
+                    this.cap_geometry.center();
+                }
+            };
 
             var board = {
                 size: 0,
@@ -1045,7 +1076,7 @@
                 },
                 // addboard: draws the empty board in the scene
                 addboard: function () {
-                    this.updateBoardMaterials();
+                    materials.updateBoardMaterials();
                     var squareGeometry = new THREE.BoxGeometry(sq_size, sq_height, sq_size);
                     squareGeometry.center();
 
@@ -1061,7 +1092,7 @@
                     var square;
                     for (i = 0; i < this.size; i++) {
                         for (j = 0; j < this.size; j++) {
-                            square = new THREE.Mesh(squareGeometry, ((i + j) % 2) ? white_sqr_material : black_sqr_material);
+                            square = new THREE.Mesh(squareGeometry, ((i + j) % 2) ? materials.white_sqr : materials.black_sqr);
                             square.position.set(startx + i * sq_size, 0, startz + j * sq_size);
 
                             square.file = i;//String.fromCharCode('A'.charCodeAt(0)+i);
@@ -1077,21 +1108,21 @@
                     // draw the border around the squares
                     // ... the top and bottom borders
                     var borderGeometry = new THREE.BoxGeometry(this.size * sq_size + 2 * border_size, piece_height, border_size);
-                    var border = new THREE.Mesh(borderGeometry, border_material);
+                    var border = new THREE.Mesh(borderGeometry, materials.border);
                     border.position.set(0, 0, startz - sq_size / 2 - border_size / 2);
                     scene.add(border);
-                    border = new THREE.Mesh(borderGeometry, border_material);
+                    border = new THREE.Mesh(borderGeometry, materials.border);
                     border.rotateY(Math.PI);
                     border.position.set(0, 0, this.position.endz - sq_size / 2 + border_size / 2);
                     scene.add(border);
                     
                     // ... the left and right borders
                     borderGeometry = new THREE.BoxGeometry(this.size * sq_size, piece_height, border_size);
-                    border = new THREE.Mesh(borderGeometry, border_material);
+                    border = new THREE.Mesh(borderGeometry, materials.border);
                     border.rotateY(Math.PI / 2);
                     border.position.set(this.position.x - sq_size / 2 - border_size / 2, 0, -sq_size / 2);
                     scene.add(border);
-                    border = new THREE.Mesh(borderGeometry, border_material);
+                    border = new THREE.Mesh(borderGeometry, materials.border);
                     border.rotateY(-Math.PI / 2);
                     border.position.set(this.position.endx - border_size, 0, -sq_size / 2);
                     scene.add(border);
@@ -1102,7 +1133,7 @@
                     for (var i = 0; i < this.size; i++) {
                         letterGeometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        letter = new THREE.Mesh(letterGeometry, letter_material);
+                        letter = new THREE.Mesh(letterGeometry, materials.letter);
                         letter.rotateX(-Math.PI / 2);
                         letter.position.set(this.position.x - letter_size / 2 + i * sq_size, sq_height / 2,
                                 this.position.endz - border_size / 2 - letter_size);
@@ -1110,7 +1141,7 @@
 
                         letterGeometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        letter = new THREE.Mesh(letterGeometry, letter_material);
+                        letter = new THREE.Mesh(letterGeometry, materials.letter);
                         letter.rotateX(-Math.PI / 2);
                         letter.position.set(this.position.x - sq_size / 2 - border_size / 2 - letter_size / 2, sq_height / 2,
                                 this.position.endz - border_size - sq_size / 2 - letter_size / 2 - digit_adjustment - i * sq_size);
@@ -1120,7 +1151,7 @@
                     for (var i = this.size - 1; i >= 0; i--) {
                         letterGeometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        letter = new THREE.Mesh(letterGeometry, letter_material);
+                        letter = new THREE.Mesh(letterGeometry, materials.letter);
                         letter.rotateX(Math.PI / 2);
                         letter.rotateY(Math.PI);
                         letter.position.set(this.position.x + letter_size / 2 + i * sq_size, sq_height / 2,
@@ -1129,7 +1160,7 @@
 
                         letterGeometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        letter = new THREE.Mesh(letterGeometry, letter_material);
+                        letter = new THREE.Mesh(letterGeometry, materials.letter);
                         letter.rotateX(-Math.PI / 2);
                         letter.rotateZ(Math.PI);
                         letter.position.set(this.position.endx - sq_size / 2 + border_size / 2 + letter_size / 2, sq_height / 2,
@@ -1143,7 +1174,7 @@
                 },
                 // addpieces: add the pieces to the scene, not on the board
                 addpieces: function () {
-                    this.updatePieceMaterials();
+                    materials.updatePieceMaterials();
                     var stackno;
                     for (var i = 0; i < this.tottiles; i++) {
                         // we put the flat stones in stacks of 10
@@ -1161,13 +1192,13 @@
                     }
                 },
                 makePieceAndPositionIt: function(playerNum,pieceNum,stackno,stackheight) {
-                    var materialMine = (playerNum == 1 ? white_piece_material : black_piece_material);
-                    var materialOpp = (playerNum == 1 ? black_piece_material : white_piece_material);
+                    var materialMine = (playerNum == 1 ? materials.white_piece : materials.black_piece);
+                    var materialOpp = (playerNum == 1 ? materials.black_piece : materials.white_piece);
                     var pieceOffsetFromBorder = 50;
                     
                     var piece;
                     if (pieceNum < this.tottiles - 1) {
-                        piece = new THREE.Mesh(pieceGeometry, materialMine);
+                        piece = new THREE.Mesh(materials.piece_geometry, materialMine);
                         piece.iswhitepiece = (playerNum == 1);
                         piece.isfirstpiece = false;
                         if (playerNum == 1) {
@@ -1177,7 +1208,7 @@
                         }
                     } else {
                         // for the last piece give each player one piece of the other player's
-                        piece = new THREE.Mesh(pieceGeometry, materialOpp);
+                        piece = new THREE.Mesh(materials.piece_geometry, materialOpp);
                         piece.iswhitepiece = (playerNum != 1);
                         piece.isfirstpiece = true;
                         if (playerNum == 1) {
@@ -1200,11 +1231,11 @@
                 makeCapAndPositionIt: function(playerNum,stackno) {
                     var piece;
                     if ( playerNum == 1) {
-                        piece = new THREE.Mesh(capGeometry, white_cap_material);
+                        piece = new THREE.Mesh(materials.cap_geometry, materials.white_cap);
                         piece.position.set(this.position.endx + 50, capstone_height / 2, this.position.endz - piece_size - stackno * stack_dist);
                         piece.iswhitepiece = true;
                     } else {
-                        piece = new THREE.Mesh(capGeometry, black_cap_material);
+                        piece = new THREE.Mesh(materials.cap_geometry, materials.black_cap);
                         piece.position.set(this.position.x - 50 - piece_size, capstone_height / 2, this.position.z + stackno * stack_dist);
                         piece.iswhitepiece = false;
                     }
@@ -1216,31 +1247,6 @@
                     this.piece_objects.push(piece);
                     scene.add(piece);
                 },
-                // this is done again whenever we need to create a board in case the user
-                // has changed the textures
-                updateBoardMaterials: function() {
-                    white_sqr_texture = THREE.ImageUtils.loadTexture(white_square_tex_name);
-                    black_sqr_texture = THREE.ImageUtils.loadTexture(black_square_tex_name);
-                   
-                    white_sqr_material = new THREE.MeshBasicMaterial({map: white_sqr_texture});
-                    black_sqr_material = new THREE.MeshBasicMaterial({map: black_sqr_texture});
-                },
-                updatePieceMaterials: function() {
-                    white_piece_texture = THREE.ImageUtils.loadTexture(white_piece_tex_name);
-                    black_piece_texture = THREE.ImageUtils.loadTexture(black_piece_tex_name);
-                    white_cap_texture = THREE.ImageUtils.loadTexture(white_caps_tex_name);
-                    black_cap_texture = THREE.ImageUtils.loadTexture(black_caps_tex_name);
-                    
-                    white_piece_material = new THREE.MeshBasicMaterial({map: white_piece_texture});
-                    black_piece_material = new THREE.MeshBasicMaterial({map: black_piece_texture});
-                    white_cap_material = new THREE.MeshBasicMaterial({map: white_cap_texture});
-                    black_cap_material = new THREE.MeshBasicMaterial({map: black_cap_texture}); 
-                    
-                    pieceGeometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
-                    pieceGeometry.center();
-                    capGeometry = new THREE.CylinderGeometry(capstone_radius, capstone_radius, capstone_height, 30);
-                    capGeometry.center();
-                },
                 // called if the user changes the texture of the board
                 updateboard: function () {
                     this.updateBoardMaterials();
@@ -1249,14 +1255,13 @@
                         if (this.board_objects[i].isboard===true) {
                             this.board_objects[i].material =
                                 ((i + Math.floor(i / this.size) * ((this.size - 1) % 2)) % 2)
-                                ? white_sqr_material : black_sqr_material;
+                                ? materials.white_sqr : materials.black_sqr;
                         }
                     }
                 },
                 // called if the user changes the texture or size of the pieces
                 updatepieces: function () {
                     this.updatePieceMaterials();
-                    var pieceGeometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     var old_size = this.piece_objects[0].geometry.parameters.width;
                     
                     // for all pieces...
@@ -1265,10 +1270,10 @@
                         if (this.piece_objects[i].iscapstone)
                         {
                             this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
-                                ? white_cap_material : black_cap_material;
+                                ? materials.white_cap : materials.black_cap;
                         } else {
                             this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
-                                ? white_piece_material : black_piece_material;
+                                ? materials.white_piece : materials.black_piece;
                         }
                         
                         if (this.piece_objects[i].iscapstone) {
@@ -1285,7 +1290,7 @@
                             }
 
                             // reapply geometry.
-                            this.piece_objects[i].geometry = pieceGeometry;
+                            this.piece_objects[i].geometry = materials.piece_geometry;
                             this.piece_objects[i].updateMatrix();
                         }
                     }
@@ -3434,30 +3439,30 @@
               // load white piece style.
               if (localStorage.getItem('piece_style_white2')!==null) {
                 var styleName = localStorage.getItem('piece_style_white2');
-                white_piece_tex_name = 'images/pieces/white_' + styleName + '_pieces.png';
-                white_caps_tex_name = 'images/pieces/white_' + styleName + '_caps.png';
+                materials.white_piece_style_name = styleName;
+                materials.white_cap_style_name = styleName;
                 document.getElementById('piece-style-white-' + styleName).checked = true;
               }
               
               // load black piece style.
               if (localStorage.getItem('piece_style_black2')!==null) {
                 var styleName = localStorage.getItem('piece_style_black2');
-                black_piece_tex_name = 'images/pieces/black_' + styleName + '_pieces.png';
-                black_caps_tex_name = 'images/pieces/black_' + styleName + '_caps.png';
+                materials.black_piece_style_name = styleName;
+                materials.black_cap_style_name = styleName;
                 document.getElementById('piece-style-black-' + styleName).checked = true;
               }
               
               // load black board style.
               if (localStorage.getItem('board_style_black2')!==null) {
                 var styleName = localStorage.getItem('board_style_black2');
-                black_square_tex_name = 'images/board/black_' + styleName + '.png';
+                materials.black_sqr_style_name = styleName;
                 document.getElementById('board-style-black-' + styleName).checked = true;
               }
               
               // load white board style.
               if (localStorage.getItem('board_style_white2')!==null) {
                 var styleName = localStorage.getItem('board_style_white2');
-                white_square_tex_name = 'images/board/white_' + styleName + '.png';
+                materials.white_sqr_style_name = styleName;
                 document.getElementById('board-style-white-' + styleName).checked = true;
               }
 
@@ -3526,8 +3531,8 @@
              */
             function radioPieceStyleWhite(styleName) {
               document.getElementById('piece-style-white-' + styleName).checked = true;
-              white_piece_tex_name = 'images/pieces/white_' + styleName + '_pieces.png';
-              white_caps_tex_name = 'images/pieces/white_' + styleName + '_caps.png';
+              materials.white_piece_style_name = styleName;
+              materials.white_cap_style_name = styleName;
               localStorage.setItem('piece_style_white2', styleName);
               board.updatepieces();
             }
@@ -3538,8 +3543,8 @@
              */
             function radioPieceStyleBlack(styleName) {
               document.getElementById('piece-style-black-' + styleName).checked = true;
-              black_piece_tex_name = 'images/pieces/black_' + styleName + '_pieces.png';
-              black_caps_tex_name = 'images/pieces/black_' + styleName + '_caps.png';
+              materials.black_piece_style_name = styleName;
+              materials.black_cap_style_name = styleName;
               localStorage.setItem('piece_style_black2', styleName);
               board.updatepieces();
             }
@@ -3550,7 +3555,7 @@
              */
             function radioBoardStyleBlack(styleName) {
               document.getElementById('board-style-black-' + styleName).checked = true;
-              black_square_tex_name = 'images/board/black_' + styleName + '.png';
+              materials.black_sqr_style_name = styleName;
               localStorage.setItem('board_style_black2', styleName);
               board.updateboard();
             }
@@ -3561,7 +3566,7 @@
              */
             function radioBoardStyleWhite(styleName) {
               document.getElementById('board-style-white-' + styleName).checked = true;
-              white_square_tex_name = 'images/board/white_' + styleName + '.png';
+              materials.white_sqr_style_name = styleName;
               localStorage.setItem('board_style_white2', styleName);
               board.updateboard();
             }
