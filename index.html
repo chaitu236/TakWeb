@@ -1957,11 +1957,11 @@
                         this.sendmove("M " + st + " " + end + " " + nos.trim());
                         this.notateMmove(this.move.start.file, this.move.start.rank,
                                 this.move.end.file, this.move.end.rank, nos);
-                        this.incmovecnt();
                         if (this.scratch) {
                             this.checkroadwin();
                             this.checksquaresover();
                         }
+                        this.incmovecnt();
                     }
                     this.move = {start: null, end: null, dir: 'U', squares: []};
                 },
