@@ -575,6 +575,18 @@
                             </div>
                           </div>
                         </div>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <div class="form-group">
+                              <label for="time">My Color</label>
+                              <select class="form-control" id="colorselect">
+                                <option selected="selected">Any</option>
+                                <option>White</option>
+                                <option>Black</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
                         <div class="row center">
                           <div class="col-sm-12">
                             <form role="form" onsubmit="server.seek(); return false;">
@@ -3015,7 +3027,7 @@
                     }
                     //new seek
                     else if (e.startsWith("Seek new")) {
-                        //Seek new 1 chaitu 5 180
+                        //Seek new 1 chaitu 5 180 W|B
                         var spl = e.split(" ");
 
                         var no = spl[2];
@@ -3026,11 +3038,18 @@
                         var p = spl[3];
                         var sz = spl[4]+'x'+spl[4];
 
+                        img = "images/circle_any.svg"
+                        if(spl.length == 7) {
+                            img = (spl[6] === 'W')?"images/circle_white.svg":
+                                                   "images/circle_black.svg";
+                        }
+                        img = '<img src="'+img+'"/>';
+
                         p = "<span class='playername'>"+p+"</span>";
                         sz = "<span class='badge'>"+sz+"</span>";
 
                         var li = $('<li/>').addClass('seek'+no).appendTo($('#seeklist'));
-                        $('<a/>').append(p + " " + sz + " " + m+":"+s).click(function() {server.acceptseek(spl[2])}).
+                        $('<a/>').append(img + " " + p + " " + sz + " " + m+":"+s).click(function() {server.acceptseek(spl[2])}).
                                     appendTo(li);
 
                         var op = document.getElementById("seekcount");
@@ -3075,7 +3094,14 @@
                     var size = $('#boardsize').find(':selected').text();
                     size = parseInt(size);
                     var time = $('#timeselect').find(':selected').text();
-                    this.send("Seek "+size+" "+time*60);
+                    var clrtxt = $('#colorselect').find(':selected').text();
+                    var clr='';
+                    if(clrtxt == 'White')
+                      clr = ' W';
+                    if(clrtxt == 'Black')
+                      clr = ' B';
+
+                    this.send("Seek "+size+" " + (time*60) + clr);
                     $('#creategamemodal').modal('hide');
                 },
                 removeseek: function() {
