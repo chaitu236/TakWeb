@@ -1136,7 +1136,7 @@
                     border = new THREE.Mesh(geometry, materials.border);
                     border.position.set(0, 0, this.position.corner_endz - border_size/2);
                     scene.add(border);
-                    
+
                     // ... the left and right borders
                     geometry = new THREE.BoxGeometry(border_size, piece_height, board_length);
                     border = new THREE.Mesh(geometry, materials.border);
@@ -1186,7 +1186,6 @@
                         scene.add(letter);
                     }
                 },
-                
                 // addpieces: add the pieces to the scene, not on the board
                 addpieces: function () {
                     materials.updatePieceMaterials();
@@ -1301,7 +1300,6 @@
                             if (this.piece_objects[i].isstanding) {
                                 this.piece_objects[i].rotation.set(0, 0, 0);
                                 this.piece_objects[i].updateMatrix();
-                                this.piece_objects[i].position.y -= old_size / 2 - piece_height / 2;
                                 this.piece_objects[i].position.y -= old_size / 2;
                                 this.piece_objects[i].isstanding = false;
                                 this.standup(this.piece_objects[i]);
