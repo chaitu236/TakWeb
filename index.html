@@ -1300,7 +1300,7 @@
                             if (this.piece_objects[i].isstanding) {
                                 this.piece_objects[i].rotation.set(0, 0, 0);
                                 this.piece_objects[i].updateMatrix();
-                                this.piece_objects[i].position.y -= old_size / 2;
+                                this.piece_objects[i].position.y -= old_size / 2 - piece_height / 2;
                                 this.piece_objects[i].isstanding = false;
                                 this.standup(this.piece_objects[i]);
                             }
