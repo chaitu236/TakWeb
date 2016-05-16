@@ -1103,16 +1103,12 @@
                     var squares_start_x = -squares_end_x;
                     var squares_start_z = -squares_end_z;
                     var board_length = this.size*sq_size + border_size*2;
-                    var board_corner_endx = board_length/2;
-                    var board_corner_endz = board_length/2;
-                    var board_corner_x = -board_corner_endx;
-                    var board_corner_z = -board_corner_endz;
 
                     // save the outside corners
-                    this.position.corner_x = board_corner_x;
-                    this.position.corner_z = board_corner_z;
-                    this.position.corner_endx = board_corner_endx;
-                    this.position.corner_endz = board_corner_endz;
+                    this.position.corner_endx = board_length/2;
+                    this.position.corner_endz = board_length/2;
+                    this.position.corner_x = -this.position.corner_endx;
+                    this.position.corner_z = -this.position.corner_endz;
 
                     var geometry;
                     // draw the squares
@@ -1135,19 +1131,19 @@
                     // ... the top and bottom borders
                     geometry = new THREE.BoxGeometry(board_length, piece_height, border_size);
                     var border = new THREE.Mesh(geometry, materials.border);
-                    border.position.set(0, 0, board_corner_z + border_size/2);
+                    border.position.set(0, 0, this.position.corner_z + border_size/2);
                     scene.add(border);
                     border = new THREE.Mesh(geometry, materials.border);
-                    border.position.set(0, 0, board_corner_endz - border_size/2);
+                    border.position.set(0, 0, this.position.corner_endz - border_size/2);
                     scene.add(border);
                     
                     // ... the left and right borders
                     geometry = new THREE.BoxGeometry(border_size, piece_height, board_length);
                     border = new THREE.Mesh(geometry, materials.border);
-                    border.position.set(board_corner_x + border_size/2, 0, 0);
+                    border.position.set(this.position.corner_x + border_size/2, 0, 0);
                     scene.add(border);
                     border = new THREE.Mesh(geometry, materials.border);
-                    border.position.set(board_corner_endx - border_size/2, 0, 0);
+                    border.position.set(this.position.corner_endx - border_size/2, 0, 0);
                     scene.add(border);
 
                     // add the letters and numbers on the bottom and left borders
@@ -1157,14 +1153,14 @@
                         var letter = new THREE.Mesh(geometry, materials.letter);
                         letter.rotateX(-Math.PI / 2);
                         letter.position.set(squares_start_x - letter_size/2 + i*sq_size, sq_height/2,
-                                board_corner_endz - border_size/2);
+                                this.position.corner_endz - border_size/2);
                         scene.add(letter);
 
                         geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
                                 {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
                         letter = new THREE.Mesh(geometry, materials.letter);
                         letter.rotateX(-Math.PI / 2);
-                        letter.position.set(board_corner_x + letter_size, sq_height / 2,
+                        letter.position.set(this.position.corner_x + letter_size, sq_height / 2,
                                 squares_end_z + letter_size/2 - i*sq_size);
                         scene.add(letter);
                     }
@@ -1177,7 +1173,7 @@
                         letter.rotateX(Math.PI / 2);
                         letter.rotateY(Math.PI);
                         letter.position.set(squares_start_x + letter_size/2 + i*sq_size, sq_height/2,
-                                board_corner_z + border_size/2);
+                                this.position.corner_z + border_size/2);
                         scene.add(letter);
 
                         geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
@@ -1185,7 +1181,7 @@
                         letter = new THREE.Mesh(geometry, materials.letter);
                         letter.rotateX(-Math.PI / 2);
                         letter.rotateZ(Math.PI);
-                        letter.position.set(board_corner_endx - letter_size, sq_height / 2,
+                        letter.position.set(this.position.corner_endx - letter_size, sq_height / 2,
                                 squares_end_z -letter_size/2 - i*sq_size);
                         scene.add(letter);
                     }
