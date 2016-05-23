@@ -2862,6 +2862,8 @@
                               }
                             } else if (spl[2] === "1/2-1/2") {
                               msg += "The game is a draw!";
+                            } else if (spl[2] === "0-0") {
+                              msg += "The game is aborted!";
                             } else {//black wins
                               if(board.observing === true) {
                                 msg += "Black wins by "+type;
