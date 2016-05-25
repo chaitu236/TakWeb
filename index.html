@@ -437,8 +437,8 @@
                                 <img id="settings-img" src="images/ic_settings_black_24px.svg" height="20" width="20"/>
                             </a>
                         </li>
-                        <li>
-                            <a href="#" title="Number of online players" >Online <span class="badge" id="onlineplayers">0</span></a>
+                        <li id="onlineplayers" class="hidden">
+                            <a href="#" title="Number of online players" >Online <span class="badge" id="onlineplayersbadge">0</span></a>
                         </li>
                         <li>
                             <button id="login-button" type="button" class="btn btn-default navbar-btn" onclick="server.init()">Sign up / Login</button>
@@ -2630,7 +2630,8 @@
                     };
                     this.connection.onclose = function (e) {
                         document.getElementById('login-button').textContent = 'Sign up / Login';
-                        document.getElementById("onlineplayers").innerHTML = "0";
+                        $('#onlineplayers').addClass('hidden');
+                        document.getElementById("onlineplayersbadge").innerHTML = "0";
                         document.getElementById("seekcount").innerHTML = "0";
                         document.getElementById("gamecount").innerHTML = "0";
                         document.getElementById("scratchsize").disabled = false;
@@ -3087,7 +3088,8 @@
                     }
                     //Online players
                     else if (e.startsWith("Online ")) {
-                        var op = document.getElementById("onlineplayers");
+                        $('#onlineplayers').removeClass('hidden');
+                        var op = document.getElementById("onlineplayersbadge");
                         op.innerHTML = Number(e.split("Online ")[1]);
                     }
                 },
