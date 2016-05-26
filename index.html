@@ -1864,7 +1864,7 @@
                             cell2.innerHTML = '1/2';
                         }
 
-                        $('#notationbar').scrollTop($('#moveslist tr:last').position().top);
+                        $('#notationbar').scrollTop(10000);
                         return;
                     }
 
@@ -1901,7 +1901,7 @@
                         var cell1 = row.cells[1];
                         cell1.innerHTML = '<a href="#" onclick="board.showmove('+(this.movecount+1)+');"><span class=moveno'+this.movecount+'>'+txt+'</span></a>';
                     }
-                    $('#notationbar').scrollTop($('#moveslist tr:last').position().top);
+                    $('#notationbar').scrollTop(10000);
                 },
                 getCurrentNotationRow: function () {
                     var om = document.getElementById("moveslist");
