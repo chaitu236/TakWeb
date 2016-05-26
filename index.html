@@ -2737,7 +2737,7 @@
                         board.gameno = Number(spl[1].split("Game#")[1]);
                         $('.player1-name:first').html(spl[2]);
                         $('.player2-name:first').html(spl[4].split(",")[0]);
-                        document.title = "Tak: " + spl[2] + " vs " + spl[4];
+                        document.title = "Tak: " + spl[2] + " vs " + spl[4].split(",")[0];
 
                         var time = Number(spl[6].split(",")[0]);
                         var m = parseInt(time/60);
