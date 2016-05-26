@@ -933,6 +933,7 @@
             var offset = new THREE.Vector3();
 
             var materials = {
+                images_root_path: 'images/',
                 board_texture_path: 'images/board/',
                 pieces_texture_path: 'images/pieces/',
                 white_sqr_style_name: 'simple',
@@ -969,6 +970,26 @@
                 getBlackCapTextureName: function() {
                      return this.pieces_texture_path + 'black_' + this.black_cap_style_name + '_caps.png';
                 },
+                
+                getUndoImageName: function() {
+                    return this.images_root_path + 'requestundo.svg'
+                },
+                getOtherPlayerUndoImageName: function() {
+                    return this.images_root_path + 'otherrequestedundo.svg';
+                },
+                getBlackPlayerImageName: function() {
+                    return this.images_root_path + 'player-black.png'
+                },
+                getWhitePlayerImageName: function() {
+                    return this.images_root_path + 'player-white.png'
+                },
+                getOfferHandImageName: function() {
+                    return this.images_root_path + 'offer-hand.png";
+                },
+                getOtherOfferHandImageName: function() {
+                    return this.images_root_path + 'hand-other-offered.png";
+                },
+                
                 // updateBoardMaterials after the user changes the board styles
                 updateBoardMaterials: function() {
                     this.white_sqr = new THREE.MeshBasicMaterial(
@@ -1323,7 +1344,7 @@
                     var old_size = this.piece_objects[0].geometry.parameters.width;
                     
                     // for all pieces...
-                    for (i = 0; i < this.piece_objects.length; ++i) {
+                    for (i = 0; i < this.piece_objects.length ; i++) {
                         // reapply texture.
                         if (this.piece_objects[i].iscapstone)
                         {
@@ -1384,7 +1405,7 @@
                     }
 
                     this.ismymove = this.checkifmymove();
-                    $('#undo').attr('src', 'images/requestundo.svg');
+                    $('#undo').attr('src', materials.getUndoTextureName());
                 },
                 // We save an array that contains a description of the pieces in each cell.
                 // Each piece is either a:  p=flatstone, c=capstone, w=wall
@@ -2242,7 +2263,7 @@
                     var tbl = document.getElementById("moveslist");
                     while (tbl.rows.length > 0)
                         tbl.deleteRow(0);
-                    document.getElementById("draw").src = "images/offer-hand.png";
+                    document.getElementById("draw").src = materials.getOfferHandImageName();
                     stopTime();
 
                     $('#player-me-name').removeClass('player1-name');
@@ -2265,8 +2286,8 @@
                     $('#player-me-time').addClass('player2-time');
                     $('#player-opp-time').addClass('player1-time');
 
-                    $('#player-me-img').attr('src', 'images/player-black.png');
-                    $('#player-opp-img').attr('src', 'images/player-white.png');
+                    $('#player-me-img').attr('src', materials.getBlackPlayerImageName());
+                    $('#player-opp-img').attr('src', materials.getWhitePlayerImageName());
 
                     $('#player-opp').addClass('selectplayer');
 
@@ -2677,7 +2698,7 @@
                         return;
                     }
                     var url = window.location.host;
-                    if (url.indexOf("playtak") > -1)
+                    //if (url.indexOf("playtak") > -1)
                         url = 'playtak.com:3000';
                     var proto='ws://';
                     if (window.location.protocol === "https:")
@@ -2770,8 +2791,8 @@
                             $('#player-me-time').addClass('player1-time');
                             $('#player-opp-time').addClass('player2-time');
 
-                            $('#player-me-img').attr('src', 'images/player-white.png');
-                            $('#player-opp-img').attr('src', 'images/player-black.png');
+                            $('#player-me-img').attr('src', materials.getWhitePlayerImageName());
+                            $('#player-opp-img').attr('src', materials.getBlackPlayerImageName());
 
                             $('#player-me').addClass('selectplayer');
                         } else {//I am black
@@ -2781,8 +2802,8 @@
                             $('#player-me-time').addClass('player2-time');
                             $('#player-opp-time').addClass('player1-time');
 
-                            $('#player-me-img').attr('src', 'images/player-black.png');
-                            $('#player-opp-img').attr('src', 'images/player-white.png');
+                            $('#player-me-img').attr('src', materials.getBlackPlayerImageName());
+                            $('#player-opp-img').attr('src', materials.getWhitePlayerImageName());
 
                             $('#player-opp').addClass('selectplayer');
                         }
@@ -2896,27 +2917,27 @@
                         //Game#1 RequestUndo
                         else if (spl[1] === "RequestUndo") {
                           alert("info", "Your opponent requests to undo the last move");
-                          $('#undo').attr('src', 'images/otherrequestedundo.svg');
+                          $('#undo').attr('src', materials.getOtherPlayerUndoImageName());
                         }
                         //Game#1 RemoveUndo
                         else if (spl[1] === "RemoveUndo") {
                           alert("info", "Your opponent removes undo request");
-                          $('#undo').attr('src', 'images/requestundo.svg');
+                          $('#undo').attr('src', materials.getUndoImageName());
                         }
                         //Game#1 Undo
                         else if (spl[1] === "Undo") {
                           board.undo();
                           alert("info", "Game has been UNDOed by 1 move");
-                          $('#undo').attr('src', 'images/requestundo.svg');
+                          $('#undo').attr('src', materials.getUndoImageName());
                         }
                         //Game#1 OfferDraw
                         else if (spl[1] === "OfferDraw") {
-                            document.getElementById("draw").src = "images/hand-other-offered.png";
+                            document.getElementById("draw").src = materials.getOtherOfferHandImageName();
                             alert("info", "Draw is offered by your opponent");
                         }
                         //Game#1 RemoveDraw
                         else if (spl[1] === "RemoveDraw") {
-                            document.getElementById("draw").src = "images/offer-hand.png";
+                            document.getElementById("draw").src = materials.getOfferHandImageName();
                             alert("info", "Draw offer is taken back by your opponent");
                         }
                         //Game#1 Over result
