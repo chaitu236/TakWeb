@@ -31,9 +31,10 @@
         <link rel="stylesheet" href="css/bootstrap-tour.min.css">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="js/three.min.js"></script>
+        <!-- <script src="js/three.min.js"></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js"></script>
         <script src="js/OrbitControls.min.js"></script>
-        <script src="js/helvetiker_regular.typeface.js"></script>
+        <!-- <script src="js/helvetiker_regular.typeface.js"></script> -->
         <script src="js/linkify.min.js"></script>
         <script src="js/linkify-string.min.js"></script>
 
@@ -1107,43 +1108,54 @@
                     scene.add(border);
 
                     var material = new THREE.MeshBasicMaterial({color: 0xFFF5B5});
-                    for (var i = 0; i < this.size; i++) {
-                        geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
-                                {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
 
-                        var letter = new THREE.Mesh(geometry, material);
-                        letter.rotateX(-Math.PI / 2);
-                        letter.position.set(this.position.x - letter_size / 2 + i * sq_size, sq_height / 2,
-                                this.position.endz - border_size / 2 - letter_size);
-                        scene.add(letter);
+                    var loader = new THREE.FontLoader();
+                    loader.load('js/helvetiker_regular.typeface.js', function(font) {
+                        for (var i = 0; i < board.size; i++) {
+                            geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
+                            geometry.center();
 
-                        geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
-                                {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        letter = new THREE.Mesh(geometry, material);
-                        letter.rotateX(-Math.PI / 2);
-                        letter.position.set(this.position.x - sq_size / 2 - border_size / 2 - letter_size / 2, sq_height / 2,
-                                this.position.endz - border_size - sq_size / 2 - letter_size / 2 - digit_adjustment - i * sq_size);
-                        scene.add(letter);
-                    }
-                    for (var i = this.size - 1; i >= 0; i--) {
-                        geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
-                                {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        var letter = new THREE.Mesh(geometry, material);
-                        letter.rotateX(Math.PI / 2);
-                        letter.rotateY(Math.PI);
-                        letter.position.set(this.position.x + letter_size / 2 + i * sq_size, sq_height / 2,
-                                this.position.z - sq_size / 2 - border_size / 2 - letter_size / 2);
-                        scene.add(letter);
+                            var letter = new THREE.Mesh(geometry, material);
+                            letter.rotateX(-Math.PI / 2);
+                            letter.position.set(board.position.x + sq_size / 2 - letter_size + i * sq_size, sq_height / 2,
+                                    board.position.endz - sq_size / 2 - border_size / 2);
+                            scene.add(letter);
 
-                        geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
-                                {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
-                        letter = new THREE.Mesh(geometry, material);
-                        letter.rotateX(-Math.PI / 2);
-                        letter.rotateZ(Math.PI);
-                        letter.position.set(this.position.endx - sq_size / 2 + border_size / 2 + letter_size / 2, sq_height / 2,
-                                this.position.endz - border_size - sq_size / 2 - letter_size * 1.5 - digit_adjustment - i * sq_size);
-                        scene.add(letter);
-                    }
+                            geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
+                            geometry.center();
+
+                            letter = new THREE.Mesh(geometry, material);
+                            letter.rotateX(-Math.PI / 2);
+                            letter.position.set(board.position.x - border_size / 2 - letter_size - digit_adjustment, sq_height / 2,
+                                    board.position.endz - sq_size - border_size - i * sq_size);
+                            scene.add(letter);
+                        }
+                        for (var i = board.size - 1; i >= 0; i--) {
+                            geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
+                            geometry.center();
+
+                            var letter = new THREE.Mesh(geometry, material);
+                            letter.rotateX(Math.PI / 2);
+                            letter.rotateY(Math.PI);
+                            letter.position.set(board.position.x + sq_size / 2 - letter_size + i * sq_size, sq_height / 2,
+                                    board.position.z - digit_adjustment - letter_size - border_size / 2);
+                            scene.add(letter);
+
+                            geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
+                            geometry.center();
+
+                            letter = new THREE.Mesh(geometry, material);
+                            letter.rotateX(-Math.PI / 2);
+                            letter.rotateZ(Math.PI);
+                            letter.position.set(board.position.endx - sq_size / 2 - border_size / 2, sq_height / 2,
+                                    board.position.endz - sq_size -border_size - i * sq_size);
+                            scene.add(letter);
+                        }
+                    });
                     this.position.x -= border_size;
                     this.position.z -= border_size;
                     this.position.endx += border_size;
