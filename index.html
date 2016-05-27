@@ -339,20 +339,41 @@
                 padding: 2px;
             }
             .border {
-              border-radius : 20px;
-              padding: 5px;
-              margin: 2px;
-              border : 2px solid black;
+                border-radius : 20px;
+                padding: 5px;
+                margin: 2px;
+                border : 2px solid black;
+            }
+            #moveslist tbody tr td + td {
+                display: inline-block;
+                height: 100%;
+                width: 40%;
+            }
+            #moveslist tbody tr td {
+                display: inline-block;
+                height: 100%;
+                width: 20%;
+            }
+            #moveslist tbody tr td a {
+                display: block;
+                height: 100%;
+                width: 100%;
+            }
+            #moveslist tbody tr td a span {
+                display: block;
+                height: 100%;
+                width: 100%;
+            }
+            #moveslist tbody tr td a span:hover {
+                background-color: #c3c3c3;
             }
             .curmove {
-              padding-left: 4px;
-              padding-right: 4px;
-              border : 2px solid black;
+                background-color: #c3c3c3;
             }
             .scrollable-menu {
-              height: auto;
-              max-height: 280px;
-              overflow-x: hidden;
+                height: auto;
+                max-height: 280px;
+                overflow-x: hidden;
             }
         </style>
 
