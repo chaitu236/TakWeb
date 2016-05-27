@@ -31,9 +31,10 @@
         <link rel="stylesheet" href="css/bootstrap-tour.min.css">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="js/three.min.js"></script>
+        <!-- <script src="js/three.min.js"></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js"></script>
         <script src="js/OrbitControls.min.js"></script>
-        <script src="js/helvetiker_regular.typeface.js"></script>
+        <!-- <script src="js/helvetiker_regular.typeface.js"></script> -->
         <script src="js/linkify.min.js"></script>
         <script src="js/linkify-string.min.js"></script>
 
@@ -972,22 +973,22 @@
                 },
                 
                 getUndoImageName: function() {
-                    return this.images_root_path + 'requestundo.svg'
+                    return this.images_root_path + 'requestundo.svg';
                 },
                 getOtherPlayerUndoImageName: function() {
                     return this.images_root_path + 'otherrequestedundo.svg';
                 },
                 getBlackPlayerImageName: function() {
-                    return this.images_root_path + 'player-black.png'
+                    return this.images_root_path + 'player-black.png';
                 },
                 getWhitePlayerImageName: function() {
-                    return this.images_root_path + 'player-white.png'
+                    return this.images_root_path + 'player-white.png';
                 },
                 getOfferHandImageName: function() {
-                    return this.images_root_path + 'offer-hand.png";
+                    return this.images_root_path + 'offer-hand.png';
                 },
                 getOtherOfferHandImageName: function() {
-                    return this.images_root_path + 'hand-other-offered.png";
+                    return this.images_root_path + 'hand-other-offered.png';
                 },
                 
                 // updateBoardMaterials after the user changes the board styles
@@ -1039,14 +1040,14 @@
                     }
                     return border
                 },
-                makeLetter: function(index,side) {
+                makeLetter: function(index,side,font) {
                     var geometry;
                     if (side === TOP_BORDER || side === BOTTOM_BORDER) {
                         geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + index),
-                                    {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
                     } else {
                         geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + index),
-                                    {size: letter_size, height: 1, font: 'helvetiker', weight: 'normal'});
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
                     }
                     
                     var letter = new THREE.Mesh(geometry, materials.letter);
@@ -1284,14 +1285,16 @@
                     scene.add(boardFactory.makeBorder(LEFT_BORDER));
                     scene.add(boardFactory.makeBorder(RIGHT_BORDER));
 
-                    var geometry;
-                    // add the letters and numbers around the border
-                    for (var i = 0; i < this.size; i++) {
-                        scene.add(boardFactory.makeLetter(i,LEFT_BORDER));
-                        scene.add(boardFactory.makeLetter(i,BOTTOM_BORDER));
-                        scene.add(boardFactory.makeLetter(i,TOP_BORDER));
-                        scene.add(boardFactory.makeLetter(i,RIGHT_BORDER));
-                    }
+                    var loader = new THREE.FontLoader();
+                    loader.load('js/helvetiker_regular.typeface.js', function(font) {
+                            // add the letters and numbers around the border
+                            for (var i = 0; i < board.size; i++) {
+                                scene.add(boardFactory.makeLetter(i,LEFT_BORDER,font));
+                                scene.add(boardFactory.makeLetter(i,BOTTOM_BORDER,font));
+                                scene.add(boardFactory.makeLetter(i,TOP_BORDER,font));
+                                scene.add(boardFactory.makeLetter(i,RIGHT_BORDER,font));
+                            }
+                        });
                 },
                 // addpieces: add the pieces to the scene, not on the board
                 addpieces: function () {
