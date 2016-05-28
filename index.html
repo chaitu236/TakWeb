@@ -1687,10 +1687,11 @@
 
                     dontanimate = false;
                 },
-                gameover: function () {
+                gameover: function (premsg) {
+                    premsg = (typeof premsg === 'undefined') ? "" : premsg + " ";
                     console.log('gameover ' + this.result);
                     this.notate(this.result);
-                    alert("info", "Game over!! " + this.result);
+                    alert("info", premsg + "Game over!! " + this.result);
                     this.scratch = true;
                     this.isPlayEnded = true;
                 },
@@ -1833,7 +1834,7 @@
                                 return false;
 
                     this.findwhowon();
-                    this.gameover();
+                    this.gameover("All spaces covered.");
                     return true;
                 },
                 reverseboard: function () {
@@ -2421,6 +2422,10 @@
                     this.create(rowCnt, this.determineColor(playerToMove), true, false);
                     
                     this.initFromTPS(rowDescriptors);
+                    if (this.checkroadwin())
+                        return;
+                    if (this.checksquaresover())
+                        return;
                     
                     var assumedMoveCount = this.moveCountCalc(moveNumber, moveNumber, playerToMove);
                     
@@ -2467,7 +2472,6 @@
                     document.getElementById("player-opp").className = (this.mycolor === "white" ? "selectplayer" : "");
                     document.getElementById("player-me").className = (this.mycolor === "black" ? "selectplayer" : "");
 
-                    this.notate("load");
                     this.whitepiecesleft = this.tottiles + this.totcaps - p1Cnt;
                     this.blackpiecesleft = this.tottiles + this.totcaps - p2Cnt;
                     if (this.whitepiecesleft <=0 && this.blackpiecesleft <=0) {
@@ -2477,14 +2481,15 @@
                     }
                     if (this.whitepiecesleft <=0) {
                         this.result = "F-0";
-                        this.gameover();
+                        this.gameover('All white pieces used.');
                         return;
                     }
                     if (this.blackpiecesleft <=0) {
                         this.result = "0-F";
-                        this.gameover();
+                        this.gameover('All black pieces used.');
                         return;
                     }
+                    this.notate("load");
 
                     this.showmove(this.moveshown);
                     if (this.mycolor !== this.boardside) {
@@ -2644,7 +2649,7 @@
                     this.connection = new WebSocket(proto+url, "binary");
                     board.server = this;
                     this.connection.onerror = function (e) {
-                        this.output("Connection error: " + e);
+                        output("Connection error: " + e);
                     };
                     this.connection.onmessage = function (e) {
                         var blob = e.data;
