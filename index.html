@@ -1356,6 +1356,7 @@
                 },
                 // called if the user changes the texture or size of the pieces
                 updatepieces: function () {
+                    var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     materials.updatePieceMaterials();
                     var old_size = this.piece_objects[0].geometry.parameters.width;
                     
@@ -1384,7 +1385,7 @@
                             }
 
                             // reapply geometry.
-                            this.piece_objects[i].geometry = materials.piece_geometry;
+                            this.piece_objects[i].geometry = geometry;
                             this.piece_objects[i].updateMatrix();
                         }
                     }
