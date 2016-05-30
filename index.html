@@ -1025,112 +1025,120 @@
             };
 
             var boardFactory = {
-                makeSquare: function(file,rankInverse) {
+                makeSquare: function(file,rankInverse,scene) {
                     var geometry = new THREE.BoxGeometry(sq_size, sq_height, sq_size);
+                    geometry.center();
                     var square = new THREE.Mesh(geometry, ((file+rankInverse) % 2 ? materials.white_sqr : materials.black_sqr));
                     square.position.set(board.sq_position.startx + file*sq_size, 0,
                                         board.sq_position.startz + rankInverse*sq_size);
                     square.file = file;
                     square.rank = board.size - 1 - rankInverse;
                     square.isboard = true;
+                    scene.add(square);
                     return square;
                 },
-                makeBorder: function(side) {
+                makeBorders: function(scene) {
+                    // We use the same geometry for all 4 borders. This means the borders
+                    // overlap each other at the corners. Probably OK at this point, but
+                    // maybe there are cases where that would not be good.
                     var geometry = new THREE.BoxGeometry(board.length, piece_height, border_size);
-                    var border = new THREE.Mesh(geometry, materials.border);
+                    geometry.center();
+                    var border;
 
-                    if (side === TOP_BORDER ) {
-                        border.position.set(0, 0, board.corner_position.z + border_size/2);
-                    } else if ( side === BOTTOM_BORDER ) {
-                        border.position.set(0, 0, board.corner_position.endz - border_size/2);
-                        border.rotateY(Math.PI);
-                    } else if ( side === LEFT_BORDER ) {
-                        border.position.set(board.corner_position.x + border_size/2, 0, 0);
-                        border.rotateY(Math.PI/2);
-                    } else if (side === RIGHT_BORDER ) {
-                        border.position.set(board.corner_position.endx - border_size/2, 0, 0);
-                        border.rotateY(-Math.PI / 2);
-                    }
-                    return border
-                },
-                makeLetter: function(index,side,font) {
-                    var geometry;
-                    if (side === TOP_BORDER || side === BOTTOM_BORDER) {
-                        geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + index),
-                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
-                    } else {
-                        geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + index),
-                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
-                    }
+                    // Top border
+                    border = new THREE.Mesh(geometry, materials.border);
+                    border.position.set(0, 0, board.corner_position.z + border_size/2);
+                    scene.add(border);
+                    // Bottom border
+                    border = new THREE.Mesh(geometry, materials.border);
+                    border.position.set(0, 0, board.corner_position.endz - border_size/2);
+                    border.rotateY(Math.PI);
+                    scene.add(border);
+                    // Left border
+                    border = new THREE.Mesh(geometry, materials.border);
+                    border.position.set(board.corner_position.x + border_size/2, 0, 0);
+                    border.rotateY(Math.PI/2);
+                    scene.add(border);
+                    // Right border
+                    border = new THREE.Mesh(geometry, materials.border);
+                    border.position.set(board.corner_position.endx - border_size/2, 0, 0);
+                    border.rotateY(-Math.PI / 2);
+                    scene.add(border);
                     
-                    var letter = new THREE.Mesh(geometry, materials.letter);
-                   
-                    if (side === BOTTOM_BORDER) {
-                        letter.rotateX(-Math.PI / 2);
-                        letter.position.set(board.sq_position.startx - letter_size/2 + index*sq_size, sq_height/2,
-                                            board.corner_position.endz - border_size/2 + letter_size/2);
-                    } else if (side === LEFT_BORDER) {
-                        letter.rotateX(-Math.PI / 2);
-                        letter.position.set(board.corner_position.x + letter_size, sq_height / 2,
-                                            board.sq_position.endz + letter_size/2 - index*sq_size);
-                    } else if (side === TOP_BORDER) {
-                        letter.rotateX(Math.PI / 2);
-                        letter.rotateY(Math.PI);
-                        letter.position.set(board.sq_position.startx + letter_size/2 + index*sq_size, sq_height/2,
-                                            board.corner_position.z + border_size/2 - letter_size/2);
-                    } else if (side === RIGHT_BORDER) {
-                        letter.rotateX(-Math.PI / 2);
-                        letter.rotateZ(Math.PI);
-                        letter.position.set(board.corner_position.endx - letter_size, sq_height / 2,
-                                            board.sq_position.endz - letter_size/2 - index*sq_size);
-                    }
-                    return letter;
+                    var loader = new THREE.FontLoader();
+                    loader.load('js/helvetiker_regular.typeface.js', function(font) {
+                            // add the letters and numbers around the border
+                            for (var i = 0; i < board.size; i++) {
+                                var geometry, letter;
+                                
+                                // Top letters
+                                geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
+                                letter = new THREE.Mesh(geometry, materials.letter);
+                                letter.rotateX(Math.PI / 2);
+                                letter.rotateY(Math.PI);
+                                letter.position.set(board.sq_position.startx + letter_size/2 + i*sq_size, sq_height/2,
+                                                    board.corner_position.z + border_size/2 - letter_size/2);
+                                scene.add(letter);
+                                // Bottom letters
+                                geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
+                                letter = new THREE.Mesh(geometry, materials.letter);
+                                letter.rotateX(-Math.PI / 2);
+                                letter.position.set(board.sq_position.startx - letter_size/2 + i*sq_size, sq_height/2,
+                                                    board.corner_position.endz - border_size/2 + letter_size/2);
+                                scene.add(letter);
+                                // Left side numbers
+                                geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
+                                letter = new THREE.Mesh(geometry, materials.letter);
+                                letter.rotateX(-Math.PI / 2);
+                                letter.position.set(board.corner_position.x + letter_size, sq_height / 2,
+                                                    board.sq_position.endz + letter_size/2 - i*sq_size);
+                                scene.add(letter);
+                                // Right side numbers
+                                geometry = new THREE.TextGeometry(String.fromCharCode('1'.charCodeAt(0) + i),
+                                    {size: letter_size, height: 1, font: font, weight: 'normal'});
+                                letter = new THREE.Mesh(geometry, materials.letter);
+                                letter.rotateX(-Math.PI / 2);
+                                letter.rotateZ(Math.PI);
+                                letter.position.set(board.corner_position.endx - letter_size, sq_height / 2,
+                                                    board.sq_position.endz - letter_size/2 - i*sq_size);
+                                scene.add(letter);
+                            }
+                        });
                 }
             };
             
             var pieceFactory = {
-                makePiece: function(playerNum,pieceNum) {
+                makePiece: function(playerNum,pieceNum,scene) {
                     var materialMine = (playerNum === WHITE_PLAYER ? materials.white_piece : materials.black_piece);
                     var materialOpp = (playerNum === WHITE_PLAYER ? materials.black_piece : materials.white_piece);
                     var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     geometry.center();
 
-                    var piece;
-                    if (pieceNum == 0) {
-                        // for the first piece give each player one piece of the other player's
-                        piece = new THREE.Mesh(geometry, materialOpp);
-                        piece.iswhitepiece = (playerNum !== WHITE_PLAYER);
-                        piece.isfirstpiece = true;
-                        if (playerNum === WHITE_PLAYER) {
-                            piece.position.set(board.corner_position.endx - piece_size/2, 0, board.corner_position.endz + piece_size/2 + stackOffsetFromBorder);
-                        } else {
-                            piece.position.set(board.corner_position.x + piece_size/2, 0, board.corner_position.z - piece_size/2 - stackOffsetFromBorder);
-                        }
+                    var stackno = Math.floor(pieceNum / 10);
+                    var stackheight = pieceNum % 10;
+                    var piece = new THREE.Mesh(geometry, materialMine);
+                    piece.iswhitepiece = (playerNum === WHITE_PLAYER);
+                    if (playerNum === WHITE_PLAYER) {
+                        piece.position.set(board.corner_position.endx + stackOffsetFromBorder + piece_size/2,
+                                            stackheight*piece_height,
+                                            board.corner_position.endz - piece_size/2 - stackno*stack_dist);
                     } else {
-                        // we don't count the 1st piece in our stacks
-                        pieceNum = pieceNum - 1;
-                        var stackno = Math.floor(pieceNum / 10);
-                        var stackheight = pieceNum % 10;
-                        piece = new THREE.Mesh(geometry, materialMine);
-                        piece.iswhitepiece = (playerNum === WHITE_PLAYER);
-                        piece.isfirstpiece = false;
-                        if (playerNum === WHITE_PLAYER) {
-                            piece.position.set(board.corner_position.endx + stackOffsetFromBorder + piece_size/2,
-                                                stackheight*piece_height,
-                                                board.corner_position.endz - piece_size/2 - stackno*stack_dist);
-                        } else {
-                            piece.position.set(board.corner_position.x - stackOffsetFromBorder - piece_size/2,
-                                                stackheight*piece_height,
-                                                board.corner_position.z + piece_size/2 + stackno*stack_dist);
-                        }
+                        piece.position.set(board.corner_position.x - stackOffsetFromBorder - piece_size/2,
+                                            stackheight*piece_height,
+                                            board.corner_position.z + piece_size/2 + stackno*stack_dist);
                     }
+
                     piece.isstanding = false;
                     piece.onsquare = null;
                     piece.isboard = false;
                     piece.iscapstone = false;
+                    scene.add(piece);
                     return piece;
                 },
-                makeCap: function(playerNum,capNum) {
+                makeCap: function(playerNum,capNum,scene) {
                     var geometry = new THREE.CylinderGeometry(capstone_radius, capstone_radius, capstone_height, 30);
                     geometry.center();
 
@@ -1153,6 +1161,7 @@
                     piece.onsquare = null;
                     piece.isboard = false;
                     piece.iscapstone = true;
+                    scene.add(piece);
                     return piece;
                 }
             };
@@ -1285,61 +1294,33 @@
                         for (j = 0; j < this.size; j++) {
                             // We draw them from the left to right and top to bottom.
                             // But, note, the naming (A1, B1, etc) is left to right and bottom to top.
-                            var square = boardFactory.makeSquare(i,j);
+                            var square = boardFactory.makeSquare(i,j,scene);
                             this.board_objects.push(square);
                             this.sq[i][j].board_object = square;
-                            scene.add(square);
                         }
                     }
 
                     // draw the border around the squares
-                    scene.add(boardFactory.makeBorder(TOP_BORDER));
-                    scene.add(boardFactory.makeBorder(BOTTOM_BORDER));
-                    scene.add(boardFactory.makeBorder(LEFT_BORDER));
-                    scene.add(boardFactory.makeBorder(RIGHT_BORDER));
-
-                    var loader = new THREE.FontLoader();
-                    loader.load('js/helvetiker_regular.typeface.js', function(font) {
-                            // add the letters and numbers around the border
-                            for (var i = 0; i < board.size; i++) {
-                                scene.add(boardFactory.makeLetter(i,LEFT_BORDER,font));
-                                scene.add(boardFactory.makeLetter(i,BOTTOM_BORDER,font));
-                                scene.add(boardFactory.makeLetter(i,TOP_BORDER,font));
-                                scene.add(boardFactory.makeLetter(i,RIGHT_BORDER,font));
-                            }
-                        });
+                    boardFactory.makeBorders(scene);
                 },
                 // addpieces: add the pieces to the scene, not on the board
                 addpieces: function () {
                     materials.updatePieceMaterials();
-                    // There is a reason we make the 0th/first pieces last.
-                    // It has to do with the way the getFromStack method
-                    // is used later while redrawing the board after an Undo.
                     var piece;
-                    for (var i=1 ; i < this.tottiles; i++ ) {
-                        piece = pieceFactory.makePiece(WHITE_PLAYER,i);
+                    for (var i=0 ; i < this.tottiles; i++ ) {
+                        piece = pieceFactory.makePiece(WHITE_PLAYER,i,scene);
                         this.piece_objects.push(piece);
-                        scene.add(piece);
 
-                        piece = pieceFactory.makePiece(BLACK_PLAYER,i);
+                        piece = pieceFactory.makePiece(BLACK_PLAYER,i,scene);
                         this.piece_objects.push(piece);
-                        scene.add(piece);
                     }
-                    piece = pieceFactory.makePiece(WHITE_PLAYER,0);
-                    this.piece_objects.push(piece);
-                    scene.add(piece);
-                    piece = pieceFactory.makePiece(BLACK_PLAYER,0);
-                    this.piece_objects.push(piece);
-                    scene.add(piece);
                     
                     for (var i=0; i < this.totcaps; i++) {
-                        piece = pieceFactory.makeCap(WHITE_PLAYER,i);
+                        piece = pieceFactory.makeCap(WHITE_PLAYER,i,scene);
                         this.piece_objects.push(piece);
-                        scene.add(piece);
                         
-                        piece = pieceFactory.makeCap(BLACK_PLAYER,i);
+                        piece = pieceFactory.makeCap(BLACK_PLAYER,i,scene);
                         this.piece_objects.push(piece);
-                        scene.add(piece);
                     }
                 },
                 // called if the user changes the texture of the board
@@ -1605,12 +1586,6 @@
                         var obj = intersects[0].object;
 
                         if (!obj.isboard && !obj.onsquare && !this.isPlayEnded) {
-                            // if this is the player's first move, then they can only
-                            // pickup one of the pieces labelled to be a 'first piece'
-                            if ((this.movecount === 0 || this.movecount === 1) &&
-                                    obj.isfirstpiece == false)
-                                return;
-                            
                             // these must match to pick up this obj
                             if (obj.iswhitepiece !== this.is_white_piece_to_move())
                                 return;
