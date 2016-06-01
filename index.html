@@ -112,6 +112,7 @@
             }
             .chattime {
               color: #7D7D7D;
+              text-align: center;
             }
             #chat-toggle-text {
             }
@@ -2676,6 +2677,7 @@
                 tries:0,
                 timervar: null,
                 lastTimeUpdate: null,
+                lastChatTime: '',
 
                 init: function () {
                     console.log("called init");
@@ -3106,10 +3108,16 @@
                         var hours = now.getHours();
                         var mins = now.getMinutes();
                         var cls = 'chattime'
+                        var timenow = getZero(hours)+':'+getZero(mins);
+
                         if (localStorage.getItem('hide-chat-time')==='true') {
                           cls = cls + ' hidden';
                         }
-                        $cs.append('<span class="'+cls+'">['+getZero(hours)+':'+getZero(mins)+'] </span>');
+
+                        if(timenow != server.lastChatTime) {
+                          $cs.append('<div class="'+cls+'">'+timenow+'</div>');
+                          server.lastChatTime = timenow;
+                        }
                         $cs.append('<span class="'+clsname+'">'+name+':</span>');
                         var options = {/* ... */};
 
