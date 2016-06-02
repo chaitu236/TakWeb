@@ -83,6 +83,9 @@
                 height:100%;
                 overflow-y: auto;
             }
+            #watchgame-modal{
+              overflow-x: auto;
+            }
             .optlist a {
               margin-top: 2px;
               margin-bottom: 2px;
@@ -396,6 +399,57 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
+                    <div class="nav pull-left">
+                        <button type="button" class="btn navbar-toggle " onclick="server.init()">
+                            <img src="images/ic_account_box_black_24px.svg"/>
+                        </button>
+                        <button type="button" class="btn navbar-toggle " data-toggle="modal" data-target="#watchgame-modal">
+                            <img src="images/ic_remove_red_eye_black_24px.svg"/>
+                        </button>
+                        <button type="button" class="btn navbar-toggle " data-toggle="modal" data-target="#joingame-modal">
+                            <img src="images/ic_play_circle_filled_black_24px.svg"/>
+                        </button>
+                        <button type="button" class="btn navbar-toggle " onclick="$('#creategamemodal').modal('show')">
+                            <img src="images/ic_add_box_black_24px.svg"/>
+                        </button>
+                        <button type="button" class="btn navbar-toggle dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="images/ic_create_black_24px.svg"/>
+                        </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" onclick="scratchbutton(3);">3x3</a></li>
+                                <li><a href="#" onclick="scratchbutton(4);">4x4</a></li>
+                                <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>
+                                <li><a href="#" onclick="scratchbutton(6);">6x6</a></li>
+                                <li><a href="#" onclick="scratchbutton(7);">7x7</a></li>
+                                <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
+                            </ul>
+                        <!--<button type="button" class="btn navbar-toggle " data-toggle="modal" data-target="#help-modal">
+                            <img src="images/ic_help_black_24px.svg"/>
+                          </button>-->
+                    </div>
+                    <!--<div class="btn-group">
+                    <button type="button" class="navbar-toggle collapsed">
+                          <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                             title="Create a new empty board to play locally" aria-haspopup="true" aria-expanded="false"
+                             id="scratchsize">
+                                <img id="settings-img" src="images/ic_create_black_24px.svg" />
+                              </a>
+
+                            <ul class="dropdown-menu">
+                                 <li><a href="#" onclick="scratchbutton(3);">3x3</a></li>
+                                <li><a href="#" onclick="scratchbutton(4);">4x4</a></li>
+                                <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>
+                                <li><a href="#" onclick="scratchbutton(6);">6x6</a></li>
+                                <li><a href="#" onclick="scratchbutton(7);">7x7</a></li>
+                                <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
+                            </ul>
+                    </button>
+                    <button type="button" class="navbar-toggle collapsed">
+                        <a href="#" data-toggle="modal" data-target="#help-modal">
+                            <img id="settings-img" src="images/ic_help_black_24px.svg" />
+                        </a>
+                    </button>
+                  </div>-->
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -420,21 +474,13 @@
                         <li>
                           <a id="creategame" href="#" title="Create online game" onclick="$('#creategamemodal').modal('show')">New Game</a>
                         </li>
-                        <li class="dropdown">
-                            <a id="joingame" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               title="Accept a seek" aria-haspopup="true" aria-expanded="false"> Join game
-                                <span class="badge" id="seekcount">0</span>
-                                <span class="caret"></span></a>
-                            <ul id="seeklist" class="dropdown-menu scrollable-menu">
-                            </ul>
+                        <li>
+                            <a id="joingame" href="#" title="Accept a seek" onclick="$('#joingame-modal').modal('show')">Join Game
+                                <span class="badge" id="seekcount">0</span></a>
                         </li>
                         <li class="dropdown">
-                            <a id="watch" href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               title="Observe a game" aria-haspopup="true" aria-expanded="false"> Watch
-                                <span class="badge" id="gamecount">0</span>
-                                <span class="caret"></span></a>
-                            <ul id="gamelist" class="dropdown-menu scrollable-menu">
-                            </ul>
+                            <a id="watch" href="#" title="Observe a game" onclick="$('#watchgame-modal').modal('show')">Watch
+                              <span class="badge" id="gamecount">0</span></a>
                         </li>
                         <li><a target="_blank" title="Search for previous games" href="http://www.playtak.com/games">History</a></li>
                     </ul>
@@ -894,6 +940,40 @@
                                         - <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
                                 </ul></li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="joingame-modal" class="modal fade">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Join Game</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover">
+                          <tbody id="seeklist">
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="watchgame-modal" class="modal fade">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Watch Game</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover table-condensed">
+                          <tbody id="gamelist">
+                          </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -2856,12 +2936,15 @@
                         p2 = "<span class='playername'>"+p2+"</span>";
                         sz = "<span class='badge'>"+sz+"</span>";
 
-                        //var val = spl[3] + " vs " + spl[5].split(",")[0] + " " + spl[6].split(",")[0] + " " + m+':'+s;
-                        var val = p1 + " vs " + p2 + " " + sz + " " + m+":"+s + " +"+inc+"s";
-
-                        var li = $('<li/>').addClass('game'+no).appendTo($('#gamelist'));
-                        $('<a/>').append(val).click(function() {server.observegame(spl[2].split("Game#")[1]);}).
-                                              appendTo(li);
+                        var row = $('<tr/>').addClass('row').addClass('game'+no)
+                                            .click(function() {server.observegame(spl[2].split("Game#")[1]);})
+                                            .appendTo($('#gamelist'));
+                        $('<td/>').append(p1).appendTo(row);
+                        $('<td/>').append('vs').appendTo(row);
+                        $('<td/>').append(p2).appendTo(row);
+                        $('<td/>').append(sz).appendTo(row);
+                        $('<td/>').append(m+':'+s).appendTo(row);
+                        $('<td/>').append('+'+inc+'s').appendTo(row);
 
                         var op = document.getElementById("gamecount");
                         op.innerHTML = Number(op.innerHTML)+1;
@@ -3165,9 +3248,14 @@
                         p = "<span class='playername'>"+p+"</span>";
                         sz = "<span class='badge'>"+sz+"</span>";
 
-                        var li = $('<li/>').addClass('seek'+no).appendTo($('#seeklist'));
-                        $('<a/>').append(img + " " + p + " " + sz + " " + m+":"+s+" +"+inc+"s").click(function() {server.acceptseek(spl[2])}).
-                                    appendTo(li);
+                        var row = $('<tr/>').addClass('row').addClass('seek'+no)
+                                            .click(function() {server.acceptseek(spl[2])})
+                                            .appendTo($('#seeklist'));
+                        $('<td/>').append(img).appendTo(row);
+                        $('<td/>').append(p).appendTo(row);
+                        $('<td/>').append(sz).appendTo(row);
+                        $('<td/>').append(m+':'+s).appendTo(row);
+                        $('<td/>').append('+'+inc+'s').appendTo(row);
 
                         var op = document.getElementById("seekcount");
                         op.innerHTML = Number(op.innerHTML)+1;
@@ -3273,12 +3361,14 @@
                 },
                 acceptseek: function (e) {
                     this.send("Accept " + e);
+                    $('#joingame-modal').modal('hide');
                 },
                 unobserve: function() {
                     if(board.gameno !== 0)
                         this.send("Unobserve " + board.gameno);
                 },
                 observegame: function (no) {
+                    $('#watchgame-modal').modal('hide');
                     if (board.observing === false && board.scratch === false) //don't observe game while playing another
                         return;
                     if (no === board.gameno)
