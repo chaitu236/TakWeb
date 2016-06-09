@@ -3382,6 +3382,8 @@
                 document.body.appendChild(renderer.domElement);
 
                 window.addEventListener('resize', onWindowResize, false);
+                window.addEventListener('keyup', onKeyUp, false);
+
                 controls = new THREE.OrbitControls(camera, renderer.domElement);
                 controls.minDistance = 200;
                 controls.maxDistance = 1500;
@@ -3467,10 +3469,19 @@
                   board.leftclick();
                 }
             }
+
             function onDocumentMouseUp(e) {
                 if (e.button === 2)
                     board.rightup();
             }
+
+            function onKeyUp(e) {
+              if(e.keyCode === 27) {
+                stepback();
+                stepforward();
+              }
+            }
+
             function output(e) {
                 console.log("output:" + e);
             }
