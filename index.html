@@ -2794,9 +2794,36 @@
                             this.remove();
                         });
                         stopTime();
-                        alert("info", "You're disconnected from server");
+
+                        if(localStorage.getItem('keeploggedin')==='true') {
+                          alert("info", "Connection lost. Trying to reconnect...");
+                          server.startLoginTimer();
+                        } else {
+                          alert("info", "You're disconnected from server");
+                        }
                     };
                 },
+
+                loginTimer: null,
+
+                startLoginTimer: function() {
+                  if(server.loginTimer !== null)
+                    return;
+                  server.loginTimer = setTimeout(server.loginTimerFn, 5000);
+                },
+
+                stopLoginTimer: function() {
+                  if(server.loginTimer == null)
+                    return;
+                  clearTimeout(server.loginTimer);
+                  server.loginTimer = null;
+                },
+
+                loginTimerFn: function() {
+                  server.init();
+                  server.loginTimer = setTimeout(server.loginTimerFn, 5000);
+                },
+
                 login: function () {
                     var name = $('#login-username').val();
                     var pass = $('#login-pwd').val();
@@ -3124,6 +3151,8 @@
                     }
                     //Welcome kaka!
                     else if (e.startsWith("Welcome ")) {
+                        server.stopLoginTimer();
+
                         this.tries = 0;
                         $('#login').modal('hide');
                         document.getElementById('login-button').textContent = 'Logout';
