@@ -1342,7 +1342,6 @@
                 // The center of the board is at 0,0,0.
                 // All these elements are drawn as centered at their x,y,z position
                 addboard: function () {
-                    materials.updateBoardMaterials();
                     this.calculateBoardPositions();
 
                     // draw the squares
@@ -1361,7 +1360,6 @@
                 },
                 // addpieces: add the pieces to the scene, not on the board
                 addpieces: function () {
-                    materials.updatePieceMaterials();
                     var piece;
                     for (var i=0 ; i < this.tottiles; i++ ) {
                         piece = pieceFactory.makePiece(WHITE_PLAYER,i,scene);
@@ -3393,6 +3391,8 @@
             function init() {
                 // load the user settings.
                 loadSettings();
+                materials.updateBoardMaterials();
+                materials.updatePieceMaterials();
                 
                 canvas = document.getElementById("gamecanvas");
                 canvas.width = window.innerWidth;
