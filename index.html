@@ -1062,21 +1062,23 @@
                 },
                 // updateBoardMaterials after the user changes the board styles
                 updateBoardMaterials: function() {
+                    var loader = new THREE.TextureLoader();
                     this.white_sqr = new THREE.MeshBasicMaterial(
-                        {map: THREE.ImageUtils.loadTexture(this.getWhiteSquareTextureName())});
+                        {map: loader.load(this.getWhiteSquareTextureName())});
                     this.black_sqr = new THREE.MeshBasicMaterial(
-                        {map: THREE.ImageUtils.loadTexture(this.getBlackSquareTextureName())});
+                        {map: loader.load(this.getBlackSquareTextureName())});
                 },
                 // updatePieceMaterials after the user changes the piece styles
                 updatePieceMaterials: function() {
+                    var loader = new THREE.TextureLoader();
                     this.white_piece = new THREE.MeshBasicMaterial(
-                        {map: THREE.ImageUtils.loadTexture(this.getWhitePieceTextureName())});
+                        {map: loader.load(this.getWhitePieceTextureName())});
                     this.black_piece = new THREE.MeshBasicMaterial(
-                        {map: THREE.ImageUtils.loadTexture(this.getBlackPieceTextureName())});
+                        {map: loader.load(this.getBlackPieceTextureName())});
                     this.white_cap = new THREE.MeshBasicMaterial(
-                        {map: THREE.ImageUtils.loadTexture(this.getWhiteCapTextureName())});
+                        {map: loader.load(this.getWhiteCapTextureName())});
                     this.black_cap = new THREE.MeshBasicMaterial(
-                        {map: THREE.ImageUtils.loadTexture(this.getBlackCapTextureName())}); 
+                        {map: loader.load(this.getBlackCapTextureName())});
                 }
             };
 
