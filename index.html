@@ -1063,22 +1063,64 @@
                 // updateBoardMaterials after the user changes the board styles
                 updateBoardMaterials: function() {
                     var loader = new THREE.TextureLoader();
+                    this.boardLoaded = 0;
+
                     this.white_sqr = new THREE.MeshBasicMaterial(
-                        {map: loader.load(this.getWhiteSquareTextureName())});
+                        {map: loader.load(this.getWhiteSquareTextureName(), this.boardLoadedFn)});
                     this.black_sqr = new THREE.MeshBasicMaterial(
-                        {map: loader.load(this.getBlackSquareTextureName())});
+                        {map: loader.load(this.getBlackSquareTextureName(), this.boardLoadedFn)});
                 },
                 // updatePieceMaterials after the user changes the piece styles
                 updatePieceMaterials: function() {
                     var loader = new THREE.TextureLoader();
+                    this.piecesLoaded = 0;
+
                     this.white_piece = new THREE.MeshBasicMaterial(
-                        {map: loader.load(this.getWhitePieceTextureName())});
+                    {map: loader.load(this.getWhitePieceTextureName(), this.piecesLoadedFn)});
                     this.black_piece = new THREE.MeshBasicMaterial(
-                        {map: loader.load(this.getBlackPieceTextureName())});
+                        {map: loader.load(this.getBlackPieceTextureName(), this.piecesLoadedFn)});
                     this.white_cap = new THREE.MeshBasicMaterial(
-                        {map: loader.load(this.getWhiteCapTextureName())});
+                        {map: loader.load(this.getWhiteCapTextureName(), this.piecesLoadedFn)});
                     this.black_cap = new THREE.MeshBasicMaterial(
-                        {map: loader.load(this.getBlackCapTextureName())});
+                        {map: loader.load(this.getBlackCapTextureName(), this.piecesLoadedFn)});
+                },
+
+                piecesLoaded: 0,
+                //callback on loading piece textures
+                piecesLoadedFn: function() {
+                  materials.piecesLoaded++;
+
+                  if(materials.piecesLoaded === 4) {
+                    materials.piecesLoaded = 0;
+                    // reapply texture.
+                    for (i = 0; i < board.piece_objects.length ; i++) {
+                      if (board.piece_objects[i].iscapstone)
+                      {
+                          board.piece_objects[i].material = (board.piece_objects[i].iswhitepiece)
+                              ? materials.white_cap : materials.black_cap;
+                      } else {
+                          board.piece_objects[i].material = (board.piece_objects[i].iswhitepiece)
+                              ? materials.white_piece : materials.black_piece;
+                      }
+                    }
+                  }
+                },
+
+                boardLoaded: 0,
+                //callback on loading board textures
+                boardLoadedFn: function() {
+                  materials.boardLoaded++;
+
+                  if(materials.boardLoaded === 2) {
+                    materials.boardLoaded = 0;
+                    for (i = 0; i < board.size * board.size; ++i) {
+                        if (board.board_objects[i].isboard===true) {
+                            board.board_objects[i].material =
+                                ((i + Math.floor(i / board.size) * ((board.size - 1) % 2)) % 2)
+                                ? materials.white_sqr : materials.black_sqr;
+                        }
+                    }
+                  }
                 }
             };
 
@@ -1382,14 +1424,6 @@
                 // called if the user changes the texture of the board
                 updateboard: function () {
                     materials.updateBoardMaterials();
-                    var fields = this.size * this.size;
-                    for (i = 0; i < fields; ++i) {
-                        if (this.board_objects[i].isboard===true) {
-                            this.board_objects[i].material =
-                                ((i + Math.floor(i / this.size) * ((this.size - 1) % 2)) % 2)
-                                ? materials.white_sqr : materials.black_sqr;
-                        }
-                    }
                 },
                 // called if the user changes the texture or size of the pieces
                 updatepieces: function () {
@@ -1399,16 +1433,6 @@
                     
                     // for all pieces...
                     for (i = 0; i < this.piece_objects.length ; i++) {
-                        // reapply texture.
-                        if (this.piece_objects[i].iscapstone)
-                        {
-                            this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
-                                ? materials.white_cap : materials.black_cap;
-                        } else {
-                            this.piece_objects[i].material = (this.piece_objects[i].iswhitepiece)
-                                ? materials.white_piece : materials.black_piece;
-                        }
-                        
                         if (this.piece_objects[i].iscapstone) {
                         // <updates on the capstones will be made here>
                         } else {
