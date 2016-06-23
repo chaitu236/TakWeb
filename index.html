@@ -2211,22 +2211,25 @@
                 },
                 //bring pieces to original positions
                 resetpieces: function() {
-                    for (var i = scene.children.length - 1; i >= 0; i--) {
-                        scene.remove(scene.children[i]);
+                    for (var i = this.piece_objects.length - 1; i >= 0; i--) {
+                        scene.remove(this.piece_objects[i]);
                     }
 
                     this.whitepiecesleft = this.tottiles + this.totcaps;
                     this.blackpiecesleft = this.tottiles + this.totcaps;
 
-                    this.sq = [];
-                    this.board_objects = [];
                     this.piece_objects = [];
                     this.highlighted = null;
                     this.selected = null;
                     this.selectedStack = null;
                     this.move = {start: null, end: null, dir: 'U', squares: []};
 
-                    this.resetBoardStacks();
+                    for (var i = 0; i < this.size; i++) {
+                        for (var j = 0; j < this.size; j++) {
+                            this.sq[i][j].length = 0;
+                        }
+                    }
+                    this.addpieces();
                 },
                 resetBoardStacks: function () {
                     for (var i = 0; i < this.size; i++) {
