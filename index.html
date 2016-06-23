@@ -3416,8 +3416,6 @@
             function init() {
                 // load the user settings.
                 loadSettings();
-                materials.updateBoardMaterials();
-                materials.updatePieceMaterials();
                 
                 canvas = document.getElementById("gamecanvas");
                 canvas.width = window.innerWidth;
@@ -3461,6 +3459,9 @@
 
                 board.create(5, "white", true);
                 board.initEmpty();
+
+                materials.updateBoardMaterials();
+                materials.updatePieceMaterials();
             }
 
             function onWindowResize() {
