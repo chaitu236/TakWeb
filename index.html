@@ -3230,10 +3230,12 @@
                         $cs.append('<span class="'+clsname+'">'+name+':</span>');
                         var options = {/* ... */};
 
+                        var occ = (txt.match(new RegExp(this.myname, "g")) || []).length;
                         txt = txt.linkify(options);
+                        var occ2 = (txt.match(new RegExp(this.myname, "g")) || []).length;
 
-                        //someone said our name
-                        if(txt.indexOf(this.myname) > -1) {
+                        //someone said our name and link in string doesn't contain name
+                        if(occ===occ2 && txt.indexOf(this.myname) > -1) {
                           var tmp = txt.split(this.myname);
                           txt = tmp[0] + '<span class="chatmyname">'+this.myname+'</span>' + tmp[1];
                         }
