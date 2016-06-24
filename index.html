@@ -569,11 +569,6 @@
             <canvas id="gamecanvas"></canvas>
         </div>
 
-<!--        <div id="status">
-            <input id="status-inp" type="text">
-            <button onclick="statusclick()">Ok</button>
-        </div>-->
-
         <div id="alertbox">
             <div class="alerts">
                 <div id="alert" class="alert alert-dismissible hidden" role="alert">
@@ -3586,12 +3581,6 @@
                     return;
                 server.unobserve();
                 board.loadtps(tps);
-            }
-            function statusclick() {
-                var inp = document.getElementById('status-inp');
-                console.log('input: '+inp.value);
-                server.send(inp.value);
-                inp.innerHTML='';
             }
             function volume_change() {
                 var img = document.getElementById("volume-img");
