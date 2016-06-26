@@ -848,10 +848,6 @@
                             Hide 'Send' button
                             <br/>
                             <br/>
-                            <input id="auto-open-chat-checkbox" type="checkbox" onClick="checkboxAutoOpenChat()" checked/>
-                            Show/Hide chat on window resize
-                            <br/>
-                            <br/>
                             <input id="auto-rotate-checkbox" type="checkbox" onClick="checkboxAutoRotate()" checked/>
                             Rotate board when player 2
                           </form>
@@ -3487,18 +3483,15 @@
               $('#chat').offset({ top: $('nav').height() + 5 });
               $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
               $('#chat').height(window.innerHeight - $('nav').height() - 85
-                  + (localStorage.getItem('hide-send')==='true' ? 34 : 0));
+                  + (localStorage.getItem('hide-send')==='true' ? 34 : 0));*/
 
-              if (localStorage.getItem('auto_chat')!=='false')
-              {
-                if(isBreakpoint('xs') || isBreakpoint('sm')) {
-                  hidechat();
-                  hidermenu();
-                } else {
-                  showchat();
-                  showrmenu();
-                }
-              }*/
+              if(isBreakpoint('xs') || isBreakpoint('sm')) {
+                hidechat();
+                hidermenu();
+              } else {
+                showchat();
+                showrmenu();
+              }
             }
 
             var dontanimate=false;
@@ -3737,11 +3730,6 @@
                 });
               }
 
-              // load the setting for automatically opening and closing the chat on window resize.
-              if(localStorage.getItem('auto_chat')==='false') {
-                document.getElementById('auto-open-chat-checkbox').checked = false;
-              }
-
               // load the setting for automatically rotating the board, when assigned player 2.
               if(localStorage.getItem('auto_rotate')==='false') {
                 document.getElementById('auto-rotate-checkbox').checked = false;
@@ -3865,19 +3853,7 @@
                 });
               }
             }
-            
-            /*
-             * Notify checkbox change for checkbox:
-             *   Show/Hide chat on window resize
-             */
-            function checkboxAutoOpenChat() {
-              if (document.getElementById('auto-open-chat-checkbox').checked) {
-                localStorage.setItem('auto_chat', 'true');
-              } else {
-                localStorage.setItem('auto_chat', 'false');
-              }
-            }
-            
+
             /*
              * Notify checkbox change for checkbox:
              *   Rotate board when player 2
