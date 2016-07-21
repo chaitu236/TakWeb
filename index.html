@@ -361,6 +361,19 @@
                 max-height: 280px;
                 overflow-x: hidden;
             }
+            .botlevel {
+                display: inline-block;
+                width: 0;
+                height: 0;
+                font-size: 12px;
+                color: #666;
+                position: relative;
+                top: 15px;
+                padding-bottom: 30px;
+            }
+            .table {
+                margin-bottom: 0;
+            }
         </style>
 
         <script>
@@ -452,7 +465,7 @@
                         </li>
                         <li>
                             <a id="joingame" href="#" title="Accept a seek" onclick="$('#joingame-modal').modal('show')">Join Game
-                                <span class="badge" id="seekcount">0</span></a>
+                                <span class="badge"><span id="seekcount">0</span> + <span id="seekcountbot">0</span></span></a>
                         </li>
                         <li class="dropdown">
                             <a id="watch" href="#" title="Observe a game" onclick="$('#watchgame-modal').modal('show')">Watch
@@ -928,7 +941,7 @@
         </div>
 
         <div id="joingame-modal" class="modal fade">
-            <div class="modal-dialog modal-sm">
+            <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -937,6 +950,15 @@
                     <div class="modal-body">
                         <table class="table table-hover">
                           <tbody id="seeklist">
+                          </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Join AI Game</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover">
+                          <tbody id="seeklistbot">
                           </tbody>
                         </table>
                     </div>
@@ -1026,6 +1048,18 @@
             var highlighter;
             var mouse = new THREE.Vector2();
             var offset = new THREE.Vector3();
+            
+            var botlist = {
+                "TakticianBot": [0, "Very&nbsp;Hard"],
+                "alphatak_bot": [1, "Hard"],
+                "ShlktBot": [2, "Intermediate"],
+                "takkybot": [3, "Easy"],
+                "BeginnerBot": [4, "Beginner"],
+                "FriendlyBot": [5, "Adjustable"],
+                "TakticianBotDev": [6, "Experimental"],
+                "alphabot": [7, "Experimental"],
+                "cutak_bot": [8, "Experimental"]
+            };
 
             var materials = {
                 images_root_path: 'images/',
@@ -2813,6 +2847,7 @@
                         $('#onlineplayers').addClass('hidden');
                         document.getElementById("onlineplayersbadge").innerHTML = "0";
                         document.getElementById("seekcount").innerHTML = "0";
+                        document.getElementById("seekcountbot").innerHTML = "0";
                         document.getElementById("gamecount").innerHTML = "0";
                         document.getElementById("scratchsize").disabled = false;
                         board.scratch = true;
@@ -2820,6 +2855,9 @@
                         board.gameno = 0;
                         document.title = "Tak";
                         $('#seeklist').children().each(function() {
+                            this.remove();
+                        });
+                        $('#seeklistbot').children().each(function() {
                             this.remove();
                         });
                         $('#gamelist').children().each(function() {
@@ -2990,10 +3028,16 @@
                         var spl = e.split(" ");
 
                         var no = spl[2].split("Game#")[1];
-                        $('.game'+no).remove();
+                        var game_element = $('.game'+no);
 
                         var op = document.getElementById("gamecount");
-                        op.innerHTML = Number(op.innerHTML)-1;
+                        if (game_element.length) {
+                            op.innerHTML = Number(op.innerHTML)-1;
+                            game_element.remove()
+                        }
+                        else {
+                            console.log('Game '+no+' removed twice.')
+                        }
                     }
                     else if (e.startsWith("Game#")) {
                       var spl = e.split(" ");
@@ -3283,21 +3327,46 @@
                                                    "images/circle_black.svg";
                         }
                         img = '<img src="'+img+'"/>';
+                        
+                        var botsettings = botlist[p];
 
-                        p = "<span class='playername'>"+p+"</span>";
+                        var pspan = "<span class='playername'>"+p+"</span>";
                         sz = "<span class='badge'>"+sz+"</span>";
+                        var botlevel = "";
+                        
+                        var op = document.getElementById("seekcount");
+                        var opbot = document.getElementById("seekcountbot");
 
                         var row = $('<tr/>').addClass('row').addClass('seek'+no)
                                             .click(function() {server.acceptseek(spl[2])})
-                                            .appendTo($('#seeklist'));
+                        if (botsettings) {
+                            var listed = $('#seeklistbot').children();
+                            var previous = null;
+                            for (var i = 0; i < listed.length; i++) {
+                                var position = +(/(^| )botid([0-9]+)($| )/.exec(listed[i].className)[2]);
+                                if (position < botsettings[0]) {
+                                    previous = $(listed[i]);
+                                }
+                            }
+                            if (previous) {
+                                previous.after(row);
+                            }
+                            else {
+                                $('#seeklistbot').prepend(row);
+                            }
+                            row.addClass('botid'+botsettings[0]);
+                            botlevel = "<span class='botlevel'>"+botsettings[1]+"</span>";
+                            opbot.innerHTML = Number(opbot.innerHTML)+1;
+                        }
+                        else {
+                            row.appendTo($('#seeklist'));
+                            op.innerHTML = Number(op.innerHTML)+1;
+                        }
                         $('<td/>').append(img).appendTo(row);
-                        $('<td/>').append(p).appendTo(row);
+                        $('<td/>').append(botlevel+pspan).appendTo(row);
                         $('<td/>').append(sz).appendTo(row);
                         $('<td/>').append(m+':'+s).appendTo(row);
                         $('<td/>').append('+'+inc+'s').appendTo(row);
-
-                        var op = document.getElementById("seekcount");
-                        op.innerHTML = Number(op.innerHTML)+1;
                     }
                     //remove seek
                     else if (e.startsWith("Seek remove")) {
@@ -3305,10 +3374,18 @@
                         var spl = e.split(" ");
 
                         var no = spl[2];
+                        
+                        var botgame = $('#seeklistbot .seek'+no).length
                         $('.seek'+no).remove();
 
                         var op = document.getElementById("seekcount");
-                        op.innerHTML = Number(op.innerHTML)-1;
+                        var opbot = document.getElementById("seekcountbot");
+                        if (botgame) {
+                            opbot.innerHTML = Number(opbot.innerHTML)-1;
+                        }
+                        else{
+                            op.innerHTML = Number(op.innerHTML)-1;
+                        }
                     }
                     //Online players
                     else if (e.startsWith("Online ")) {
