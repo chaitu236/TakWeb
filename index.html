@@ -763,13 +763,14 @@
                         <h4 class="modal-title">Settings</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="split-container-left">
-                          <p>
-                            <b>
-                              Board and Pieces
-                            </b>
-                            <br/>
-                          </p>
+                      <ul class="nav nav-tabs">
+                        <li role="presentation" class="active"><a href="#board" data-toggle="tab">Board and Pieces</a></li>
+                        <li role="presentation"><a href="#interface" data-toggle="tab">Interface</a></li>
+                        <li role="presentation"><a href="#account" data-toggle="tab">Account</a></li>
+                      </ul>
+                      <div class="tab-content clearfix">
+                        <div class="tab-pane active" id="board">
+                          <br/>
                           <form>
                             <input id="wall-orientation" type="checkbox" onClick="checkboxDiagonalWalls()"/>
                             Diagonal walls
@@ -840,33 +841,44 @@
                             </div>
                           </form>
                         </div>
-                        <div class="split-container-right">
-                          <p>
-                            <b>
-                              Interface
-                            </b>
-                            <br/>
-                            <i>Some changes to the interface will require the page to be reloaded.</i><br/>
-                          </p>
-                          <form>
-                            <input id="antialiasing-checkbox" type="checkbox" onClick="checkboxAntialiasing()"/>
-                            Antialiasing (not recommended for slower devices)
-                            <br/>
-                            <br/>
-                            <input id="hide-chat-time" type="checkbox" onClick="checkboxHideChatTime()"/>
-                            Hide chat time
-                            <br/>
-                            <br/>
-                            <input id="hide-send-checkbox" type="checkbox" onClick="checkboxHideSend()"/>
-                            Hide 'Send' button
-                            <br/>
-                            <br/>
-                            <input id="auto-rotate-checkbox" type="checkbox" onClick="checkboxAutoRotate()" checked/>
-                            Rotate board when player 2
-                          </form>
-                        </div>
-                        
+                      <div class="tab-pane" id="interface">
                         <br/>
+                        <form>
+                          <input id="antialiasing-checkbox" type="checkbox" onClick="checkboxAntialiasing()"/>
+                          Antialiasing (not recommended for slower devices)
+                          <br/>
+                          <br/>
+                          <input id="hide-chat-time" type="checkbox" onClick="checkboxHideChatTime()"/>
+                          Hide chat time
+                          <br/>
+                          <br/>
+                          <input id="hide-send-checkbox" type="checkbox" onClick="checkboxHideSend()"/>
+                          Hide 'Send' button
+                          <br/>
+                          <br/>
+                          <input id="auto-rotate-checkbox" type="checkbox" onClick="checkboxAutoRotate()" checked/>
+                          Rotate board when player 2
+                        </form>
+                      </div>
+                      <div class="tab-pane" id="account">
+                        <form role="form" onsubmit="server.changepassword(); return false;">
+                          <br/>
+                          <h4>Change Password</h4><br/>
+                          <div class="form-group">
+                            <label for="pwd">Current password:</label>
+                            <input type="password" class="form-control" id="cur-pwd">
+                          </div>
+                          <div class="form-group">
+                            <label for="pwd">New password:</label>
+                            <input type="password" class="form-control" id="new-pwd">
+                          </div>
+                          <div class="form-group">
+                            <label for="pwd">Retype new password:</label>
+                            <input type="password" class="form-control" id="retype-new-pwd">
+                          </div>
+                          <button type="submit" class="btn btn-primary">Change Password</button>
+                        </form>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -2908,6 +2920,18 @@
                     var email = $('#register-email').val();
                     this.send("Register " + name + " " + email);
                 },
+                changepassword: function() {
+                    console.log('here');
+                    var curpass = $('#cur-pwd').val();
+                    var newpass = $('#new-pwd').val();
+                    var retypenewpass = $('#retype-new-pwd').val();
+
+                    if(newpass !== retypenewpass) {
+                      alert("danger", "Passwords don't match");
+                    } else {
+                      this.send("ChangePassword "+curpass+" "+newpass);
+                    }
+                },
                 keepalive: function() {
                     if(server.connection && server.connection.readyState === 1)//open connection
                         server.send("PING");
@@ -3219,6 +3243,9 @@
                           $('#login').modal('show');
                         }
                     }
+                    else if (e.startsWith("Wrong password")) {
+                      alert("danger", "Wrong Password");
+                    }
                     //You're already logged in
                     else if (e.startsWith("You're already logged in")) {
                       alert("warning", "You're already logged in from another window");
@@ -3245,6 +3272,10 @@
                           localStorage.setItem('usr', name);
                           localStorage.setItem('token', token);
                         }
+                    }
+                    else if (e.startsWith("Password changed")) {
+                      $('#settings-modal').modal('hide');
+                      alert("success", "Password changed!");
                     }
                     else if (e.startsWith("Message")) {
                         var msg = e.split("Message ");
