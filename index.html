@@ -3615,9 +3615,19 @@
             }
 
             function onKeyUp(e) {
-              if(e.keyCode === 27) {
-                stepback();
-                stepforward();
+              switch(e.keyCode) {
+                case 27://ESC
+                  stepback();
+                  stepforward();
+                  break;
+
+                case 38://UP
+                  stepback();
+                  break;
+
+                case 40://DOWN
+                  stepforward();
+                  break;
               }
             }
 
