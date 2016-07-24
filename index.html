@@ -713,6 +713,9 @@
                                     </div>
                                     <button type="submit" class="btn btn-primary">Login</button>
                                 </form>
+                                    <br/>
+                                    <a href="#" onclick="showresetpwd(); return false;">Forgot password?</a>
+                                    <br/>
                             </div>
                             <div class="col-sm-6">
                                 <form role="form" onsubmit="server.register(); return false;">
@@ -883,6 +886,7 @@
                 </div>
             </div>
         </div>
+    </div>
 
         <div id="privacy-modal" class="modal fade">
             <div class="modal-dialog modal-md">
@@ -897,6 +901,59 @@
                           <li>IP addresses will be logged for abuse control</li>
                           <li>Only email addresses, passwords, IP addresses will remain private on the server</li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resetpwd-modal" class="modal fade">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Reset Password</h4>
+                    </div>
+                    <div class="modal-body">
+                      <ul class="nav nav-tabs" id="resetpwd-ul">
+                        <li role="presentation" class="active"><a href="#sendresettoken" data-toggle="tab">Send Reset Token</a></li>
+                        <li role="presentation"><a href="#resetpwd" data-toggle="tab">Reset Password</a></li>
+                      </ul>
+                      <div class="tab-content clearfix">
+                        <div class="tab-pane active" id="sendresettoken">
+                            <form role="form" onsubmit="server.sendresettoken(); return false;">
+                                <div class="form-group">
+                                    <label for="usr">Username</label>
+                                    <input type="text" class="form-control" id="resettoken-username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email address:</label>
+                                    <input type="email" class="form-control" id="resettoken-email">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Send token</button>
+                            </form>
+                        </div>
+                        <div class="tab-pane" id="resetpwd">
+                            <form role="form" onsubmit="server.resetpwd(); return false;">
+                                <div class="form-group">
+                                    <label for="usr">Username</label>
+                                    <input type="text" class="form-control" id="resetpwd-username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="usr">Token</label>
+                                    <input type="text" class="form-control" id="resetpwd-token">
+                                </div>
+                                <div class="form-group">
+                                  <label for="pwd">New password:</label>
+                                  <input type="password" class="form-control" id="reset-new-pwd">
+                                </div>
+                                <div class="form-group">
+                                  <label for="pwd">Retype New password:</label>
+                                  <input type="password" class="form-control" id="reset-retype-new-pwd">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Reset password</button>
+                            </form>
+                        </div>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -2921,7 +2978,6 @@
                     this.send("Register " + name + " " + email);
                 },
                 changepassword: function() {
-                    console.log('here');
                     var curpass = $('#cur-pwd').val();
                     var newpass = $('#new-pwd').val();
                     var retypenewpass = $('#retype-new-pwd').val();
@@ -2930,6 +2986,22 @@
                       alert("danger", "Passwords don't match");
                     } else {
                       this.send("ChangePassword "+curpass+" "+newpass);
+                    }
+                },
+                sendresettoken: function() {
+                    var name = $('#resettoken-username').val();
+                    var email = $('#resettoken-email').val();
+                    this.send('SendResetToken '+name+' '+email);
+                },
+                resetpwd: function() {
+                    var name = $('#resetpwd-username').val();
+                    var token = $('#resetpwd-token').val();
+                    var npwd = $('#reset-new-pwd').val();
+                    var rnpwd = $('#reset-retype-new-pwd').val();
+                    if(npwd !== rnpwd) {
+                        alert("danger", "Passwords don't match");
+                    } else {
+                        this.send('ResetPassword '+name+' '+token+' '+npwd);
                     }
                 },
                 keepalive: function() {
@@ -3202,6 +3274,7 @@
                     }
                     else if (e.startsWith("Login or Register")) {
                         server.send("Client " + "TakWeb-16.05.26");
+                        this.timeoutvar = window.setInterval(this.keepalive, 30000);
 
                         if(localStorage.getItem('keeploggedin')==='true' && this.tries<3) {
                           var uname = localStorage.getItem('usr');
@@ -3423,6 +3496,11 @@
                         $('#onlineplayers').removeClass('hidden');
                         var op = document.getElementById("onlineplayersbadge");
                         op.innerHTML = Number(e.split("Online ")[1]);
+                    }
+                    //Reset token sent
+                    else if (e.startsWith("Reset token sent")) {
+                        alert("success", "Token sent to your email");
+                        $("#resetpwd-ul li:eq(1) a").tab('show');
                     }
                 },
                 chat: function () {
@@ -4033,6 +4111,11 @@
                   board.undo();
                 else
                   server.undo();
+            }
+
+            function showresetpwd() {
+                $('#login').modal('hide');
+                $('#resetpwd-modal').modal('show');
             }
 
             function fastrewind() {
