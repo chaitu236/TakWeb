@@ -861,6 +861,11 @@
                           <br/>
                           <input id="auto-rotate-checkbox" type="checkbox" onClick="checkboxAutoRotate()" checked/>
                           Rotate board when player 2
+                          <br/>
+                          <br/>
+                          Chat size
+                          <input id="chat-size-slider" type="range" value="180" step="2" min="100" max="500" oninput="sliderChatSize(this.value)"/>
+                          <span id="chat-size-display">180</span>
                         </form>
                       </div>
                       <div class="tab-pane" id="account">
@@ -3603,6 +3608,7 @@
                 }
             };
 
+            var chat_width = 180;
             init();
             $(window).on("load", animate);
 
@@ -3816,7 +3822,7 @@
                 }
             }
             function showchat() {
-                $('#chat-toggle-button').css('right', 185);
+                $('#chat-toggle-button').css('right', chat_width+5);
                 $('#chat-toggle-text').html('>><br>c<br>h<br>a<br>t');
                 $('#chat').removeClass('hidden');
             }
@@ -3824,6 +3830,21 @@
                 $('#chat-toggle-button').css('right', 0);
                 $('#chat-toggle-text').html('<<<br>c<br>h<br>a<br>t');
                 $('#chat').addClass('hidden');
+            }
+            function sliderChatSize(newSize) {
+                showchat();
+
+                chat_width = Number(newSize);
+                //localStorage.setItem('chat-width', chat_width);
+
+                adjustChatWidth();
+            }
+            function adjustChatWidth() {
+                $('#chat-size-display').html(chat_width);
+                $('#chat-size-slider').val(chat_width);
+                $('#chat').width(chat_width);
+
+                $('chat-toggle-button').css('right', chat_width+5);
             }
             function isBreakpoint( alias ) {
                 return $('.device-' + alias).is(':hidden');
@@ -3930,6 +3951,13 @@
               if(localStorage.getItem('auto_rotate')==='false') {
                 document.getElementById('auto-rotate-checkbox').checked = false;
               }
+
+              /*//load chat width.. doesnt work properly
+              if(localStorage.getItem('chat-width')!==null) {
+                chat_width = Number(localStorage.getItem('chat-width'));
+                console.log('val====='+chat_width);
+                adjustChatWidth();
+              }*/
             }
             
             /*
@@ -4150,6 +4178,7 @@
                 }
 
                 $('#chat').offset({ top: $('nav').height() + 5 });
+                $('#chat').height(window.innerHeight - $('nav').height() - 85);
                 $('#chat-toggle-button').offset({ top: $('nav').height() + 7 });
 
                 $('#chat-server').append('<a href="#" onclick="showPrivacyPolicy();"> Privacy Policy</a><br>');
