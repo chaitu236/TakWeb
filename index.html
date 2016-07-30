@@ -1125,14 +1125,15 @@
             
             var botlist = {
                 "TakticianBot": [0, "Very&nbsp;Hard"],
-                "alphatak_bot": [1, "Hard"],
-                "ShlktBot": [2, "Intermediate"],
-                "takkybot": [3, "Easy"],
-                "BeginnerBot": [4, "Beginner"],
-                "FriendlyBot": [5, "Adjustable"],
-                "TakticianBotDev": [6, "Experimental"],
-                "alphabot": [7, "Experimental"],
-                "cutak_bot": [8, "Experimental"]
+                "TakkerusBot": [5, "Hard"],
+                "alphatak_bot": [10, "Hard"],
+                "ShlktBot": [20, "Intermediate"],
+                "takkybot": [30, "Easy"],
+                "BeginnerBot": [40, "Beginner"],
+                "FriendlyBot": [50, "Adjustable"],
+                "TakticianBotDev": [60, "Experimental"],
+                "alphabot": [70, "Experimental"],
+                "cutak_bot": [80, "Experimental"]
             };
 
             var materials = {
@@ -2891,12 +2892,15 @@
                         localStorage.removeItem('token');
                         return;
                     }
-                    var url = window.location.host;
-                    if (url.indexOf("playtak") > -1)
-                        url = 'www.playtak.com/ws';
-                    var proto='ws://';
-                    if (window.location.protocol === "https:")
-                        proto='wss://';
+                    var url = 'www.playtak.com/ws';
+                    var proto = 'wss://';
+                    if (window.location.protocol === "http:" && window.location.host.indexOf("playtak") === -1){
+                        proto = 'ws://';
+                        url = window.location.host;
+                    }
+                    else if (window.location.protocol === "https:" && window.location.host.indexOf("playtak") === -1){
+                        url = window.location.host;
+                    }
                     this.connection = new WebSocket(proto+url, "binary");
                     board.server = this;
                     this.connection.onerror = function (e) {
