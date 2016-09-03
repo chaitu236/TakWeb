@@ -10,6 +10,7 @@
         <title>Tak</title>
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/jquery.contextMenu.min.css">
         <link rel="stylesheet" href="css/bootstrap-tour.min.css">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -24,6 +25,7 @@
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
         <script src="js/bootstrap.min.js"></script>
         <script src="js/bootstrap-tour.min.js"></script>
+        <script src="js/jquery.contextMenu.min.js"></script>
         <script src="js/playtaktour.js"></script>
 
         <style>
@@ -100,6 +102,9 @@
               text-align: center;
             }
             #chat-toggle-text {
+            }
+            .context-player {
+              cursor: pointer;
             }
             #notation-toggle-text {
                 position: absolute;
@@ -3370,7 +3375,7 @@
                         var msg = e.split("Shout ");
                         var name = msg[1].split('<')[1].split('>')[0];
                         var txt = msg[1].split('<'+name+'>')[1];
-                        var clsname = 'chatname';
+                        var clsname = 'chatname context-player';
 
                         if (name=='IRC') {
                           name = txt.split('<')[1].split('>')[0];
@@ -4187,6 +4192,31 @@
                 $('#chat-server').append('<a href="#" onclick="showPrivacyPolicy();"> Privacy Policy</a><br>');
                 tour(false);
             })
+
+            $(function() {
+                $.contextMenu({
+                    selector: '.context-player',
+                    trigger: 'left',
+                    items: {
+                        PrivateChat: {
+                            name: "Private chat",
+                            callback: function(key, opt) {
+                                console.log('private chat', opt.$trigger.context.innerText)
+                            }
+                        },
+                        Ignore: {
+                            name: "Ignore",
+                            callback: function(key, opt) {
+                                console.log('ignore', opt.$trigger.context.innerText)
+                            }
+                        },
+                    }
+                });
+
+                $('.context-player').on('click', function(e){
+                    console.log('clicked', this);
+                })
+            });
         </script>
 
     </body>
