@@ -61,7 +61,7 @@
                 width: 180px;
                 height: 80%;
             }
-            #chat-server {
+            #room_divs > div {
                 padding: 3px;
                 word-wrap: break-word;
                 background-color: #e7e7e9;
@@ -578,20 +578,23 @@
             </a>
         </div>
         <div id="chat">
-            <div class="dropdown">
-                <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown">
-                    Global
-                    <span class="caret"></span>
-                </a>
-                <ul id="room_list" class="dropdown-menu">
-                    <li>
-                        <a href="#" onclick="select_room('global')">Global</a>
-                        <button type="button" class="close">&times;</button>
-                    </li>
-                </ul>
-            </div>
-            <div class="form-group height-full">
-                <div id="chat-server"></div>
+            <ul class="nav nav-tabs">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" role="button"
+                                data-toggle="dropdown">
+                        <span id="cur_room" style="width: 100%">Global</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul id="room_list" class="dropdown-menu">
+                        <li>
+                            <a href="#room-div-global" data-toggle="tab" onclick="chathandler.selectRoom('global', 'global')">global</a>
+                            <!-- <button type="button" class="close">&times;</button> -->
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <div id="room_divs" class="form-group height-full tab-content">
+                <div id="room-div-global" class="tab-pane active"></div>
             </div>
             <form role="form" onsubmit="chathandler.send(); return false;" class="height-auto" autocomplete="off">
               <input type="text" class="form-control" id="chat-me">
@@ -885,7 +888,7 @@
                           <br/>
                           <br/>
                           Chat size
-                          <input id="chat-size-slider" type="range" value="180" step="2" min="100" max="500" oninput="chathandler.sliderChatSize(this.value)"/>
+                          <input id="chat-size-slider" type="range" value="180" step="2" min="100" max="500" oninput="sliderChatSize(this.value)"/>
                           <span id="chat-size-display">180</span>
                         </form>
                       </div>
@@ -3093,7 +3096,17 @@
                         var s = getZero(parseInt(time%60));
                         $('.player1-time:first').html(m+':'+s);
                         $('.player2-time:first').html(m+':'+s);
-
+                        
+                        if (spl[7] === "white") {//I am white
+                            if(!chathandler.roomExists('priv', spl[6]))
+                                chathandler.createRoom('priv', spl[6]);
+                            chathandler.setRoom('priv', spl[6]);
+                        } else {//I am black
+                            if(!chathandler.roomExists('priv', spl[4]))
+                                chathandler.createRoom('priv', spl[4]);
+                            chathandler.setRoom('priv', spl[4]);
+                        }
+                        
                         var chimesound = document.getElementById("chime-sound");
                         chimesound.play();
                     }
@@ -3113,6 +3126,10 @@
                         var s = getZero(parseInt(time%60));
                         $('.player1-time:first').html(m+':'+s);
                         $('.player2-time:first').html(m+':'+s);
+                        
+                        if(!chathandler.roomExists('room', 'Game'+board.gameno))
+                            chathandler.createRoom('room', 'Game'+board.gameno);
+                        chathandler.setRoom('room', 'Game'+board.gameno);
                     }
                     else if (e.startsWith("GameList Add Game#")) {
                         //GameList Add Game#1 player1 vs player2, 4x4, 180, 15, 0 half-moves played, player1 to move
@@ -3386,9 +3403,33 @@
                         var msg = e.split("Error:")[1];
                         alert("danger", "Server says: "+msg);
                     }
-                    else if (e.startsWith("Shout")) {
-                        var msg = e.split("Shout ");
-                        chathandler.received(msg);
+                    //Shout <name> msg
+                    else if (e.startsWith("Shout ")) {
+                        var regex = /Shout <([^\s]*)> (.*)/g;
+                        var match = regex.exec(e);
+                        
+                        chathandler.received('global', '', match[1], match[2]);
+                    }
+                    //ShoutRoom name <name> msg
+                    else if (e.startsWith("ShoutRoom")) {
+                        var regex = /ShoutRoom ([^\s]*) <([^\s]*)> (.*)/g;
+                        var match = regex.exec(e);
+                        
+                        chathandler.received('room', match[1], match[2], match[3]);
+                    }
+                    //Tell <name> msg
+                    else if (e.startsWith("Tell")) {
+                        var regex = /Tell <([^\s]*)> (.*)/g;
+                        var match = regex.exec(e);
+                        
+                        chathandler.received('priv', match[1], match[1], match[2]);
+                    }
+                    //Told <name> msg
+                    else if (e.startsWith("Told")) {
+                        var regex = /Told <([^\s]*)> (.*)/g;
+                        var match = regex.exec(e);
+                        
+                        chathandler.received('priv', match[1], this.myname, match[2]);
                     }
                     else if (e.startsWith("CmdReply")) {
                         var msg = e.split("CmdReply ")[1];
@@ -3490,8 +3531,18 @@
                         $("#resetpwd-ul li:eq(1) a").tab('show');
                     }
                 },
-                chat: function (msg) {
-                    this.send('Shout '+msg);
+                chat: function (type, name, msg) {
+                    if ( type === 'global')
+                        this.send('Shout '+msg);
+                    else if (type == 'room')
+                        this.send('ShoutRoom ' + name + ' ' + msg);
+                    else if (type === 'priv')
+                        this.send('Tell ' + name + ' ' + msg);
+                    else
+                        console.log('undefined chat type');
+                },
+                leaveroom: function (room ) {
+                    this.send('LeaveRoom ' + room);
                 },
                 send: function (e) {
                     if (this.connection && this.connection.readyState === 1)
@@ -3584,7 +3635,6 @@
                 }
             };
 
-            var chat_width = 180;
             init();
             $(window).on("load", animate);
 
@@ -4060,6 +4110,12 @@
                 console.log('res='+res);
             }
 
+            
+            function sliderChatSize(newSize) {
+                chathandler.showchat();
+                chathandler.adjustChatWidth(Number(newSize));
+            }
+            
             function undoButton() {
                 if(board.scratch)
                   board.undo();
@@ -4106,30 +4162,6 @@
                 tour(false);
             })
 
-            $(function() {
-                $.contextMenu({
-                    selector: '.context-player',
-                    trigger: 'left',
-                    items: {
-                        PrivateChat: {
-                            name: "Private chat",
-                            callback: function(key, opt) {
-                                console.log('private chat', opt.$trigger.context.innerText)
-                            }
-                        },
-                        Ignore: {
-                            name: "Ignore",
-                            callback: function(key, opt) {
-                                console.log('ignore', opt.$trigger.context.innerText)
-                            }
-                        },
-                    }
-                });
-
-                $('.context-player').on('click', function(e){
-                    console.log('clicked', this);
-                })
-            });
         </script>
 
     </body>
