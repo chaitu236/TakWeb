@@ -104,6 +104,12 @@
             }
             #chat-toggle-text {
             }
+            #room_list li {
+                width: 100%;
+            }
+            .fullw {
+                width: 100%;
+            }
             .context-player {
               cursor: pointer;
             }
@@ -579,16 +585,16 @@
         </div>
         <div id="chat">
             <ul class="nav nav-tabs">
-                <li class="dropdown">
+                <li class="dropdown fullw">
                     <a href="#" class="dropdown-toggle" role="button"
                                 data-toggle="dropdown">
-                        <span id="cur_room" style="width: 100%">Global</span>
+                        <span id="cur_room">global</span>
                         <span class="caret"></span>
                     </a>
-                    <ul id="room_list" class="dropdown-menu">
+                    <ul id="room_list" class="dropdown-menu fullw">
                         <li>
                             <a href="#room-div-global" data-toggle="tab" onclick="chathandler.selectRoom('global', 'global')">global</a>
-                            <!-- <button type="button" class="close">&times;</button> -->
+                            <button type="button" class="close">&times;</button>
                         </li>
                     </ul>
                 </li>

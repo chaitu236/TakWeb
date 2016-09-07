@@ -65,7 +65,7 @@ var chathandler = {
             txt = tmp[0] + '<span class="chatmyname">' + this.myname + '</span>' + tmp[1];
         }
 
-        $cs.append(txt + '<br>');
+        $cs.append(' ' + txt + '<br>');
 
         $cs.scrollTop($cs[0].scrollHeight);
     },
@@ -127,8 +127,7 @@ var chathandler = {
         var room = type + '-' + name;
         
         var room_div = $('<div/>').attr('id', 'room-div-' + room)
-                            .addClass('tab-pane')
-                            .html('Room ' + room);
+                            .addClass('tab-pane');
         $('#room_divs').append(room_div);
         
         var room_list = $('#room_list');
@@ -205,7 +204,7 @@ $(function() {
                     console.log('private chat', name);
                     
                     //Don't create if already exists
-                    if (!this.roomExists('priv', name))
+                    if (!chathandler.roomExists('priv', name))
                         chathandler.createRoom('priv', name);
                     
                     chathandler.setRoom('priv', name);
