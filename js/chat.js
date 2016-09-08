@@ -15,8 +15,6 @@ var chathandler = {
      */
     received: function (type, roomName, name, txt) {
         console.log('received', type, roomName, name, txt);
-        //var name = msg.split('<')[1].split('>')[0];
-        //var txt = msg.split('<' + name + '>')[1];
         var clsname = 'chatname context-player';
 
         if (name === 'IRC') {
@@ -67,6 +65,20 @@ var chathandler = {
 
         $cs.append(' ' + txt + '<br>');
 
+        $cs.scrollTop($cs[0].scrollHeight);
+    },
+    /*
+     * Callback from server to print a msg without styling.
+     * The caller will do stying on their end
+     */
+    raw: function(type, roomName, msg) {
+        var room = type + '-' + roomName;
+        if (type === 'global')
+            room = 'global';
+        
+        var $cs = $('#room-div-' + room);
+        $cs.append(' ' + msg + '<br>');
+        
         $cs.scrollTop($cs[0].scrollHeight);
     },
     /*

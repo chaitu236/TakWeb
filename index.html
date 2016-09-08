@@ -3440,10 +3440,9 @@
                     }
                     else if (e.startsWith("CmdReply")) {
                         var msg = e.split("CmdReply ")[1];
-                        var $cs = $('#chat-server');
+                        msg = '<span class="cmdreply">' + msg + '</span>';
 
-                        $cs.append('<span class="cmdreply">'+msg+'</span><br>');
-                        $cs.scrollTop($cs[0].scrollHeight);
+                        chathandler.raw('global', 'global', msg);
                     }
                     //new seek
                     else if (e.startsWith("Seek new")) {
