@@ -59,8 +59,7 @@ var chathandler = {
 
         //someone said our name and link in string doesn't contain name
         if (occ === occ2 && txt.indexOf(server.myname) > -1) {
-            txt = txt.replace(new RegExp(server.myname, "g"),
-                '<span class="chatmyname">$&</span>');
+            txt = txt.replace(new RegExp('(^|[^\\w\\d])(' + server.myname + ')(?=$|[^\\w\\d])', 'g'), '$1<span class="chatmyname">$2</span>');
         }
 
         $cs.append(' ' + txt + '<br>');
