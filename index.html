@@ -61,6 +61,11 @@
                 width: 180px;
                 height: 80%;
             }
+            #chat > ul > li > a {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
             #room_divs > div {
                 padding: 3px;
                 word-wrap: break-word;
@@ -103,9 +108,6 @@
               text-align: center;
             }
             #chat-toggle-text {
-            }
-            #room_list li {
-                width: 100%;
             }
             .fullw {
                 width: 100%;
@@ -336,8 +338,33 @@
                 color: black;
                 padding: 2px;
             }
-            #room_list li a {
-                display: inline-block;
+            #room_list > li {
+                display: table;
+                width: 100%;
+            }
+            #room_list > li > a {
+                display: table-cell;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding: 4px 0px 4px 12px;
+            }
+            #room_list > li > a > span > span:nth-child(2) {
+                display: block;
+                font-size: 12px;
+                text-align: center;
+            }
+            #room_list > li > a > span > span:nth-child(3) {
+                float: right;
+            }
+            #room_list > li > div {
+                display: table-cell;
+                text-align: center;
+                width: 20px;
+                padding: 4px 6px 4px 12px;
+                font-size: 21px;
+                opacity: .4;
+                vertical-align: middle;
             }
             .border {
                 border-radius : 20px;
@@ -588,12 +615,13 @@
                 <li class="dropdown fullw">
                     <a href="#" class="dropdown-toggle" role="button"
                                 data-toggle="dropdown">
-                        <span id="cur_room">global</span>
+                        <span id="cur_room">Global</span>
                         <span class="caret"></span>
                     </a>
                     <ul id="room_list" class="dropdown-menu fullw">
-                        <li>
-                            <a href="#room-div-global" data-toggle="tab" onclick="chathandler.selectRoom('global', 'global')">global</a>
+                        <li class="room-name-global">
+                            <a href="#room-div-global" data-toggle="tab" onclick="chathandler.selectRoom('global', 'global')">
+                                <span>Global</span></a>
                             <!-- <button type="button" class="close">&times;</button> -->
                         </li>
                     </ul>
@@ -3106,11 +3134,11 @@
                         
                         if (spl[7] === "white") {//I am white
                             if(!chathandler.roomExists('priv', spl[6]))
-                                chathandler.createRoom('priv', spl[6]);
+                                chathandler.createPrivateRoom(spl[6]);
                             chathandler.setRoom('priv', spl[6]);
                         } else {//I am black
                             if(!chathandler.roomExists('priv', spl[4]))
-                                chathandler.createRoom('priv', spl[4]);
+                                chathandler.createPrivateRoom(spl[4]);
                             chathandler.setRoom('priv', spl[4]);
                         }
                         
@@ -3120,13 +3148,17 @@
                     else if (e.startsWith("Observe Game#")) {
                         //Observe Game#1 player1 vs player2, 4x4, 180, 7 half-moves played, player2 to move
                         var spl = e.split(" ");
+                        
+                        var p1 = spl[2];
+                        var p2 = spl[4].split(',')[0];
+                        
                         board.clear();
                         board.create(Number(spl[5].split("x")[0]), "white", false, true);
                         board.initEmpty();
                         board.gameno = Number(spl[1].split("Game#")[1]);
-                        $('.player1-name:first').html(spl[2]);
-                        $('.player2-name:first').html(spl[4].split(",")[0]);
-                        document.title = "Tak: " + spl[2] + " vs " + spl[4].split(",")[0];
+                        $('.player1-name:first').html(p1);
+                        $('.player2-name:first').html(p2);
+                        document.title = "Tak: " + p1 + " vs " + p2;
 
                         var time = Number(spl[6].split(",")[0]);
                         var m = parseInt(time/60);
@@ -3135,7 +3167,7 @@
                         $('.player2-time:first').html(m+':'+s);
                         
                         if(!chathandler.roomExists('room', 'Game'+board.gameno))
-                            chathandler.createRoom('room', 'Game'+board.gameno);
+                            chathandler.createGameRoom('Game'+board.gameno, p1, p2);
                         chathandler.setRoom('room', 'Game'+board.gameno);
                     }
                     else if (e.startsWith("GameList Add Game#")) {

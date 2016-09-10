@@ -26,7 +26,7 @@ var chathandler = {
         if (type === 'priv') {
             //Create room if doesn't exist and switch to it
             if (!this.roomExists('priv', roomName)) {
-                chathandler.createRoom('priv', roomName);
+                chathandler.createPrivateRoom(roomName);
                 chathandler.setRoom('priv', roomName);
             }
         }
@@ -106,7 +106,8 @@ var chathandler = {
         if (type === 'global')
             this.cur_room = 'global';
         
-        $('#cur_room').html(name);
+        title = $('.room-name-' + this.cur_room + ' a span').html()
+        $('#cur_room').html(title);
     },
     
     setRoom: function (type, name) {
@@ -135,7 +136,7 @@ var chathandler = {
     /*
      * Callback from UI
      */
-    createRoom: function (type, name) {
+    createRoom: function (type, name, title) {
         var room = type + '-' + name;
         
         var room_div = $('<div/>').attr('id', 'room-div-' + room)
@@ -146,14 +147,33 @@ var chathandler = {
         var a = $('<a/>').click(function() { chathandler.selectRoom(type, name) })
                             .attr('data-toggle', 'tab')
                             .attr('href', '#room-div-' + room)
-                            .html(name);
+                            .append(title);
         var li = $('<li/>').append(a).addClass('room-name-' + room);
         
-        $('<button/>').addClass('close').html('&times;')
+        $('<div/>').addClass('btn').html('&times;')
                         .click(function() { chathandler.removeRoom(type, name)})
                         .appendTo(li);
         
         $('#room_list').append(li);
+    },
+    
+    /*
+     * Callback from UI
+     */
+    createGameRoom: function (game, p1, p2) {
+        var p1span = $('<span/>').html(p1).addClass('playername');
+        var p2span = $('<span/>').html(p2).addClass('playername');
+        var vs = $('<span/>').html(' vs ');
+        var sp = $('<span/>').append(p1span).append(vs).append(p2span);
+        
+        this.createRoom('room', game, sp);
+    },
+    
+    createPrivateRoom: function (player) {
+        var psp = $('<span/>').html(player).addClass('playername');
+        var sp = $('<span/>').append(psp);
+        
+        this.createRoom('priv', player, sp);
     },
     
     roomExists: function (type, name) {
@@ -216,7 +236,7 @@ $(function() {
                     
                     //Don't create if already exists
                     if (!chathandler.roomExists('priv', name))
-                        chathandler.createRoom('priv', name);
+                        chathandler.createPrivateRoom(name);
                     
                     chathandler.setRoom('priv', name);
                 }
