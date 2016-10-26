@@ -501,7 +501,7 @@
                             </ul>
                         </li>
                         <!--<li><a  class="visible-xs-block" title="Reverse view" class="hidden-xs" href="#" onclick="board.reverseboard()">Flip view</a></li>-->
-                        <li><a id="loadtps" href="#" onclick="loadtps()">Load TPS</a></li>
+                        <li><a id="loadptn" href="#" onclick="$('#loadptnmodal').modal('show')">Load PTN</a></li>
                         <li>
                           <a id="creategame" href="#" title="Create online game" onclick="$('#creategamemodal').modal('show')">New Game</a>
                         </li>
@@ -522,7 +522,7 @@
                                 <img id="volume-img" src="images/ic_volume_up_black_24px.svg" height="20" width="20"/>
                             <!--</button>-->
                             </a>
-                            
+
                             <audio id="move-sound">
                                 <source src="audio/move.mp3" type="audio/mpeg">
                                 <source src="audio/move.ogg" type="audio/ogg">
@@ -752,6 +752,29 @@
            </div>
         </div>
 
+        <div id="loadptnmodal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <form role="form">
+                            <div class="form-group">
+                              <label>PTN file</label>
+                              <input type='file' id='loadptnfile'></input>
+                            </div>
+                          </form>
+                        </div>
+                        </div>
+                        <div class="modal-footer center">
+                            <button type="button" class="btn btn-default" onclick='loadptn(); return false;'>Load PTN</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+           </div>
+        </div>
+
         <div id="login" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -839,7 +862,7 @@
                           </form><br/>
                           <form>
                             Piece size
-                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="board.updatepieces()"/> 
+                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="board.updatepieces()"/>
                             <span id="piece-size-display">88</span>
                           </form><br/>
                           <form>
@@ -1162,7 +1185,7 @@
 
             // antialiasing must be disabled per default, so slower devices are not impaired.
             var antialiasing_mode = false;
-            
+
             const WHITE_PLAYER = 1, BLACK_PLAYER = 2;
             var stack_dist = 105;
             var piece_size = 88;
@@ -1176,12 +1199,12 @@
             var stackOffsetFromBorder = 50;
             var letter_size = 12;
             var diagonal_walls = false;
-            
+
             var raycaster = new THREE.Raycaster();
             var highlighter;
             var mouse = new THREE.Vector2();
             var offset = new THREE.Vector3();
-            
+
             var botlist = {
                 "TakticianBot": [0, "Very&nbsp;Hard"],
                 "TakkerusBot": [5, "Very&nbsp;Hard"],
@@ -1339,13 +1362,13 @@
                     border.position.set(board.corner_position.endx - border_size/2, 0, 0);
                     border.rotateY(-Math.PI / 2);
                     scene.add(border);
-                    
+
                     var loader = new THREE.FontLoader();
                     loader.load('js/helvetiker_regular.typeface.js', function(font) {
                             // add the letters and numbers around the border
                             for (var i = 0; i < board.size; i++) {
                                 var geometry, letter;
-                                
+
                                 // Top letters
                                 geometry = new THREE.TextGeometry(String.fromCharCode('A'.charCodeAt(0) + i),
                                     {size: letter_size, height: 1, font: font, weight: 'normal'});
@@ -1384,7 +1407,7 @@
                         });
                 }
             };
-            
+
             var pieceFactory = {
                 makePiece: function(playerNum,pieceNum,scene) {
                     var materialMine = (playerNum === WHITE_PLAYER ? materials.white_piece : materials.black_piece);
@@ -1440,7 +1463,7 @@
                     return piece;
                 }
             };
- 
+
             var board = {
                 size: 0,
                 totcaps: 0,
@@ -1455,7 +1478,7 @@
                 // TPS may start at some other move.
                 // This matters during Undo, because we can't undo beyond
                 // the initial board layout received from the TPS.
-                movestart: 0, 
+                movestart: 0,
                 scratch: true,
                 // string representation of contents of each square on the board
                 sq: [],
@@ -1474,17 +1497,17 @@
                 boardside: "white",
                 result: "",
                 observing: false,
-                
+
                 // Keep track of some important positions
                 sq_position: {startx: 0, startz: 0, endx:0, endz:0},
                 corner_position: {x: 0, z: 0, endx: 0, endz: 0},
-                
+
                 // a stack of board layouts
                 board_history: [],
                 timer_started: false,
                 // the game has ended and play cannot continue
                 isPlayEnded: false,
-                
+
                 create: function (sz, color, isScratch, obs) {
                     this.size = sz;
 
@@ -1531,7 +1554,7 @@
                     // we keep track of the complete board position before each move
                     // thus, the initial board position is an empty board of the proper size
                     this.pushInitialEmptyBoard(this.size);
-                    
+
                     this.addboard();
                     this.addpieces();
 
@@ -1587,11 +1610,11 @@
                         piece = pieceFactory.makePiece(BLACK_PLAYER,i,scene);
                         this.piece_objects.push(piece);
                     }
-                    
+
                     for (var i=0; i < this.totcaps; i++) {
                         piece = pieceFactory.makeCap(WHITE_PLAYER,i,scene);
                         this.piece_objects.push(piece);
-                        
+
                         piece = pieceFactory.makeCap(BLACK_PLAYER,i,scene);
                         this.piece_objects.push(piece);
                     }
@@ -1605,7 +1628,7 @@
                     var geometry = new THREE.BoxGeometry(piece_size, piece_height, piece_size);
                     materials.updatePieceMaterials();
                     var old_size = this.piece_objects[0].geometry.parameters.width;
-                    
+
                     // for all pieces...
                     for (i = 0; i < this.piece_objects.length ; i++) {
                         if (this.piece_objects[i].iscapstone) {
@@ -1699,7 +1722,7 @@
                         console.log( "no board position found for moveNum " + moveNum);
                         return;
                     }
-                    
+
                     // scan through each cell in the pos array
                     for(var i=0;i<this.size;i++) {//file
                         for(var j=0;j<this.size;j++) {//rank
@@ -1804,7 +1827,7 @@
                         this.unselect(obj);
                         return;
                     }
-                    
+
                     // if we've got a stack in our hand
                     if (this.selectedStack) {
                         if (this.highlighted && this.selectedStack.length > 0) {
@@ -2217,8 +2240,8 @@
                         }
                         return;
                     }
-                    
-                    // if the move count is non-zero and is an odd# then the code 
+
+                    // if the move count is non-zero and is an odd# then the code
                     // assumes there must be a row in the moveslist table that
                     // we can add a new cell to.
                     if (this.movecount !== 0 && this.movecount % 2 === 1) {
@@ -2461,7 +2484,7 @@
                     // we can't undo before the place we started from
                     if(this.movecount <= this.movestart)
                         return;
-                    
+
                     // This resetpieces() is to make sure there aren't any pieces
                     // in mid-move, in case the user clicked a piece to place it, but
                     // then clicked undo.
@@ -2485,7 +2508,7 @@
                   //fix notation
                   var ml = document.getElementById("moveslist");
                   var lr = ml.rows[ml.rows.length - 1];
-                  
+
                   // first check if we are undoing the last move that finished
                   // the game, if we have to do something a bit special
                   var txt1 = lr.cells[1].innerHTML.trim();
@@ -2679,7 +2702,7 @@
                         stk[i].onsquare = sq;
                     }
                 },
-              
+
                 // This function loads any valid TPS
                 // It also will allow some liberties with the notation:
                 //   * if you don't complete a row it assumes the cells are empty
@@ -2690,13 +2713,13 @@
                         alert('warning', 'TPS won\'t be displayed in the middle of an online game');
                         return;
                     }
-					
+
                     var playerTurn;
                     var moveNumber;
-                    
+
                     // simple RegEx for a basic TPS notation,
                     // but doesn't specify the details of the actual layout
-                    var tpsRE = /\[(TPS\s*)?\"?\s*([,x12345678SC\/]+)(\s+([\d+]))?(\s+(\d+|-))?\s*\"?\s*\]/; 
+                    var tpsRE = /\[(TPS\s*)?\"?\s*([,x12345678SC\/]+)(\s+([\d+]))?(\s+(\d+|-))?\s*\"?\s*\]/;
                     var result = tpsRE.exec(tps);
                     if (!result) {
                         alert('warning', 'Invalid TPS');
@@ -2728,25 +2751,25 @@
                         alert('warning', 'Invalid TPS - must be 3 to 8 rows');
                         return;
                     }
-					
+
                     this.clear();
                     // a board loaded from TPS is treated as a scratch game
                     this.create(rowCnt, this.determineColor(playerToMove), true, false);
-                    
+
                     this.initFromTPS(rowDescriptors);
                     if (this.checkroadwin())
                         return;
                     if (this.checksquaresover())
                         return;
-                    
+
                     var assumedMoveCount = this.moveCountCalc(moveNumber, moveNumber, playerToMove);
-                    
+
                     var infoMsg = "";
                     var playMsg = "";
-                    
+
                     // We want to make some sense of the moveCount...
                     var p1Cnt = this.count_pieces_on_board(WHITE_PLAYER);
-                    var p2Cnt = this.count_pieces_on_board(BLACK_PLAYER);                    
+                    var p2Cnt = this.count_pieces_on_board(BLACK_PLAYER);
                     if (p1Cnt == 0 && p2Cnt == 0) {
                         // nothing played yet
                         this.initCounters(0);
@@ -2778,7 +2801,7 @@
                         playMsg = "It is " + this.mycolor + "'s turn to play.";
                         this.initCounters(assumedMoveCount);
                     }
-                 
+
                     // player-opp is white, player-me is black. Seems like those
                     // names are backward, we'll just roll with it.
                     document.getElementById("player-opp").className = (this.mycolor === "white" ? "selectplayer" : "");
@@ -2813,7 +2836,7 @@
                     var pos = this.board_history[this.movecount - this.movestart];
                     for (i=0 ; i < pos.length ; i++) {
                         var pieces = pos[i];
-                        // remember, upper case is white(p1) and lower case is black(p2), 
+                        // remember, upper case is white(p1) and lower case is black(p2),
                         for (s=0 ; s < pieces.length; s++) {
                             if (player === WHITE_PLAYER && pieces[s] === pieces[s].toUpperCase() ||
                                 player === BLACK_PLAYER && pieces[s] === pieces[s].toLowerCase()) {
@@ -2844,16 +2867,16 @@
                     this.resetBoardStacks();
 
                     // in this case the initial board position is from the TPS, we don't
-                    // know what it was before                
+                    // know what it was before
                     this.layoutFromTPS(rowDescriptors);
-                    
+
                     if (this.mycolor !== this.boardside)
                         this.reverseboard();
 
                     document.getElementById("player-opp").className = "selectplayer";
                     document.getElementById("player-me").className = "";
                 },
-                layoutFromTPS: function (rowDescriptors) {               
+                layoutFromTPS: function (rowDescriptors) {
                     var rowCnt = rowDescriptors.length;
                     // rows are described from top to bottom
                     var currRow = rowCnt;
@@ -2863,14 +2886,14 @@
 
                         // a cell is either empty (maybe multiple), or a stack of one or more pieces
                         var cellRE = /^((x([12345678]?))|(([12]+)([SC]?)))$/;
-                        
+
                         var currCol = 1;
                         for (var j = 0; j < cellDescriptors.length; j++) {
                             if ( currCol > rowCnt ) {
                                 alert('warning', 'Invalid TPS - too many cells in row ' + currRow + '... "' + rowDescriptors[i] + '"');
                                 return;
                             }
-							
+
                             var cellDescriptor = cellDescriptors[j];
                             var cellResult = cellRE.exec(cellDescriptor);
                             if (!cellResult) {
@@ -2890,10 +2913,10 @@
                                 }
                                 continue;
                             }
-							
+
                             // We didn't find an empty cell descriptor
                             // so it must be a stack descriptor.
-							
+
                             // Get a board object (a square) for the current column and row
                             var square = this.get_board_obj(currCol-1, currRow-1);
 
@@ -2920,11 +2943,11 @@
                                 }
                                 this.pushPieceOntoSquare(square, pc);
                             } // iterate over stack
-							
+
                             currCol++;
                         } // iterate over cellDescriptors
                     } // iterate over rowDescriptors
-                    
+
                     this.save_board_pos();
                 }
             };
@@ -2953,13 +2976,13 @@
                     }
                     var url = 'www.playtak.com/ws';
                     var proto = 'wss://';
-                    if (window.location.protocol === "http:" && window.location.host.indexOf("playtak") === -1){
-                        proto = 'ws://';
-                        url = window.location.host;
-                    }
-                    else if (window.location.protocol === "https:" && window.location.host.indexOf("playtak") === -1){
-                        url = window.location.host;
-                    }
+                    // if (window.location.protocol === "http:" && window.location.host.indexOf("playtak") === -1){
+                    //     proto = 'ws://';
+                    //     url = window.location.host;
+                    // }
+                    // else if (window.location.protocol === "https:" && window.location.host.indexOf("playtak") === -1){
+                    //     url = window.location.host;
+                    // }
                     this.connection = new WebSocket(proto+url, "binary");
                     board.server = this;
                     this.connection.onerror = function (e) {
@@ -3133,7 +3156,7 @@
                         var s = getZero(parseInt(time%60));
                         $('.player1-time:first').html(m+':'+s);
                         $('.player2-time:first').html(m+':'+s);
-                        
+
                         if (spl[7] === "white") {//I am white
                             if(!chathandler.roomExists('priv', spl[6]))
                                 chathandler.createPrivateRoom(spl[6]);
@@ -3143,17 +3166,17 @@
                                 chathandler.createPrivateRoom(spl[4]);
                             chathandler.setRoom('priv', spl[4]);
                         }
-                        
+
                         var chimesound = document.getElementById("chime-sound");
                         chimesound.play();
                     }
                     else if (e.startsWith("Observe Game#")) {
                         //Observe Game#1 player1 vs player2, 4x4, 180, 7 half-moves played, player2 to move
                         var spl = e.split(" ");
-                        
+
                         var p1 = spl[2];
                         var p2 = spl[4].split(',')[0];
-                        
+
                         board.clear();
                         board.create(Number(spl[5].split("x")[0]), "white", false, true);
                         board.initEmpty();
@@ -3167,7 +3190,7 @@
                         var s = getZero(parseInt(time%60));
                         $('.player1-time:first').html(m+':'+s);
                         $('.player2-time:first').html(m+':'+s);
-                        
+
                         if(!chathandler.roomExists('room', 'Game'+board.gameno))
                             chathandler.createGameRoom('Game'+board.gameno, p1, p2);
                         chathandler.setRoom('room', 'Game'+board.gameno);
@@ -3448,28 +3471,28 @@
                     else if (e.startsWith("Shout ")) {
                         var regex = /Shout <([^\s]*)> (.*)/g;
                         var match = regex.exec(e);
-                        
+
                         chathandler.received('global', '', match[1], match[2]);
                     }
                     //ShoutRoom name <name> msg
                     else if (e.startsWith("ShoutRoom")) {
                         var regex = /ShoutRoom ([^\s]*) <([^\s]*)> (.*)/g;
                         var match = regex.exec(e);
-                        
+
                         chathandler.received('room', match[1], match[2], match[3]);
                     }
                     //Tell <name> msg
                     else if (e.startsWith("Tell")) {
                         var regex = /Tell <([^\s]*)> (.*)/g;
                         var match = regex.exec(e);
-                        
+
                         chathandler.received('priv', match[1], match[1], match[2]);
                     }
                     //Told <name> msg
                     else if (e.startsWith("Told")) {
                         var regex = /Told <([^\s]*)> (.*)/g;
                         var match = regex.exec(e);
-                        
+
                         chathandler.received('priv', match[1], this.myname, match[2]);
                     }
                     else if (e.startsWith("CmdReply")) {
@@ -3499,13 +3522,13 @@
                                                    "images/circle_black.svg";
                         }
                         img = '<img src="'+img+'"/>';
-                        
+
                         var botsettings = botlist[p];
 
                         var pspan = "<span class='playername'>"+p+"</span>";
                         sz = "<span class='badge'>"+sz+"</span>";
                         var botlevel = "";
-                        
+
                         var op = document.getElementById("seekcount");
                         var opbot = document.getElementById("seekcountbot");
 
@@ -3546,7 +3569,7 @@
                         var spl = e.split(" ");
 
                         var no = spl[2];
-                        
+
                         var botgame = $('#seeklistbot .seek'+no).length
                         $('.seek'+no).remove();
 
@@ -3681,7 +3704,7 @@
             function init() {
                 // load the user settings.
                 loadSettings();
-                
+
                 canvas = document.getElementById("gamecanvas");
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
@@ -3860,6 +3883,18 @@
                 server.unobserve();
                 board.loadtps(tps);
             }
+            function loadptn() {
+                $('#loadptnmodal').modal('hide')
+                var files = $('#loadptnfile')[0].files;
+                if(files.length == 0)
+                    return;
+                var reader = new FileReader();
+                reader.onload = function(txt) {
+                    server.unobserve();
+                    board.loadptn(txt);
+                }
+                reader.readAsText(files[0]);
+            }
             function volume_change() {
                 var img = document.getElementById("volume-img");
                 var movesound = document.getElementById("move-sound");
@@ -3909,7 +3944,7 @@
             function getZero(t) {
               return t<10?'0'+t:t;
             }
-            
+
             /*
              * Settings loaded on initialization. Try to keep them in the order of the window.
              * First the left-hand div, then the right-hand div.
@@ -3935,7 +3970,7 @@
                 materials.white_cap_style_name = styleName;
                 document.getElementById('piece-style-white-' + styleName).checked = true;
               }
-              
+
               // load black piece style.
               if (localStorage.getItem('piece_style_black2')!==null) {
                 var styleName = localStorage.getItem('piece_style_black2');
@@ -3943,14 +3978,14 @@
                 materials.black_cap_style_name = styleName;
                 document.getElementById('piece-style-black-' + styleName).checked = true;
               }
-              
+
               // load black board style.
               if (localStorage.getItem('board_style_black2')!==null) {
                 var styleName = localStorage.getItem('board_style_black2');
                 materials.black_sqr_style_name = styleName;
                 document.getElementById('board-style-black-' + styleName).checked = true;
               }
-              
+
               // load white board style.
               if (localStorage.getItem('board_style_white2')!==null) {
                 var styleName = localStorage.getItem('board_style_white2');
@@ -3963,7 +3998,7 @@
                 document.getElementById('antialiasing-checkbox').checked = true;
                 antialiasing_mode = true;
               }
-              
+
               // load whether or not the 'Send' button should be hidden.
               if (localStorage.getItem('hide-send')==='true')
               {
@@ -3993,7 +4028,7 @@
                 adjustChatWidth();
               }*/
             }
-            
+
             /*
              * Notify checkbox change for checkbox:
              *   Diagonal walls
@@ -4008,7 +4043,7 @@
               }
               board.updatepieces();
             }
-            
+
             /*
              * Notify slider movement:
              *   Piece size
@@ -4018,7 +4053,7 @@
               document.getElementById('piece-size-display').innerHTML=newSize;
               piece_size = parseInt(newSize);
             }
-            
+
             /*
              * Notify radio button check:
              *   Piece style - white
@@ -4030,7 +4065,7 @@
               localStorage.setItem('piece_style_white2', styleName);
               board.updatepieces();
             }
-            
+
             /*
              * Notify radio button check:
              *   Piece style - black
@@ -4042,7 +4077,7 @@
               localStorage.setItem('piece_style_black2', styleName);
               board.updatepieces();
             }
-            
+
             /*
              * Notify radio button check:
              *   Board style - black
@@ -4053,7 +4088,7 @@
               localStorage.setItem('board_style_black2', styleName);
               board.updateboard();
             }
-            
+
             /*
              * Notify radio button check:
              *   Board style - white
@@ -4064,7 +4099,7 @@
               localStorage.setItem('board_style_white2', styleName);
               board.updateboard();
             }
-            
+
             /*
              * Notify checkbox change for checkbox:
              *   Antialiasing
@@ -4076,7 +4111,7 @@
                 localStorage.setItem('antialiasing_mode', 'false');
               }
             }
-            
+
             /*
              * Notify checkbox change for checkbox:
              *   Hide 'Send' button
@@ -4091,7 +4126,7 @@
                 document.getElementById('send-button').style.display = "initial";
                 $('#chat').height(window.innerHeight - $('nav').height() - 85);
               }
-              
+
             }
 
             /*
@@ -4150,12 +4185,12 @@
                 console.log('res='+res);
             }
 
-            
+
             function sliderChatSize(newSize) {
                 chathandler.showchat();
                 chathandler.adjustChatWidth(Number(newSize));
             }
-            
+
             function undoButton() {
                 if(board.scratch)
                   board.undo();
@@ -4206,4 +4241,3 @@
 
     </body>
 </html>
-
