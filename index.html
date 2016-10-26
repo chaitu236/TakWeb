@@ -28,6 +28,7 @@
         <script src="js/chat.js"></script>
         <script src="js/jquery.contextMenu.min.js"></script>
         <script src="js/playtaktour.js"></script>
+        <script src="js/ptn.js"></script>
 
         <style>
             body {
@@ -2703,6 +2704,104 @@
                     }
                 },
 
+                loadptn: function (ptn) {
+                    if (!this.scratch && !this.observing) {
+                        alert('warning', 'PTN cannot be loaded while in the middle of a game');
+                        return;
+                    }
+                    var parsed = parsePTN(ptn);
+                    if (!parsed) {
+                        alert('warning', 'invalid PTN');
+                        return;
+                    }
+                    var size = parseInt(parsed.tags.Size, 10);
+                    if (!(size >= 3 && size <= 8)) {
+                        alert('warning', 'invalid PTN: invalid size');
+                        return;
+                    }
+                    this.clear();
+                    this.create(size, 'white', true, false);
+                    this.initEmpty();
+                    $('.player1-name:first').html(parsed.tags.Player1);
+                    $('.player2-name:first').html(parsed.tags.Player2);
+                    if (parsed.tags.Clock !== undefined) {
+                        $('.player1-time:first').html(parsed.tags.Clock);
+                        $('.player2-time:first').html(parsed.tags.Clock);
+                    }
+
+                    dontanimate = true;
+                    for (var ply = 0; ply < parsed.moves.length; ply++) {
+                        var move = parsed.moves[ply];
+                        var match;
+                        if ((match = /^([SFC]?)([a-h])([0-8])$/.exec(move)) !== null) {
+                            var piece = match[1];
+                            var file  = match[2].charCodeAt(0) - 'a'.charCodeAt(0);
+                            var rank  = parseInt(match[3]) - 1;
+                            var obj = this.getfromstack((piece === 'C'), this.is_white_piece_to_move());
+                            if (!obj) {
+                                console.log("bad PTN: too many pieces");
+                                return;
+                            }
+                            if (piece === 'S') {
+                                this.standup(obj);
+                            }
+                            var hlt = this.get_board_obj(file, rank);
+                            this.pushPieceOntoSquare(hlt, obj);
+                        } else if ((match = /^([1-9]?)([a-h])([0-8])([><+-])(\d*)$/.exec(move)) !== null) {
+                            var count = match[1];
+                            var file  = match[2].charCodeAt(0) - 'a'.charCodeAt(0);
+                            var rank  = parseInt(match[3]) - 1;
+                            var dir   = match[4]
+                            var drops = match[5].split('');
+
+                            if (drops.length === 0) {
+                                drops = [count];
+                            }
+                            var tot = 0;
+                            var i, j;
+                            for (i = 0; i < drops.length; i++)
+                                tot += parseInt(drops[i]);
+
+                            var df = 0, dr = 0;
+                            if (dir == '<') {
+                                df = -1;
+                            } else if (dir == '>') {
+                                df = 1;
+                            } else if (dir == '-') {
+                                dr = -1;
+                            } else if (dir == '+') {
+                                dr = 1;
+                            }
+
+                            var s1 = this.get_board_obj(file, rank);
+                            var stk = this.get_stack(s1);
+                            var tstk = [];
+
+                            for (i = 0; i < tot; i++)
+                                tstk.push(stk.pop());
+
+                            for (i = 0; i < drops.length; i++) {
+                                var sq = this.get_board_obj(s1.file + (i + 1) * df,
+                                                            s1.rank + (i + 1) * dr);
+
+                                for (j = 0; j < parseInt(drops[i]); j++) {
+                                    this.pushPieceOntoSquare(sq, tstk.pop());
+                                }
+                            }
+                        }
+
+                        this.notate(move);
+                        this.incmovecnt();
+                    }
+                    dontanimate = false;
+                    if (parsed.tags.Result !== undefined) {
+                        this.result = parsed.tags.Result
+                        this.gameover();
+                    } else {
+                        this.result = '';
+                    }
+                },
+
                 // This function loads any valid TPS
                 // It also will allow some liberties with the notation:
                 //   * if you don't complete a row it assumes the cells are empty
@@ -2976,13 +3075,13 @@
                     }
                     var url = 'www.playtak.com/ws';
                     var proto = 'wss://';
-                    // if (window.location.protocol === "http:" && window.location.host.indexOf("playtak") === -1){
-                    //     proto = 'ws://';
-                    //     url = window.location.host;
-                    // }
-                    // else if (window.location.protocol === "https:" && window.location.host.indexOf("playtak") === -1){
-                    //     url = window.location.host;
-                    // }
+                    if (window.location.protocol === "http:" && window.location.host.indexOf("playtak") === -1){
+                        proto = 'ws://';
+                        url = window.location.host;
+                    }
+                    else if (window.location.protocol === "https:" && window.location.host.indexOf("playtak") === -1){
+                        url = window.location.host;
+                    }
                     this.connection = new WebSocket(proto+url, "binary");
                     board.server = this;
                     this.connection.onerror = function (e) {
@@ -3891,7 +3990,7 @@
                 var reader = new FileReader();
                 reader.onload = function(txt) {
                     server.unobserve();
-                    board.loadptn(txt);
+                    board.loadptn(reader.result);
                 }
                 reader.readAsText(files[0]);
             }
