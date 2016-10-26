@@ -2752,10 +2752,15 @@
                             var file  = match[2].charCodeAt(0) - 'a'.charCodeAt(0);
                             var rank  = parseInt(match[3]) - 1;
                             var dir   = match[4]
-                            var drops = match[5].split('');
+                            var drops = match[5];
 
-                            if (drops.length === 0) {
-                                drops = [count];
+                            if (drops === '') {
+                                if (count == '')
+                                    drops = [1];
+                                else
+                                    drops = [count];
+                            } else {
+                                drops = drops.split('');
                             }
                             var tot = 0;
                             var i, j;
@@ -2788,6 +2793,9 @@
                                     this.pushPieceOntoSquare(sq, tstk.pop());
                                 }
                             }
+                        } else {
+                            console.log("unparseable: " + move);
+                            continue;
                         }
 
                         this.notate(move);
