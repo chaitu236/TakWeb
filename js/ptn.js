@@ -1,4 +1,5 @@
 function parsePTN(text) {
+  text = text.replace(/\r/g, '');
   var bits = text.split(/\n\n/);
   if (bits.length < 2)
     return null;
