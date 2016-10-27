@@ -3979,19 +3979,14 @@
                 else
                     controls.constraint.dollyIn(1.5);
             }
-            function loadtps() {
-                var tps = window.prompt("Paste TPS here", "");
-                if (!tps)
-                    return;
-                server.unobserve();
-                board.loadtps(tps);
-            }
             function load() {
                 $('#loadmodal').modal('hide')
                 if (!board.scratch && !board.observing) {
                     alert('warning', "TPS/PTN won't be displayed in the middle of an online game");
                     return;
                 }
+
+                server.unobserve();
 
                 var text = $('#loadptntext').val();
 
