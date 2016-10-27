@@ -3060,6 +3060,7 @@
                 tries:0,
                 timervar: null,
                 lastTimeUpdate: null,
+                anotherlogin: false,
 
                 init: function () {
                     if (this.connection && this.connection.readyState === 2)//closing connection
@@ -3126,7 +3127,8 @@
                         });
                         stopTime();
 
-                        if(localStorage.getItem('keeploggedin')==='true') {
+                        if(localStorage.getItem('keeploggedin')==='true' &&
+                                                          !server.anotherlogin) {
                           alert("info", "Connection lost. Trying to reconnect...");
                           server.startLoginTimer();
                         } else {
@@ -3562,6 +3564,10 @@
                     }
                     else if (e.startsWith("Message")) {
                         var msg = e.split("Message ");
+
+                        if (e.includes("You've logged in from another window. Disconnecting"))
+                          server.anotherlogin = true;
+
                         alert("info", "Server says: " + msg[1]);
                     }
                     else if (e.startsWith("Error")) {
