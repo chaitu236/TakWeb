@@ -502,7 +502,7 @@
                             </ul>
                         </li>
                         <!--<li><a  class="visible-xs-block" title="Reverse view" class="hidden-xs" href="#" onclick="board.reverseboard()">Flip view</a></li>-->
-                        <li><a id="loadptn" href="#" onclick="$('#loadptnmodal').modal('show')">Load PTN</a></li>
+                        <li><a id="loadptn" href="#" onclick="$('#loadmodal').modal('show')">Load</a></li>
                         <li>
                           <a id="creategame" href="#" title="Create online game" onclick="$('#creategamemodal').modal('show')">New Game</a>
                         </li>
@@ -753,7 +753,7 @@
            </div>
         </div>
 
-        <div id="loadptnmodal" class="modal fade" role="dialog">
+        <div id="loadmodal" class="modal fade" role="dialog">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-body">
@@ -761,14 +761,15 @@
                         <div class="col-sm-12">
                           <form role="form">
                             <div class="form-group">
-                              <label>PTN file</label>
-                              <input type='file' id='loadptnfile'></input>
+                              <label>Paste PTN/TPS:</label>
+                              <!-- <input type="file" accept=".ptn,.txt" id="loadptnfile"></input> -->
+                              <input type="text" id="loadptntext"></input>
                             </div>
                           </form>
                         </div>
                         </div>
                         <div class="modal-footer center">
-                            <button type="button" class="btn btn-default" onclick='loadptn(); return false;'>Load PTN</button>
+                            <button type="button" class="btn btn-default" onclick='load(); return false;'>Load</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
@@ -2816,11 +2817,6 @@
                 //   * the initial TPS tagname is optional
                 //   * the player & move elements are optional
                 loadtps: function (tps) {
-                    if (!this.scratch && !this.observing) {
-                        alert('warning', 'TPS won\'t be displayed in the middle of an online game');
-                        return;
-                    }
-
                     var playerTurn;
                     var moveNumber;
 
@@ -3990,8 +3986,27 @@
                 server.unobserve();
                 board.loadtps(tps);
             }
-            function loadptn() {
-                $('#loadptnmodal').modal('hide')
+            function load() {
+                $('#loadmodal').modal('hide')
+                if (!board.scratch && !board.observing) {
+                    alert('warning', "TPS/PTN won't be displayed in the middle of an online game");
+                    return;
+                }
+
+                var text = $('#loadptntext').val();
+
+                var tpsRE = /\[(TPS\s*)?\"?\s*([,x12345678SC\/]+)(\s+([\d+]))?(\s+(\d+|-))?\s*\"?\s*\]/;
+                var tps = tpsRE.exec(text);
+
+                if(!tps)
+                  board.loadptn(text);
+                else
+                  board.loadtps(text);
+
+                $('#loadptntext').val('');
+            }
+            function loadptn(text) {
+                $('#loadmodal').modal('hide')
                 var files = $('#loadptnfile')[0].files;
                 if(files.length == 0)
                     return;

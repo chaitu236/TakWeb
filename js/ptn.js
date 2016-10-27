@@ -1,10 +1,11 @@
 function parsePTN(text) {
   text = text.replace(/\r/g, '');
-  var bits = text.split(/\n\n/);
-  if (bits.length < 2)
-    return null;
-  var header = parsePTNHeader(bits[0]);
-  var moves = parsePTNMoves(bits[1]);
+  text = text.replace(/\{[^}]+\}/gm, '');
+
+  var header = parsePTNHeader(text);
+
+  var body = text.replace(/\[(\S+)\s+\"([^"]+)\"\]/g, '').trim();
+  var moves = parsePTNMoves(body);
   if (header && moves) {
     return {
       tags: header,
@@ -17,7 +18,7 @@ function parsePTN(text) {
 function parsePTNHeader(header) {
   var tags = {};
   var match;
-  var re = /^\[(\S+)\s+\"([^"]+)\"\]$/gm;
+  var re = /\[(\S+)\s+\"([^"]+)\"\]/gm;
   while ((match = re.exec(header)) !== null) {
     tags[match[1]] = match[2];
   }
@@ -25,12 +26,11 @@ function parsePTNHeader(header) {
 }
 
 function parsePTNMoves(body) {
-  body = body.replace(/\{[^}]+\}/gm, '');
   var bits = body.split(/\s+/);
   var moves = [];
   for (var i = 0; i < bits.length; i++) {
     var tok = bits[i];
-    if (tok.match(/^\d+\.$/))
+    if (tok.match(/\d+\./))
         continue;
     moves.push(tok);
   }
