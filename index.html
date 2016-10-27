@@ -2730,7 +2730,6 @@
                         $('.player2-time:first').html(parsed.tags.Clock);
                     }
 
-                    dontanimate = true;
                     for (var ply = 0; ply < parsed.moves.length; ply++) {
                         var move = parsed.moves[ply];
                         var match;
@@ -2802,7 +2801,6 @@
                         this.notate(move);
                         this.incmovecnt();
                     }
-                    dontanimate = false;
                     if (parsed.tags.Result !== undefined) {
                         this.result = parsed.tags.Result
                         this.gameover();
@@ -3993,10 +3991,14 @@
                 var tpsRE = /\[(TPS\s*)?\"?\s*([,x12345678SC\/]+)(\s+([\d+]))?(\s+(\d+|-))?\s*\"?\s*\]/;
                 var tps = tpsRE.exec(text);
 
+                dontanimate = true;
+
                 if(!tps)
                   board.loadptn(text);
                 else
                   board.loadtps(text);
+
+                dontanimate = false;
 
                 $('#loadptntext').val('');
             }
@@ -4352,6 +4354,11 @@
                 }
                 chathandler.init();
                 tour(false);
+                if (location.search.startsWith('?load=')) {
+                   var text = decodeURIComponent(location.search.split('?load=')[1]);
+                   $('#loadptntext').val(text.replace(/\n/g, ' '));
+                   load();
+                }
             })
 
         </script>
