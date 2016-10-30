@@ -4345,10 +4345,17 @@
             }
 
             $(document).ready(function() {
+                var didload = false;
                 if(localStorage.getItem('sound')==='flase') {
                     volume_change();
                 }
-                if(localStorage.getItem('keeploggedin')==='true') {
+                if (location.search.startsWith('?load=')) {
+                   var text = decodeURIComponent(location.search.split('?load=')[1]);
+                   $('#loadptntext').val(text.replace(/\n/g, ' '));
+                   didload=true;
+                   load();
+                }
+                if(localStorage.getItem('keeploggedin')==='true' && !didload) {
                     server.init();
                 }
                 if(isBreakpoint('xs') || isBreakpoint('sm')) {
@@ -4360,11 +4367,6 @@
                 }
                 chathandler.init();
                 tour(false);
-                if (location.search.startsWith('?load=')) {
-                   var text = decodeURIComponent(location.search.split('?load=')[1]);
-                   $('#loadptntext').val(text.replace(/\n/g, ' '));
-                   load();
-                }
             })
 
         </script>
