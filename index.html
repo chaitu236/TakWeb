@@ -4348,9 +4348,6 @@
                 if(localStorage.getItem('sound')==='false') {
                     volume_change();
                 }
-                if(localStorage.getItem('keeploggedin')==='true') {
-                    server.init();
-                }
                 if(isBreakpoint('xs') || isBreakpoint('sm')) {
                     chathandler.hidechat();
                     hidermenu();
@@ -4359,12 +4356,14 @@
                     showrmenu();
                 }
                 chathandler.init();
-                tour(false);
                 if (location.search.startsWith('?load=')) {
                    var text = decodeURIComponent(location.search.split('?load=')[1]);
                    $('#loadptntext').val(text.replace(/\n/g, ' '));
                    load();
+                } else if(localStorage.getItem('keeploggedin')==='true') {
+                    server.init();
                 }
+                tour(false);
             })
 
         </script>
