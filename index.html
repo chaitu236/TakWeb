@@ -3546,6 +3546,7 @@
                         this.timeoutvar = window.setInterval(this.keepalive, 30000);
                         this.myname = e.split("Welcome ")[1].split("!")[0];
                         alert("success", "You're logged in "+this.myname+"!");
+                        document.title = "Tak";
 
                         var rem = $('#keeploggedin').is(':checked');
                         if( rem === true && !this.myname.startsWith("Guest")) {
@@ -4359,6 +4360,7 @@
                 if (location.search.startsWith('?load=')) {
                    var text = decodeURIComponent(location.search.split('?load=')[1]);
                    $('#loadptntext').val(text.replace(/\n/g, ' '));
+                   document.title = "Tak Review";
                    load();
                 } else if(localStorage.getItem('keeploggedin')==='true') {
                     server.init();
