@@ -1218,6 +1218,7 @@
                 "BeginnerBot": [40, "Beginner"],
                 "FriendlyBot": [50, "Adjustable"],
                 "TakticianBotDev": [60, "Experimental"],
+                "FPABot":[65, "Experimental"],
                 "alphabot": [70, "Experimental"],
                 "cutak_bot": [80, "Experimental"]
             };
@@ -3631,8 +3632,6 @@
                         }
                         img = '<img src="'+img+'"/>';
 
-                        var botsettings = botlist[p];
-
                         var pspan = "<span class='playername'>"+p+"</span>";
                         sz = "<span class='badge'>"+sz+"</span>";
                         var botlevel = "";
@@ -3642,23 +3641,33 @@
 
                         var row = $('<tr/>').addClass('row').addClass('seek'+no)
                                             .click(function() {server.acceptseek(spl[2])})
-                        if (botsettings) {
+                        if (p.toLowerCase().indexOf('bot') !== -1) {
                             var listed = $('#seeklistbot').children();
                             var previous = null;
-                            for (var i = 0; i < listed.length; i++) {
-                                var position = +(/(^| )botid([0-9]+)($| )/.exec(listed[i].className)[2]);
-                                if (position < botsettings[0]) {
-                                    previous = $(listed[i]);
+                            var hardness = 'Unknown';
+                            var level = 100;
+                            var botsettings = botlist[p];
+
+                            if (botsettings) {
+                                for (var i = 0; i < listed.length; i++) {
+                                    var position = +(/(^| )botid([0-9]+)($| )/.exec(listed[i].className)[2]);
+                                    if (position < botsettings[0]) {
+                                        previous = $(listed[i]);
+                                    }
                                 }
+                                level = botsettings[0];
+                                hardness = botsettings[1];
+                            } else {
+                                previous = $(listed[listed.length-1]);
                             }
-                            if (previous) {
+
+                            if (previous)
                                 previous.after(row);
-                            }
-                            else {
+                            else
                                 $('#seeklistbot').prepend(row);
-                            }
-                            row.addClass('botid'+botsettings[0]);
-                            botlevel = "<span class='botlevel'>"+botsettings[1]+"</span>";
+
+                            row.addClass('botid'+level);
+                            botlevel = "<span class='botlevel'>"+hardness+"</span>";
                             opbot.innerHTML = Number(opbot.innerHTML)+1;
                         }
                         else {
