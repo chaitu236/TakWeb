@@ -1,0 +1,87 @@
+#chat-toggle-button{
+    position: absolute;
+    right: 185px;
+    top: 62px;
+    z-index: 10;
+}
+
+#chat {
+    position: absolute;
+    right: 5px;
+    top: 60px;
+    z-index: 10;
+    width: 180px;
+    height: 80%;
+}
+
+#chat > ul > li > a {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#room_divs > div {
+    padding: 3px;
+    word-wrap: break-word;
+    background-color: #e7e7e9;
+    height:100%;
+    overflow-y: auto;
+}
+
+.chatname {
+  font-weight: bold;
+}
+
+.chatmyname {
+  color: red;
+}
+
+.cmdreply {
+  font-style: italic;
+  color: blue;
+}
+
+.ircname {
+  color: #8C6F65;
+}
+
+.chattime {
+  color: #7D7D7D;
+  text-align: center;
+}
+
+#chat-toggle-text {
+}
+
+#room_list > li {
+    display: table;
+    width: 100%;
+}
+
+#room_list > li > a {
+    display: table-cell;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 4px 0px 4px 12px;
+}
+
+#room_list > li > a > span > span:nth-child(2) {
+    display: block;
+    font-size: 12px;
+    text-align: center;
+}
+
+#room_list > li > a > span > span:nth-child(3) {
+    float: right;
+}
+
+#room_list > li > div {
+    display: table-cell;
+    text-align: center;
+    width: 20px;
+    padding: 4px 6px 4px 12px;
+    font-size: 21px;
+    opacity: .4;
+    vertical-align: middle;
+}
