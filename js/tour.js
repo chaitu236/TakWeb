@@ -18,10 +18,10 @@ function tour(force) {
         content: "Click here to register and login with your handle or login as guest",
       },
       {
-        element: "#loadtps",
-        title: "Load TPS",
+        element: "#loadptn",
+        title: "Load",
         autoscroll: false,
-        content: "Paste your TPS in 'Load TPS'"
+        content: "Paste your PTN/TPS in 'Load' menu"
       },
       {
         element: "#floating",
