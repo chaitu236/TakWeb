@@ -376,3 +376,12 @@ input[type=range]::-webkit-slider-runnable-track {
 .table {
     margin-bottom: 0;
 }
+
+#player-me-time, #player-opp-time {
+  font-size: x-large;
+}
+
+hr {
+  border-color: black;
+  margin: 5px;
+}
