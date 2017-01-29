@@ -158,17 +158,17 @@
                     <<<br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n
                 </div>
             </a>
+
             <ul id="rmenu" style="list-style-type:none">
                 <li class="center">
                     <div id="player-opp">
-                    <img id="player-opp-img" src="images/player-white.png" height="20" width="20">
-                    <div id="player-opp-name" class="player1-name">You</div>
+                      <img id="player-opp-img" src="images/player-white.png" height="20" width="20">
+                      <div id="player-opp-name" class="player1-name">You</div>
                     </div>
                     <div id="player-opp-time" class="player1-time">0:00</div>
                 </li>
+
                 <li class="optlist center">
-                <a id="download_notation" href="#" title="Download notation" class="btn" onclick="downloadNotation();">
-                  <img src="images/ic_file_download_black_24px.svg" width="25" height="25"></a>
                 <a href="#" title="Undo" class="btn" onclick="undoButton()">
                   <img id="undo" src="images/requestundo.svg" width="25" height="25"></a>
                 <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()">
@@ -176,28 +176,41 @@
                 <a href="#" title="Resign" class="btn" onclick="server.resign()">
                   <img src="images/flag.svg" width="25" height="20"></a>
                 </li>
+
                 <li>
-                    <div title="Notation for current game appears here" id="notationbar">
-                        <table id="moveslist">
-                        </table>
-                    </div>
+                  <div title="Notation for current game appears here" id="notationbar">
+                    <table id="moveslist">
+                    </table>
+                  </div>
                 </li>
+
                 <li class="optlist center">
-                <a href="#" title="First move" class="btn" onclick="fastrewind()">
-                  <img src="images/ic_fast_rewind_black_24px.svg" width="25" height="25"></a>
-                <a href="#" title="Step back" class="btn" onclick="stepback()">
-                  <img src="images/ic_keyboard_arrow_left_black_24px.svg" width="25" height="25"></a>
-                <a href="#" title="Step forward" class="btn" onclick="stepforward()">
-                  <img src="images/ic_keyboard_arrow_right_black_24px.svg" width="25" height="25"></a>
-                <a href="#" title="Current move" class="btn" onclick="fastforward()">
-                  <img src="images/ic_fast_forward_black_24px.svg" width="25" height="25"></a>
+                  <a href="#" title="First move" class="btn" onclick="fastrewind()">
+                    <img src="images/ic_fast_rewind_black_24px.svg" width="25" height="25"></a>
+                  <a href="#" title="Step back" class="btn" onclick="stepback()">
+                    <img src="images/ic_keyboard_arrow_left_black_24px.svg" width="25" height="25"></a>
+                  <a href="#" title="Step forward" class="btn" onclick="stepforward()">
+                    <img src="images/ic_keyboard_arrow_right_black_24px.svg" width="25" height="25"></a>
+                  <a href="#" title="Current move" class="btn" onclick="fastforward()">
+                    <img src="images/ic_fast_forward_black_24px.svg" width="25" height="25"></a>
                 </li>
+
+                <li class="optlist center">
+                  <a id="download_notation" href="#" title="Download notation" class="btn" onclick="downloadNotation();">
+                    <img src="images/ic_file_download_black_24px.svg" width="25" height="25">
+                  </a>
+                  <a id="notation_link" href="#" title="Copy a link to this game"  class="btn" onclick="copyNotationLink();">
+								    <span class="fa fa-clipboard fa-lg" aria-hidden="true"></span>
+                    <img src="images/ic_content_copy_black_24px.svg" width="23" height="23">
+                  </a>
+                </li>
+
                 <li class="center">
-                    <div id="player-me">
+                  <div id="player-me">
                     <img id="player-me-img" src="images/player-black.png" height="20" width="20">
                     <div id="player-me-name" class="player2-name">You</div>
-                    </div>
-                    <div id="player-me-time" class="player2-time">0:00</div>
+                  </div>
+                  <div id="player-me-time" class="player2-time">0:00</div>
                 </li>
             </ul>
         </div>

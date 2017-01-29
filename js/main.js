@@ -524,7 +524,7 @@ function getHeader(key, val) {
   return '['+key+' "'+val+'"]\r\n';
 }
 
-function downloadNotation() {
+function getNotation() {
     var p1 = $('.player1-name:first').html();
     var p2 = $('.player2-name:first').html();
     var now = new Date();
@@ -556,10 +556,35 @@ function downloadNotation() {
         count++;
       })
     });
-    $('#download_notation').attr('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(res));
-    console.log('res='+res);
+
+    return res;
 }
 
+function downloadNotation() {
+    $('#download_notation').attr('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(getNotation()));
+}
+
+function copyNotationLink() {
+    var link = 'http://www.playtak.com/?load=' + encodeURIComponent(getNotation());
+
+    var dummy = document.createElement("input");
+    document.body.appendChild(dummy);
+
+    dummy.value = link;
+    dummy.select();
+
+    try {
+      var successful = document.execCommand('copy');
+      if (successful)
+        alert('success', 'Copied!');
+      else
+        alert('danger', 'Unable to copy!');
+    } catch(err) {
+      alert('danger', 'Unable to copy!');
+    }
+
+    document.body.removeChild(dummy);
+}
 
 function sliderChatSize(newSize) {
     chathandler.showchat();
