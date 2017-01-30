@@ -201,7 +201,14 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 #notationbar {
-    height: 150px;
+    border-top-style: solid;
+    border-top-color: #888;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #888;
+    border-bottom-width: 1px;
+    background-color: #eee;
+    height: 200px;
     overflow: auto;
 }
 
@@ -308,15 +315,13 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 #player-opp, .player1-name {
-    display: inline;
-    /*color: #d8cdab;*/
+    display: inline-block;
     color: #a3a3a3;
     padding: 2px;
 }
 
 #player-me, .player2-name {
-    display: inline;
-    /*color: #593514;*/
+    display: inline-block;
     color: black;
     padding: 2px;
 }
