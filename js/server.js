@@ -347,12 +347,12 @@ var server = {
             }
             //Game#1 OfferDraw
             else if (spl[1] === "OfferDraw") {
-                document.getElementById("draw").src = "images/hand-other-offered.png";
+                $('#draw').toggleClass('opp-offered-draw offer-draw');
                 alert("info", "Draw is offered by your opponent");
             }
             //Game#1 RemoveDraw
             else if (spl[1] === "RemoveDraw") {
-                document.getElementById("draw").src = "images/offer-hand.png";
+                $('#draw').removeClass('i-offered-draw').removeClass('opp-offered-draw').addClass('offer-draw');
                 alert("info", "Draw offer is taken back by your opponent");
             }
             //Game#1 Over result
@@ -702,14 +702,14 @@ var server = {
         else if(board.observing)
           return;
 
-        var img = document.getElementById("draw");
-        if(img.src.match("offer-hand")) {//offer
-            img.src = "images/hand-i-offered.png";
+        if($('#draw').hasClass("offer-draw")) {//offer
+            $('#draw').toggleClass('i-offered-draw offer-draw');
             this.send("Game#" + board.gameno + " OfferDraw");
-        } else if(img.src.match("hand-i-offered")) {//remove offer
-            img.src = "images/offer-hand.png";
+        } else if($('#draw').hasClass("i-offered-draw")) {//remove offer
+            $('#draw').toggleClass('i-offered-draw offer-draw');
             this.send("Game#" + board.gameno + " RemoveDraw");
         } else {//accept the offer
+            $('#draw').removeClass('i-offered-draw').removeClass('opp-offered-draw').addClass('offer-draw');
             this.send("Game#" + board.gameno + " OfferDraw");
         }
     },
@@ -721,7 +721,6 @@ var server = {
         this.send("Game#" + board.gameno + " RequestUndo");
         $('#undo').toggleClass('request-undo i-requested-undo');
         alert('info', 'Undo request sent');
-
       } else if ($('#undo').hasClass('opp-requested-undo')) {//accept request
         this.send("Game#" + board.gameno + " RequestUndo");
         $('#undo').toggleClass('request-undo opp-requested-undo');

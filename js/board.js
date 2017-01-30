@@ -1334,7 +1334,7 @@ var board = {
         var tbl = document.getElementById("moveslist");
         while (tbl.rows.length > 0)
             tbl.deleteRow(0);
-        document.getElementById("draw").src = "images/offer-hand.png";
+        $('#draw').removeClass('i-offered-draw').removeClass('opp-offered-draw').addClass('offer-draw');
         stopTime();
 
         $('#player-me-name').removeClass('player1-name');

@@ -390,7 +390,7 @@ hr {
   margin: 5px;
 }
 
-a .fa:not(#undo) {
+a .fa:not(#undo):not(#draw) {
   color: black;
 }
 
@@ -398,14 +398,14 @@ a .fa:not(#undo) {
   margin: 2px;
 }
 
-.request-undo {
+.request-undo, .offer-draw {
   color: black;
 }
 
-.i-requested-undo {
+.i-requested-undo, .i-offered-draw {
   color: red;
 }
 
-.opp-requested-undo {
+.opp-requested-undo, .opp-offered-draw {
   color: blue;
 }
