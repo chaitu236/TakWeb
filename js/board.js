@@ -478,7 +478,7 @@ var board = {
         }
 
         this.ismymove = this.checkifmymove();
-        $('#undo').attr('src', 'images/requestundo.svg');
+        $('#undo').removeClass('i-requested-undo').removeClass('opp-requested-undo').addClass('request-undo');
     },
     // We save an array that contains a description of the pieces in each cell.
     // Each piece is either a:  p=flatstone, c=capstone, w=wall
@@ -1357,8 +1357,8 @@ var board = {
         $('#player-me-time').addClass('player2-time');
         $('#player-opp-time').addClass('player1-time');
 
-        $('#player-me-img').attr('src', 'images/player-black.png');
-        $('#player-opp-img').attr('src', 'images/player-white.png');
+        $('#player-me-img').removeClass('white-player-color');
+        $('#player-opp-img').addClass('white-player-color');
 
         $('#player-opp').addClass('selectplayer');
 

@@ -26,8 +26,8 @@ body {
   margin-top: 2px;
   margin-bottom: 2px;
 
-  margin-left: 5px;
-  margin-right: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
   padding: 0px;
 }
 
@@ -299,8 +299,12 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 .selectplayer {
-    border-radius: 20px;
+    border-radius: 10px;
     border: 2px solid black;
+}
+
+.white-player-color {
+    color: #b3b3b3;
 }
 
 #player-opp, .player1-name {
@@ -384,4 +388,24 @@ input[type=range]::-webkit-slider-runnable-track {
 hr {
   border-color: black;
   margin: 5px;
+}
+
+a .fa:not(#undo) {
+  color: black;
+}
+
+#zoomcontrols .fa {
+  margin: 2px;
+}
+
+.request-undo {
+  color: black;
+}
+
+.i-requested-undo {
+  color: red;
+}
+
+.opp-requested-undo {
+  color: blue;
 }

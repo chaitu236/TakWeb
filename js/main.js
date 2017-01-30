@@ -268,24 +268,22 @@ function loadptn(text) {
 }
 
 function volume_change() {
-    var img = document.getElementById("volume-img");
     var movesound = document.getElementById("move-sound");
     var chimesound = document.getElementById("chime-sound");
 
-    if(img.src.match("mute")) {
-        img.src = "images/ic_volume_up_black_24px.svg";
+    if($('#volume-img').hasClass('fa-volume-off')) {
         movesound.muted = false;
         chimesound.muted = false;
 
         movesound.play();
         localStorage.setItem('sound', 'true');
     } else {
-        img.src = "images/ic_volume_mute_black_24px.svg";
         movesound.muted = true;
         chimesound.muted = true;
 
         localStorage.setItem('sound', 'false');
     }
+    $('#volume-img').toggleClass('fa-volume-up fa-volume-off');
 }
 
 function isBreakpoint( alias ) {

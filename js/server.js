@@ -178,8 +178,8 @@ var server = {
                 $('#player-me-time').addClass('player1-time');
                 $('#player-opp-time').addClass('player2-time');
 
-                $('#player-me-img').attr('src', 'images/player-white.png');
-                $('#player-opp-img').attr('src', 'images/player-black.png');
+                $('#player-me-img').addClass('white-player-color');
+                $('#player-opp-img').removeClass('white-player-color');
 
                 $('#player-me').addClass('selectplayer');
             } else {//I am black
@@ -189,8 +189,8 @@ var server = {
                 $('#player-me-time').addClass('player2-time');
                 $('#player-opp-time').addClass('player1-time');
 
-                $('#player-me-img').attr('src', 'images/player-black.png');
-                $('#player-opp-img').attr('src', 'images/player-white.png');
+                $('#player-me-img').removeClass('white-player-color');
+                $('#player-opp-img').addClass('white-player-color');
 
                 $('#player-opp').addClass('selectplayer');
             }
@@ -332,18 +332,18 @@ var server = {
             //Game#1 RequestUndo
             else if (spl[1] === "RequestUndo") {
               alert("info", "Your opponent requests to undo the last move");
-              $('#undo').attr('src', 'images/otherrequestedundo.svg');
+              $('#undo').toggleClass('opp-requested-undo request-undo');
             }
             //Game#1 RemoveUndo
             else if (spl[1] === "RemoveUndo") {
               alert("info", "Your opponent removes undo request");
-              $('#undo').attr('src', 'images/requestundo.svg');
+              $('#undo').toggleClass('opp-requested-undo request-undo');
             }
             //Game#1 Undo
             else if (spl[1] === "Undo") {
               board.undo();
               alert("info", "Game has been UNDOed by 1 move");
-              $('#undo').attr('src', 'images/requestundo.svg');
+              $('#undo').removeClass('i-requested-undo').removeClass('opp-requested-undo').addClass('request-undo');
             }
             //Game#1 OfferDraw
             else if (spl[1] === "OfferDraw") {
@@ -717,18 +717,17 @@ var server = {
       if(board.observing)
         return;
 
-      var img = document.getElementById("undo");
-      if(img.src.match('requestundo')) {//request undo
+      if($('#undo').hasClass('request-undo')) {//request undo
         this.send("Game#" + board.gameno + " RequestUndo");
-        img.src = 'images/irequestedundo.svg';
+        $('#undo').toggleClass('request-undo i-requested-undo');
         alert('info', 'Undo request sent');
 
-      } else if (img.src.match('otherrequestedundo')) {//accept request
+      } else if ($('#undo').hasClass('opp-requested-undo')) {//accept request
         this.send("Game#" + board.gameno + " RequestUndo");
-
-      } else if (img.src.match('irequestedundo')) {//remove request
+        $('#undo').toggleClass('request-undo opp-requested-undo');
+      } else if ($('#undo').hasClass('i-requested-undo')) {//remove request
         this.send("Game#" + board.gameno + " RemoveUndo");
-        img.src = 'images/requestundo.svg';
+        $('#undo').toggleClass('request-undo i-requested-undo');
         alert('info', 'Undo request removed');
       }
     },
