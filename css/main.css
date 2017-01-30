@@ -307,7 +307,7 @@ input[type=range]::-webkit-slider-runnable-track {
 
 .selectplayer {
     border-radius: 10px;
-    background-color: #e1c99a;
+    background-color: #cccccc;
 }
 
 .white-player-color {
