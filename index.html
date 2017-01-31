@@ -152,7 +152,7 @@
         <div id="floating">
             <a title="Click to show/hide menu" href="#" onclick="rmenu()">
                 <div id="notation-toggle-text" class="toggle-text">
-                    <<<br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n
+                    <<br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n
                 </div>
             </a>
 
@@ -167,9 +167,9 @@
 
                 <li class="optlist center">
                   <a href="#" title="Undo" class="btn" onclick="undoButton()">
-                    <i id="undo" class="fa fa-undo fa-lg request-undo" aria-hidden="true"></i>
+                    <i id="undo" class="fa fa-undo fa-lg request-undo" aria-hidden="true"></i></a>
                   <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()">
-                    <i id="draw" class="fa fa-handshake-o fa-lg offer-draw" aria-hidden="true"></i>
+                    <i id="draw" class="fa fa-handshake-o fa-lg offer-draw" aria-hidden="true"></i><a/>
                   <a href="#" title="Resign" class="btn" onclick="server.resign()">
                     <i class="fa fa-flag-o fa-lg" aria-hidden="true"></i></a>
                 </li>
@@ -203,7 +203,7 @@
 
                 <li class="center">
                   <div id="player-me">
-                    <i class="fa fa-user fa-lg" aria-hidden="true"></i></a>
+                    <i class="fa fa-user fa-lg" aria-hidden="true"></i>
                     <div id="player-me-name" class="player2-name">You</div>
                     <div id="player-me-time" class="player2-time">0:00</div>
                   </div>
@@ -336,7 +336,6 @@
                             </form>
                           </div>
                         </div>
-                        </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
@@ -371,7 +370,7 @@
                             <div class="form-group">
                               <label>Paste PTN/TPS:</label>
                               <!-- <input type="file" accept=".ptn,.txt" id="loadptnfile"></input> -->
-                              <input type="text" id="loadptntext"></input>
+                              <input type="text" id="loadptntext">
                             </div>
                           </form>
                         </div>
@@ -665,7 +664,7 @@
                     </div>
                     <div class="modal-body">
                         <ul>
-                            <li><ul> <a href="#" onclick="showPrivacyPolicy();"> Privacy Policy</a><br> </li></ul>
+                            <li><ul> <a href="#" onclick="showPrivacyPolicy();"> Privacy Policy</a><br> </ul></li>
                             <li><ul> Rules - the short version:
                                     <li>White goes first</li>
                                     <li>On first move, each player must place his opponent's tile</li>
