@@ -601,7 +601,7 @@ var server = {
                     }
                     level = botsettings[0];
                     hardness = botsettings[1];
-                } else {
+                } else if (listed.length > 0) {
                     previous = $(listed[listed.length-1]);
                 }
 
