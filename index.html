@@ -28,6 +28,7 @@
 
         <script src="js/chat.js?v=1"></script>
         <script src="js/server.js?v=2"></script>
+        <script src="js/style_selector.js?v=1"></script>
         <script src="js/board.js?v=1"></script>
 
         <script src="js/tour.js?v=1"></script>
@@ -474,65 +475,17 @@
                             <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="board.updatepieces()"/>
                             <span id="piece-size-display">88</span>
                           </form><br/>
-                          <form>
+                          <form id="white_pieces_form">
                             White pieces<br/>
-                            <div class="radio-list-item">
-                              <input id="piece-style-white-simple" type="radio" name="piece-style" checked/>
-                              <img src="images/pieces/preview/white_simple_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleWhite('simple')"/>
-                            </div>
-                            <div class="radio-list-item">
-                              <input id="piece-style-white-coral" type="radio" name="piece-style"/>
-                              <img src="images/pieces/preview/white_coral_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleWhite('coral')"/>
-                            </div>
                           </form><br/>
-                          <form>
+                          <form id="black_pieces_form">
                             Black pieces<br/>
-                            <div class="radio-list-item">
-                              <input id="piece-style-black-simple" type="radio" name="piece-style" checked/>
-                              <img src="images/pieces/preview/black_simple_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('simple')"/>
-                            </div>
-                            <div class="radio-list-item">
-                              <input id="piece-style-black-pietersite" type="radio" name="piece-style"/>
-                              <img src="images/pieces/preview/black_pietersite_pieces.png" class="radio-list-img" height="50" width="50" onClick="radioPieceStyleBlack('pietersite')"/>
-                            </div>
                           </form><br/>
-                          <form>
+                          <form id="white_squares_form">
                             White squares<br/>
-                            <div class="radio-list-item">
-                              <input id="board-style-white-simple" type="radio" name="board-style" checked/>
-                              <img src="images/board/preview/white_simple.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('simple')"/>
-                            </div>
-                            <div class="radio-list-item">
-                              <input id="board-style-white-ornate" type="radio" name="board-style"/>
-                              <img src="images/board/preview/white_ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('ornate')"/>
-                            </div>
-                            <div class="radio-list-item">
-                              <input id="board-style-white-sand-velvet" type="radio" name="board-style"/>
-                              <img src="images/board/preview/white_sand-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('sand-velvet')"/>
-                            </div>
-                            <div class="radio-list-item">
-                              <input id="board-style-white-white-velvet" type="radio" name="board-style"/>
-                              <img src="images/board/preview/white_white-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleWhite('white-velvet')"/>
-                            </div>
                           </form><br/>
-                          <form>
+                          <form id = "black_squares_form">
                             Black squares<br/>
-                            <div class="radio-list-item">
-                              <input id="board-style-black-simple" type="radio" name="board-style" checked/>
-                              <img src="images/board/preview/black_simple.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('simple')" />
-                            </div>
-                            <div class="radio-list-item">
-                              <input id="board-style-black-red-ornate" type="radio" name="board-style"/>
-                              <img src="images/board/preview/black_red-ornate.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('red-ornate')"/>
-                            </div>
-                            <div class="radio-list-item">
-                              <input id="board-style-black-sand-velvet" type="radio" name="board-style"/>
-                              <img src="images/board/preview/black_sand-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('sand-velvet')"/>
-                            </div>
-                            <div class="radio-list-item">
-                              <input id="board-style-black-blue-velvet" type="radio" name="board-style"/>
-                              <img src="images/board/preview/black_blue-velvet.png" class="radio-list-img" height="50" width="50" onClick="radioBoardStyleBlack('blue-velvet')"/>
-                            </div>
                           </form>
                         </div>
                       <div class="tab-pane" id="interface">

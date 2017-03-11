@@ -50,6 +50,7 @@ init();
 $(window).on("load", animate);
 
 function init() {
+    make_style_selector();
     // load the user settings.
     loadSettings();
 
