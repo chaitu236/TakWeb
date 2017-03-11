@@ -185,6 +185,7 @@ function onKeyUp(e) {
 }
 
 function output(e) {
+  if (typeof DEBUG !== 'undefined' && DEBUG)
     console.log("output:" + e);
 }
 

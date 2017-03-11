@@ -17,7 +17,6 @@ function make_board_selector(color)
 
   for(var i=0;i<arr.length;i++) {
     var style = arr[i];
-    console.log('style='+style);
     var div = $('<div/>').addClass('radio-list-item');
     var inp = $('<input/>').attr('id', 'board-style-'+color+'-' + style)
                            .attr('type', 'radio')
@@ -45,7 +44,6 @@ function make_piece_selector(color)
 
   for(var i=0;i<arr.length;i++) {
     var style = arr[i];
-    console.log('style='+style);
     var div = $('<div/>').addClass('radio-list-item');
     var inp = $('<input/>').attr('id', 'piece-style-'+color+'-' + style)
                            .attr('type', 'radio')
