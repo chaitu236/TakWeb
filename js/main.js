@@ -28,7 +28,7 @@ function alert2(type, msg) {
 var camera, scene, renderer, light, canvas, controls = null;
 
 // antialiasing must be disabled per default, so slower devices are not impaired.
-var antialiasing_mode = false;
+var antialiasing_mode = true;
 
 var botlist = {
     "TakticianBot": [0, "Very&nbsp;Hard"],
@@ -368,9 +368,9 @@ function loadSettings() {
   }
 
   // load the setting for antialiasing.
-  if(localStorage.getItem('antialiasing_mode')==='true') {
-    document.getElementById('antialiasing-checkbox').checked = true;
-    antialiasing_mode = true;
+  if(localStorage.getItem('antialiasing_mode')==='false') {
+    document.getElementById('antialiasing-checkbox').checked = false;
+    antialiasing_mode = false;
   }
 
   // load whether or not the 'Send' button should be hidden.
