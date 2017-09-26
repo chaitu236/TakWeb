@@ -114,6 +114,13 @@ var server = {
     register: function () {
         var name = $('#register-username').val();
         var email = $('#register-email').val();
+        var retyped_email = $('#retype-register-email').val();
+
+        if (email !== retyped_email) {
+          alert("danger", "Email address doesn't match");
+          return;
+        }
+
         this.send("Register " + name + " " + email);
     },
     changepassword: function() {
