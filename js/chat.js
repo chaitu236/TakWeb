@@ -231,7 +231,7 @@ $(function() {
             PrivateChat: {
                 name: "Private chat",
                 callback: function(key, opt) {
-                    var name = opt.$trigger.context.innerText.split(':')[0];
+                    var name = opt.$trigger[0].innerText.split(':')[0];
                     
                     //Don't create if already exists
                     if (!chathandler.roomExists('priv', name))
@@ -243,7 +243,7 @@ $(function() {
             Games: {
                 name: "Games",
                 callback: function(key, opt) {
-                    var name = opt.$trigger.context.innerText.split(':')[0];
+                    var name = opt.$trigger[0].innerText.split(':')[0];
                     //yuck.. but we don't need any more sophistication
                     var url = "https://www.playtak.com/games/search?game%5Bplayer_white%5D=kaka&game%5Bplayer_black%5D=kaka&game%5Bjoin%5D=or";
                     url = url.replace(/kaka/g, name);
