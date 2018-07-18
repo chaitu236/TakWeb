@@ -1,723 +1,848 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Play online Tak games. Tak is a strategy board game created by James Ernest and Patrick Rothfuss">
-        <meta name="keywords" content="online tak, playtak, play tak">
 
-        <title>Tak</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Play online Tak games. Tak is a strategy board game created by James Ernest and Patrick Rothfuss">
+    <meta name="keywords" content="online tak, playtak, play tak">
 
-        <!-- <link rel="stylesheet" href="css/thirdparty/bootstrap.min.css"> -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link rel="stylesheet" href="css/thirdparty/jquery.contextMenu.min.css">
-        <link rel="stylesheet" href="css/thirdparty/bootstrap-tour.min.css">
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <title>Tak</title>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
-        <!-- <script src="js/thirdparthy/three.min.js"></script> -->
-        <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js" integrity="sha384-6DmTdA/rZpkNZvLpN0hu5wDYZHDkfx110v5Glq650KURgvkVw20xZbP2lZj5YW4f" crossorigin="anonymous"></script>
-        <script src="js/thirdparty/OrbitControls.min.js"></script>
-        <script src="js/thirdparty/linkify.min.js"></script>
-        <script src="js/thirdparty/linkify-string.min.js"></script>
+    <!-- <link rel="stylesheet" href="css/thirdparty/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/thirdparty/jquery.contextMenu.min.css">
+    <link rel="stylesheet" href="css/thirdparty/bootstrap-tour.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous">
 
-        <!-- <script src="js/thirdparty/bootstrap.min.js"></script> -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <script src="js/thirdparty/bootstrap-tour.min.js"></script>
-        <script src="js/thirdparty/jquery.contextMenu.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7"
+        crossorigin="anonymous"></script>
+    <!-- <script src="js/thirdparthy/three.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js" integrity="sha384-6DmTdA/rZpkNZvLpN0hu5wDYZHDkfx110v5Glq650KURgvkVw20xZbP2lZj5YW4f"
+        crossorigin="anonymous"></script>
+    <script src="js/thirdparty/OrbitControls.min.js"></script>
+    <script src="js/thirdparty/linkify.min.js"></script>
+    <script src="js/thirdparty/linkify-string.min.js"></script>
 
-        <script src="js/env.js?v=1"></script>
-        <script src="js/chat.js?v=2"></script>
-        <script src="js/server.js?v=3"></script>
-        <script src="js/style_selector.js?v=1"></script>
-        <script src="js/board.js?v=1"></script>
+    <!-- <script src="js/thirdparty/bootstrap.min.js"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <script src="js/thirdparty/bootstrap-tour.min.js"></script>
+    <script src="js/thirdparty/jquery.contextMenu.min.js"></script>
 
-        <script src="js/tour.js?v=1"></script>
-        <script src="js/ptn.js?v=1"></script>
+    <script src="locale/catalog.js?v=1"></script>
+    <script src="js/thirdparty/stonejs.js?v=1"></script>
 
-        <link rel="stylesheet" href="css/main.css?v=1">
-        <link rel="stylesheet" href="css/chat.css?v=1">
+    <script src="js/env.js?v=1"></script>
+    <script src="js/chat.js?v=2"></script>
+    <script src="js/thirdparty/websock.js?v=2"></script>
+    <script src="js/server.js?v=3"></script>
+    <script src="js/style_selector.js?v=1"></script>
+    <script src="js/board.js?v=1"></script>
 
-        <script>
-            (function (i, s, o, g, r, a, m) {
-                i['GoogleAnalyticsObject'] = r;
-                i[r] = i[r] || function () {
-                    (i[r].q = i[r].q || []).push(arguments)
-                }, i[r].l = 1 * new Date();
-                a = s.createElement(o),
-                        m = s.getElementsByTagName(o)[0];
-                a.async = 1;
-                a.src = g;
-                m.parentNode.insertBefore(a, m)
-            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+    <script src="js/tour.js?v=1"></script>
+    <script src="js/ptn.js?v=1"></script>
 
-            ga('create', 'UA-68947366-1', 'auto');
-            ga('send', 'pageview');
+    <link rel="stylesheet" href="css/main.css?v=1">
+    <link rel="stylesheet" href="css/chat.css?v=1">
 
-        </script>
-    </head>
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-    <body style="border:1px solid #000000;">
-        <div class="device-xs hidden-xs"></div>
-        <div class="device-sm hidden-sm"></div>
-        <div class="device-md hidden-md"></div>
-        <div class="device-lg hidden-lg"></div>
+        ga('create', 'UA-68947366-1', 'auto');
+        ga('send', 'pageview');
+    </script>
 
-        <!-- Static navbar -->
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
+    <script>
+        Stone.addCatalogs(catalogs);
+        var _ = Stone.gettext;
+        $(document).ready(function () {
+            Stone.enableDomScan(true);
+            Stone.setBestMatchingLocale();
+            Stone.updateDomTranslation();
+        });
+    </script>
+</head>
+
+<body style="border:1px solid #000000;">
+    <div class="device-xs hidden-xs"></div>
+    <div class="device-sm hidden-sm"></div>
+    <div class="device-md hidden-md"></div>
+    <div class="device-lg hidden-lg"></div>
+
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                    <span class="sr-only" stonejs>Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="nav pull-left">
+                    <button type="button" class="btn navbar-toggle " onclick="server.init()">
+                        <i class="fa fa-user-circle-o fa-lg" aria-hidden="true"></i>
                     </button>
-                    <div class="nav pull-left">
-                        <button type="button" class="btn navbar-toggle " onclick="server.init()">
-                            <i class="fa fa-user-circle-o fa-lg" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" class="btn navbar-toggle " data-toggle="modal" data-target="#watchgame-modal">
-                            <i class="fa fa-eye fa-lg" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" class="btn navbar-toggle " data-toggle="modal" data-target="#joingame-modal">
-                            <i class="fa fa-play-circle fa-lg" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" class="btn navbar-toggle " onclick="$('#creategamemodal').modal('show')">
-                            <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i>
-                        </button>
-                    </div>
+                    <button type="button" class="btn navbar-toggle " data-toggle="modal" data-target="#watchgame-modal">
+                        <i class="fa fa-eye fa-lg" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn navbar-toggle " data-toggle="modal" data-target="#joingame-modal">
+                        <i class="fa fa-play-circle fa-lg" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn navbar-toggle " onclick="$('#creategamemodal').modal('show')">
+                        <i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i>
+                    </button>
                 </div>
-                <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="#" data-toggle="modal" data-target="#help-modal">Help</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               title="Create a new empty board to play locally" aria-haspopup="true" aria-expanded="false"
-                               id="scratchsize"> Scratch Board
-                                <span class="caret"></span></a>
-
-                            <ul class="dropdown-menu">
-                                <li><a href="#" onclick="scratchbutton(3);">3x3</a></li>
-                                <li><a href="#" onclick="scratchbutton(4);">4x4</a></li>
-                                <li><a href="#" onclick="scratchbutton(5);">5x5</a></li>
-                                <li><a href="#" onclick="scratchbutton(6);">6x6</a></li>
-                                <li><a href="#" onclick="scratchbutton(7);">7x7</a></li>
-                                <li><a href="#" onclick="scratchbutton(8);">8x8</a></li>
-                            </ul>
-                        </li>
-                        <li><a id="loadptn" href="#" onclick="$('#loadmodal').modal('show')">Load</a></li>
-                        <li>
-                          <a id="creategame" href="#" title="Create online game" onclick="$('#creategamemodal').modal('show')">New Game</a>
-                        </li>
-                        <li>
-                            <a id="joingame" href="#" title="Accept a seek" onclick="$('#joingame-modal').modal('show')">Join Game
-                                <span class="badge"><span id="seekcount">0</span> + <span id="seekcountbot">0</span></span></a>
-                        </li>
-                        <li class="dropdown">
-                            <a id="watch" href="#" title="Observe a game" onclick="$('#watchgame-modal').modal('show')">Watch
-                              <span class="badge" id="gamecount">0</span></a>
-                        </li>
-                        <li><a target="_blank" title="Search for previous games" href="http://www.playtak.com/games">History</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#" title="Mute/Un mute" role="button" onclick="volume_change()">
-                                <i id="volume-img" class="fa fa-volume-up fa-lg" aria-hidden="true"></i>
-                            </a>
-
-                            <audio id="move-sound">
-                                <source src="audio/move.mp3" type="audio/mpeg">
-                                <source src="audio/move.ogg" type="audio/ogg">
-                            </audio>
-                            <audio id="chime-sound">
-                                <source src="audio/chime.mp3" type="audio/mpeg">
-                                <source src="audio/chime.ogg" type="audio/ogg">
-                            </audio>
-                        </li>
-                        <li>
-                            <a href="#" data-toggle="modal" data-target="#settings-modal">
-                                <i class="fa fa-cog fa-lg" aria-hidden="true"></i>
-                            </a>
-                        </li>
-                        <li id="onlineplayers" class="hidden">
-                            <a href="#" title="Number of online players" >Online <span class="badge" id="onlineplayersbadge">0</span></a>
-                        </li>
-                        <li>
-                            <button id="login-button" type="button" class="btn btn-default navbar-btn" onclick="server.init()">Sign up / Login</button>
-                        </li>
-                    </ul>
-                </div><!--/.nav-collapse -->
             </div>
-        </nav>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#help-modal" stonejs>Help</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" title="Create a new empty board to play locally"
+                            aria-haspopup="true" aria-expanded="false" id="scratchsize" stonejs>
+                            <span stonejs>Scratch Board</span>
+                            <span class="caret"></span>
+                        </a>
 
-        <div id="floating">
-            <a title="Click to show/hide menu" href="#" onclick="rmenu()">
-                <div id="notation-toggle-text" class="toggle-text">
-                    <<<br>n<br>o<br>t<br>a<br>t<br>i<br>o<br>n
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#" onclick="scratchbutton(3);">3x3</a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="scratchbutton(4);">4x4</a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="scratchbutton(5);">5x5</a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="scratchbutton(6);">6x6</a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="scratchbutton(7);">7x7</a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="scratchbutton(8);">8x8</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a id="loadptn" href="#" onclick="$('#loadmodal').modal('show')" stonejs>Load</a>
+                    </li>
+                    <li>
+                        <a id="creategame" href="#" title="Create online game" onclick="$('#creategamemodal').modal('show')" stonejs>New Game</a>
+                    </li>
+                    <li>
+                        <a id="joingame" href="#" title="Accept a seek" onclick="$('#joingame-modal').modal('show')">
+                            <span stonejs>Join Game</span>
+                            <span class="badge">
+                                <span id="seekcount">0</span> +
+                                <span id="seekcountbot">0</span>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <a id="watch" href="#" title="Observe a game" onclick="$('#watchgame-modal').modal('show')" stonejs>
+                            <span stonejs>Watch</span>
+                            <span class="badge" id="gamecount">0</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" title="Search for previous games" href="http://www.playtak.com/games" stonejs>History</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" title="Mute/Un mute" role="button" onclick="volume_change()">
+                            <i id="volume-img" class="fa fa-volume-up fa-lg" aria-hidden="true"></i>
+                        </a>
+
+                        <audio id="move-sound">
+                            <source src="audio/move.mp3" type="audio/mpeg">
+                            <source src="audio/move.ogg" type="audio/ogg">
+                        </audio>
+                        <audio id="chime-sound">
+                            <source src="audio/chime.mp3" type="audio/mpeg">
+                            <source src="audio/chime.ogg" type="audio/ogg">
+                        </audio>
+                    </li>
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#settings-modal">
+                            <i class="fa fa-cog fa-lg" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li id="onlineplayers" class="hidden">
+                        <a href="#" title="Number of online players">
+                            <span stonejs>Online</span>
+                            <span class="badge" id="onlineplayersbadge">0</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button id="login-button" type="button" class="btn btn-default navbar-btn" onclick="server.init()" stonejs>Sign up / Login</button>
+                    </li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div id="floating">
+        <a title="Click to show/hide menu" href="#" onclick="rmenu()">
+            <div id="notation-toggle-text" class="toggle-text">
+                <<<br>n
+                    <br>o
+                    <br>t
+                    <br>a
+                    <br>t
+                    <br>i
+                    <br>o
+                    <br>n
+            </div>
+        </a>
+
+        <ul id="rmenu" style="list-style-type:none">
+            <li class="center">
+                <div id="player-opp">
+                    <i id="player-opp-img" class="fa fa-user fa-lg white-player-color" aria-hidden="true"></i>
+                    <div id="player-opp-name" class="player1-name" stonejs>You</div>
+                    <div id="player-opp-time" class="player1-time">0:00</div>
                 </div>
-            </a>
+            </li>
 
-            <ul id="rmenu" style="list-style-type:none">
-                <li class="center">
-                    <div id="player-opp">
-                      <i id="player-opp-img" class="fa fa-user fa-lg white-player-color" aria-hidden="true"></i>
-                      <div id="player-opp-name" class="player1-name">You</div>
-                      <div id="player-opp-time" class="player1-time">0:00</div>
-                    </div>
-                </li>
+            <li class="optlist center">
+                <a href="#" title="Undo" class="btn" onclick="undoButton()" stonejs>
+                    <i id="undo" class="fa fa-undo fa-lg request-undo" aria-hidden="true"></i>
+                </a>
+                <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()" stonejs>
+                    <i id="draw" class="fa fa-handshake-o fa-lg offer-draw" aria-hidden="true"></i>
+                </a>
+                <a href="#" title="Resign" class="btn" onclick="server.resign()" stonejs>
+                    <i class="fa fa-flag-o fa-lg" aria-hidden="true"></i>
+                </a>
+            </li>
 
-                <li class="optlist center">
-                  <a href="#" title="Undo" class="btn" onclick="undoButton()">
-                    <i id="undo" class="fa fa-undo fa-lg request-undo" aria-hidden="true"></i></a>
-                  <a href="#" title="Offer/Accept draw" class="btn" onclick="server.draw()">
-                    <i id="draw" class="fa fa-handshake-o fa-lg offer-draw" aria-hidden="true"></i></a>
-                  <a href="#" title="Resign" class="btn" onclick="server.resign()">
-                    <i class="fa fa-flag-o fa-lg" aria-hidden="true"></i></a>
-                </li>
-
-                <li>
-                  <div title="Notation for current game appears here" id="notationbar">
+            <li>
+                <div title="Notation for current game appears here" id="notationbar">
                     <table id="moveslist">
                     </table>
-                  </div>
-                </li>
+                </div>
+            </li>
 
-                <li class="optlist center">
-                  <a href="#" title="First move" class="btn" onclick="fastrewind()">
-                    <i class="fa fa-fast-backward" aria-hidden="true"></i></a>
-                  <a href="#" title="Step back" class="btn" onclick="stepback()">
-                    <i class="fa fa-backward" aria-hidden="true"></i></a>
-                  <a href="#" title="Step forward" class="btn" onclick="stepforward()">
-                    <i class="fa fa-forward" aria-hidden="true"></i></a>
-                  <a href="#" title="Current move" class="btn" onclick="fastforward()">
-                    <i class="fa fa-fast-forward" aria-hidden="true"></i></a>
-                </li>
+            <li class="optlist center">
+                <a href="#" title="First move" class="btn" onclick="fastrewind()" stonejs>
+                    <i class="fa fa-fast-backward" aria-hidden="true"></i>
+                </a>
+                <a href="#" title="Step back" class="btn" onclick="stepback()" stonejs>
+                    <i class="fa fa-backward" aria-hidden="true"></i>
+                </a>
+                <a href="#" title="Step forward" class="btn" onclick="stepforward()" stonejs>
+                    <i class="fa fa-forward" aria-hidden="true"></i>
+                </a>
+                <a href="#" title="Current move" class="btn" onclick="fastforward()" stonejs>
+                    <i class="fa fa-fast-forward" aria-hidden="true"></i>
+                </a>
+            </li>
 
-                <li class="optlist center">
-                  <a id="download_notation" href="#" title="Download notation" class="btn" onclick="downloadNotation();">
+            <li class="optlist center">
+                <a id="download_notation" href="#" title="Download notation" class="btn" onclick="downloadNotation();" stonejs>
                     <i class="fa fa-download fa-lg" aria-hidden="true"></i>
-                  </a>
-                  <a id="notation_link" href="#" title="Copy a link to this game"  class="btn" onclick="copyNotationLink();">
+                </a>
+                <a id="notation_link" href="#" title="Copy a link to this game" class="btn" onclick="copyNotationLink();" stonejs>
                     <i class="fa fa-clipboard fa-lg" aria-hidden="true"></i>
-                  </a>
-                </li>
+                </a>
+            </li>
 
-                <li class="center">
-                  <div id="player-me">
+            <li class="center">
+                <div id="player-me">
                     <i class="fa fa-user fa-lg" aria-hidden="true"></i>
-                    <div id="player-me-name" class="player2-name">You</div>
+                    <div id="player-me-name" class="player2-name" stonejs>You</div>
                     <div id="player-me-time" class="player2-time">0:00</div>
-                  </div>
-                </li>
-            </ul>
-        </div>
-
-        <div id="chat-toggle-button">
-            <a href="#" onclick="chathandler.togglechat()">
-                <div id="chat-toggle-text" class="toggle-text">
-                >><br>
-                c<br>h<br>a<br>t
                 </div>
-            </a>
-        </div>
-        <div id="chat">
-            <ul class="nav nav-tabs">
-                <li class="dropdown fullw">
-                    <a href="#" class="dropdown-toggle" role="button"
-                                data-toggle="dropdown">
-                        <span id="cur_room">Global</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul id="room_list" class="dropdown-menu fullw">
-                        <li class="room-name-global">
-                            <a href="#room-div-global" data-toggle="tab" onclick="chathandler.selectRoom('global', 'global')">
-                                <span>Global</span></a>
-                            <!-- <button type="button" class="close">&times;</button> -->
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <div id="room_divs" class="form-group height-full tab-content">
-                <div id="room-div-global" class="tab-pane active"></div>
+            </li>
+        </ul>
+    </div>
+
+    <div id="chat-toggle-button">
+        <a href="#" onclick="chathandler.togglechat()">
+            <div id="chat-toggle-text" class="toggle-text">
+                >>
+                <br> c
+                <br>h
+                <br>a
+                <br>t
             </div>
-            <form role="form" onsubmit="chathandler.send(); return false;" class="height-auto" autocomplete="off">
-              <input type="text" class="form-control" id="chat-me">
-              <button id="send-button" type="submit" class="btn btn-primary">Send</button>
-            </form>
+        </a>
+    </div>
+    <div id="chat">
+        <ul class="nav nav-tabs">
+            <li class="dropdown fullw">
+                <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown">
+                    <span id="cur_room" stonejs>Global</span>
+                    <span class="caret"></span>
+                </a>
+                <ul id="room_list" class="dropdown-menu fullw">
+                    <li class="room-name-global">
+                        <a href="#room-div-global" data-toggle="tab" onclick="chathandler.selectRoom('global', 'global')">
+                            <span stonejs>Global</span>
+                        </a>
+                        <!-- <button type="button" class="close">&times;</button> -->
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <div id="room_divs" class="form-group height-full tab-content">
+            <div id="room-div-global" class="tab-pane active"></div>
         </div>
+        <form role="form" onsubmit="chathandler.send(); return false;" class="height-auto" autocomplete="off">
+            <input type="text" class="form-control" id="chat-me">
+            <button id="send-button" type="submit" class="btn btn-primary" stonejs>Send</button>
+        </form>
+    </div>
 
-        <div>
-            <canvas id="gamecanvas"></canvas>
-        </div>
+    <div>
+        <canvas id="gamecanvas"></canvas>
+    </div>
 
-        <div id="alertbox">
-            <div class="alerts">
-                <div id="alert" class="alert alert-dismissible hidden" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <span id="alert-text">Text</span>
-                </div>
-            </div>
-        </div>
-
-        <div id="creategamemodal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <div class="row">
-                          <div class="col-sm-12">
-                            <div class="form-group">
-                              <label for="boardsize"> Board Size</label>
-                              <select class="form-control" id="boardsize">
-                                <option>3x3</option>
-                                <option>4x4</option>
-                                <option selected="selected">5x5</option>
-                                <option>6x6</option>
-                                <option>7x7</option>
-                                <option>8x8</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-sm-6">
-                            <div class="form-group">
-                              <label for="time">Time (minutes per player)</label>
-                              <select class="form-control" id="timeselect">
-                                <option>1</option>
-                                <option>3</option>
-                                <option>5</option>
-                                <option selected="selected">10</option>
-                                <option>15</option>
-                                <option>20</option>
-                                <option>30</option>
-                                <option>60</option>
-                                <option>180</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div class="col-sm-6">
-                            <div class="form-group">
-                              <label for="time">Increment (seconds)</label>
-                              <select class="form-control" id="incselect">
-                                <option selected="selected">0</option>
-                                <option>5</option>
-                                <option>10</option>
-                                <option>15</option>
-                                <option>20</option>
-                                <option>30</option>
-                                <option>60</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-sm-12">
-                            <div class="form-group">
-                              <label for="time">My Color</label>
-                              <select class="form-control" id="colorselect">
-                                <option selected="selected">Any</option>
-                                <option>White</option>
-                                <option>Black</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row center">
-                          <div class="col-sm-12">
-                            <form role="form" onsubmit="server.seek(); return false;">
-                              <button type="submit" class="btn btn-primary">Create</button>
-                            </form>
-                          </div>
-                        </div>
-                        <div class="row center">
-                          <div class="col-sm-12">
-                            <form role="form" onsubmit="server.removeseek(); return false;">
-                              <br>
-                              <button type="submit" class="btn btn-default">Remove Seeks</button>
-                            </form>
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
+    <div id="alertbox">
+        <div class="alerts">
+            <div id="alert" class="alert alert-dismissible hidden" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span id="alert-text" stonejs>Text</span>
             </div>
         </div>
+    </div>
 
-        <div id="gameoveralert" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-sm-12 center" id="gameoveralert-text">
-                            </div>
-                        </div>
-                        <div class="modal-footer center">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-           </div>
-        </div>
-
-        <div id="loadmodal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body">
-                      <div class="row">
+    <div id="creategamemodal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
                         <div class="col-sm-12">
-                          <form role="form">
                             <div class="form-group">
-                              <label>Paste PTN/TPS:</label>
-                              <!-- <input type="file" accept=".ptn,.txt" id="loadptnfile"></input> -->
-                              <input type="text" id="loadptntext">
+                                <label for="boardsize" stonejs>Board Size</label>
+                                <select class="form-control" id="boardsize">
+                                    <option>3x3</option>
+                                    <option>4x4</option>
+                                    <option selected="selected">5x5</option>
+                                    <option>6x6</option>
+                                    <option>7x7</option>
+                                    <option>8x8</option>
+                                </select>
                             </div>
-                          </form>
-                        </div>
-                        </div>
-                        <div class="modal-footer center">
-                            <button type="button" class="btn btn-default" onclick='load(); return false;'>Load</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
-                </div>
-           </div>
-        </div>
-
-        <div id="login" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <div class="row border">
-                            <div class="col-sm-6">
-                                <form role="form" onsubmit="server.login(); return false;">
-                                    <div class="form-group">
-                                        <label for="usr">Username</label>
-                                        <input type="text" class="form-control" id="login-username">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="pwd">Password:</label>
-                                        <input type="password" class="form-control" id="login-pwd">
-                                    </div>
-                                    <div class="checkbox">
-                                      <label><input id = "keeploggedin" type="checkbox" value="">Keep me logged in</label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Login</button>
-                                </form>
-                                    <br/>
-                                    <a href="#" onclick="showresetpwd(); return false;">Forgot password?</a>
-                                    <br/>
-                            </div>
-                            <div class="col-sm-6">
-                                <form role="form" onsubmit="server.register(); return false;">
-                                    <div class="form-group">
-                                        <label for="usr">Username</label>
-                                        <input type="text" class="form-control" id="register-username">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="email">Email address:</label>
-                                        <input type="email" class="form-control" id="register-email">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="email">Re-type Email address:</label>
-                                        <input type="email" class="form-control" id="retype-register-email">
-                                    </div>
-                                    <div class="checkbox" style="visibility:hidden">
-                                      <label><input type="checkbox" value="">Keep me logged in</label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Sign up</button>
-                                </form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="time" stonejs>Time (minutes per player)</label>
+                                <select class="form-control" id="timeselect">
+                                    <option>1</option>
+                                    <option>3</option>
+                                    <option>5</option>
+                                    <option selected="selected">10</option>
+                                    <option>15</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>60</option>
+                                    <option>180</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="row center">
-                            <br>Or<br><br>
-                          <div class="col-sm-12">
-                            <form role="form" onsubmit="server.guestlogin(); return false;">
-                              <button type="submit" class="btn btn-default">Guest Login</button>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="time" stonejs>Increment (seconds)</label>
+                                <select class="form-control" id="incselect">
+                                    <option selected="selected">0</option>
+                                    <option>5</option>
+                                    <option>10</option>
+                                    <option>15</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>60</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="time" stonejs>My Color</label>
+                                <select class="form-control" id="colorselect">
+                                    <option selected="selected" stonejs>Any</option>
+                                    <option stonejs>White</option>
+                                    <option stonejs>Black</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row center">
+                        <div class="col-sm-12">
+                            <form role="form" onsubmit="server.seek(); return false;">
+                                <button type="submit" class="btn btn-primary" stonejs>Create</button>
                             </form>
-                          </div>
                         </div>
-                        <div class="row center">
-                          <div class="col-sm-12">
-                            <div id="alert2" class="alert alert-dismissible hidden" role="alert">
-                                <span id="alert-text2">Text</span>
-                            </div>
-                          </div>
+                    </div>
+                    <div class="row center">
+                        <div class="col-sm-12">
+                            <form role="form" onsubmit="server.removeseek(); return false;">
+                                <br>
+                                <button type="submit" class="btn btn-default" stonejs>Remove Seeks</button>
+                            </form>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="server.init()">Close</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div id="settings-modal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Settings</h4>
-                    </div>
-                    <div class="modal-body">
-                      <ul class="nav nav-tabs">
-                        <li role="presentation" class="active"><a href="#board" data-toggle="tab">Board and Pieces</a></li>
-                        <li role="presentation"><a href="#interface" data-toggle="tab">Interface</a></li>
-                        <li role="presentation"><a href="#account" data-toggle="tab">Account</a></li>
-                      </ul>
-                      <div class="tab-content clearfix">
-                        <div class="tab-pane active" id="board">
-                          <br/>
-                          <form>
-                            <input id="wall-orientation" type="checkbox" onClick="checkboxDiagonalWalls()"/>
-                            Diagonal walls
-                          </form><br/>
-                          <form>
-                            Piece size
-                            <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="board.updatepieces()"/>
-                            <span id="piece-size-display">88</span>
-                          </form><br/>
-                          <form id="white_pieces_form">
-                            White pieces<br/>
-                          </form><br/>
-                          <form id="black_pieces_form">
-                            Black pieces<br/>
-                          </form><br/>
-                          <form id="white_squares_form">
-                            White squares<br/>
-                          </form><br/>
-                          <form id = "black_squares_form">
-                            Black squares<br/>
-                          </form>
-                        </div>
-                      <div class="tab-pane" id="interface">
-                        <br/>
-                        <form>
-                          <input id="antialiasing-checkbox" type="checkbox" onClick="checkboxAntialiasing()" checked/>
-                          Antialiasing (not recommended for slower devices. Requires page refresh to take effect)
-                          <br/>
-                          <br/>
-                          <input id="hide-chat-time" type="checkbox" onClick="chathandler.hideChatTime()"/>
-                          Hide chat time
-                          <br/>
-                          <br/>
-                          <input id="hide-send-checkbox" type="checkbox" onClick="checkboxHideSend()"/>
-                          Hide 'Send' button
-                          <br/>
-                          <br/>
-                          <input id="auto-rotate-checkbox" type="checkbox" onClick="checkboxAutoRotate()" checked/>
-                          Rotate board when player 2
-                          <br/>
-                          <br/>
-                          Chat size
-                          <input id="chat-size-slider" type="range" value="180" step="2" min="100" max="500" oninput="sliderChatSize(this.value)"/>
-                          <span id="chat-size-display">180</span>
-                        </form>
-                      </div>
-                      <div class="tab-pane" id="account">
-                        <form role="form" onsubmit="server.changepassword(); return false;">
-                          <br/>
-                          <h4>Change Password</h4><br/>
-                          <div class="form-group">
-                            <label for="pwd">Current password:</label>
-                            <input type="password" class="form-control" id="cur-pwd">
-                          </div>
-                          <div class="form-group">
-                            <label for="pwd">New password:</label>
-                            <input type="password" class="form-control" id="new-pwd">
-                          </div>
-                          <div class="form-group">
-                            <label for="pwd">Retype new password:</label>
-                            <input type="password" class="form-control" id="retype-new-pwd">
-                          </div>
-                          <button type="submit" class="btn btn-primary">Change Password</button>
-                        </form>
-                      </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" stonejs>Close</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-        <div id="privacy-modal" class="modal fade">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Privacy Policy</h4>
+    <div id="gameoveralert" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 center" id="gameoveralert-text">
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <ul>
-                          <li>All online games are recorded and available for viewing <a target="_blank" href="http://www.playtak.com/games/">here</a> and includes player names</li>
-                          <li>IP addresses will be logged for abuse control</li>
-                          <li>Only email addresses, passwords, IP addresses will remain private on the server</li>
-                        </ul>
+                    <div class="modal-footer center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" stonejs>Close</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="resetpwd-modal" class="modal fade">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Reset Password</h4>
+    <div id="loadmodal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form role="form">
+                                <div class="form-group">
+                                    <label stonejs>Paste PTN/TPS:</label>
+                                    <!-- <input type="file" accept=".ptn,.txt" id="loadptnfile"></input> -->
+                                    <input type="text" id="loadptntext">
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                      <ul class="nav nav-tabs" id="resetpwd-ul">
-                        <li role="presentation" class="active"><a href="#sendresettoken" data-toggle="tab">Send Reset Token</a></li>
-                        <li role="presentation"><a href="#resetpwd" data-toggle="tab">Reset Password</a></li>
-                      </ul>
-                      <div class="tab-content clearfix">
+                    <div class="modal-footer center">
+                        <button type="button" class="btn btn-default" onclick='load(); return false;' stonejs>Load</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" stonejs>Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="login" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row border">
+                        <div class="col-sm-6">
+                            <form role="form" onsubmit="server.login(); return false;">
+                                <div class="form-group">
+                                    <label for="usr" stonejs>Username</label>
+                                    <input type="text" class="form-control" id="login-username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pwd" stonejs>Password:</label>
+                                    <input type="password" class="form-control" id="login-pwd">
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="keeploggedin" type="checkbox" value="" stonejs>Keep me logged in</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary" stonejs>Login</button>
+                            </form>
+                            <br/>
+                            <a href="#" onclick="showresetpwd(); return false;" stonejs>Forgot password?</a>
+                            <br/>
+                        </div>
+                        <div class="col-sm-6">
+                            <form role="form" onsubmit="server.register(); return false;">
+                                <div class="form-group">
+                                    <label for="usr" stonejs>Username</label>
+                                    <input type="text" class="form-control" id="register-username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" stonejs>Email address:</label>
+                                    <input type="email" class="form-control" id="register-email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" stonejs>Re-type Email address:</label>
+                                    <input type="email" class="form-control" id="retype-register-email">
+                                </div>
+                                <div class="checkbox" style="visibility:hidden">
+                                    <label>
+                                        <input type="checkbox" value="" stonejs>Keep me logged in</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary" stonejs>Sign up</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row center">
+                        <br>Or
+                        <br>
+                        <br>
+                        <div class="col-sm-12">
+                            <form role="form" onsubmit="server.guestlogin(); return false;">
+                                <button type="submit" class="btn btn-default" stonejs>Guest Login</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row center">
+                        <div class="col-sm-12">
+                            <div id="alert2" class="alert alert-dismissible hidden" role="alert">
+                                <span id="alert-text2" stonejs>Text</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="server.init()" stonejs>Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" stonejs>Settings</h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs">
+                        <li role="presentation" class="active">
+                            <a href="#board" data-toggle="tab" stonejs>Board and Pieces</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#interface" data-toggle="tab" stonejs>Interface</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#account" data-toggle="tab" stonejs>Account</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content clearfix">
+                        <div class="tab-pane active" id="board">
+                            <br/>
+                            <form>
+                                <input id="wall-orientation" type="checkbox" onClick="checkboxDiagonalWalls()" />
+                                <span stonejs>Diagonal walls</span>
+                            </form>
+                            <br/>
+                            <form>
+                                <span stonejs>Piece size</span>
+                                <input id="piece-size-slider" type="range" value="80" step="2" min="60" max="88" oninput="sliderPieceSize(this.value)" onChange="board.updatepieces()"
+                                />
+                                <span id="piece-size-display">88</span>
+                            </form>
+                            <br/>
+                            <form id="white_pieces_form">
+                                <span stonejs>White pieces</span>
+                                <br/>
+                            </form>
+                            <br/>
+                            <form id="black_pieces_form">
+                                <span stonejs>Black pieces</span>
+                                <br/>
+                            </form>
+                            <br/>
+                            <form id="white_squares_form">
+                                <span stonejs>White squares</span>
+                                <br/>
+                            </form>
+                            <br/>
+                            <form id="black_squares_form">
+                                <span stonejs>Black squares</span>
+                                <br/>
+                            </form>
+                        </div>
+                        <div class="tab-pane" id="interface">
+                            <br/>
+                            <form>
+                                <input id="antialiasing-checkbox" type="checkbox" onClick="checkboxAntialiasing()" checked/>
+                                <span stonejs>Antialiasing (not recommended for slower devices. Requires page refresh to take effect)</span>
+                                <br/>
+                                <br/>
+                                <input id="hide-chat-time" type="checkbox" onClick="chathandler.hideChatTime()" />
+                                <span stonejs>Hide chat time</span>
+                                <br/>
+                                <br/>
+                                <input id="hide-send-checkbox" type="checkbox" onClick="checkboxHideSend()" />
+                                <span stonejs>Hide 'Send' button</span>
+                                <br/>
+                                <br/>
+                                <input id="auto-rotate-checkbox" type="checkbox" onClick="checkboxAutoRotate()" checked/>
+                                <span stonejs>Rotate board when player 2</span>
+                                <br/>
+                                <br/>
+                                <span stonejs>Chat size</span>
+                                <input id="chat-size-slider" type="range" value="180" step="2" min="100" max="500" oninput="sliderChatSize(this.value)" />
+                                <span id="chat-size-display">180</span>
+                            </form>
+                        </div>
+                        <div class="tab-pane" id="account">
+                            <form role="form" onsubmit="server.changepassword(); return false;">
+                                <br/>
+                                <h4 stonejs>Change Password</h4>
+                                <br/>
+                                <div class="form-group">
+                                    <label for="pwd" stonejs>Current password:</label>
+                                    <input type="password" class="form-control" id="cur-pwd">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pwd" stonejs>New password:</label>
+                                    <input type="password" class="form-control" id="new-pwd">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pwd" stonejs>Retype new password:</label>
+                                    <input type="password" class="form-control" id="retype-new-pwd">
+                                </div>
+                                <button type="submit" class="btn btn-primary" stonejs>Change Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="privacy-modal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" stonejs>Privacy Policy</h4>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>
+                            <span stonejs>All online games are recorded and available for viewing</span>
+                            <a target="_blank" href="http://www.playtak.com/games/" stonejs>here</a>
+                            <span stonejs>and includes player names</span>
+                        </li>
+                        <li stonejs>IP addresses will be logged for abuse control</li>
+                        <li stonejs>Only email addresses, passwords, IP addresses will remain private on the server</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="resetpwd-modal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" stonejs>Reset Password</h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="resetpwd-ul">
+                        <li role="presentation" class="active">
+                            <a href="#sendresettoken" data-toggle="tab" stonejs>Send Reset Token</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#resetpwd" data-toggle="tab" stonejs>Reset Password</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content clearfix">
                         <div class="tab-pane active" id="sendresettoken">
                             <form role="form" onsubmit="server.sendresettoken(); return false;">
                                 <div class="form-group">
-                                    <label for="usr">Username</label>
+                                    <label for="usr" stonejs>Username</label>
                                     <input type="text" class="form-control" id="resettoken-username">
                                 </div>
                                 <div class="form-group">
-                                    <label for="email">Email address:</label>
+                                    <label for="email" stonejs>Email address:</label>
                                     <input type="email" class="form-control" id="resettoken-email">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Send token</button>
+                                <button type="submit" class="btn btn-primary" stonejs>Send token</button>
                             </form>
                         </div>
                         <div class="tab-pane" id="resetpwd">
                             <form role="form" onsubmit="server.resetpwd(); return false;">
                                 <div class="form-group">
-                                    <label for="usr">Username</label>
+                                    <label for="usr" stonejs>Username</label>
                                     <input type="text" class="form-control" id="resetpwd-username">
                                 </div>
                                 <div class="form-group">
-                                    <label for="usr">Token</label>
+                                    <label for="usr" stonejs>Token</label>
                                     <input type="text" class="form-control" id="resetpwd-token">
                                 </div>
                                 <div class="form-group">
-                                  <label for="pwd">New password:</label>
-                                  <input type="password" class="form-control" id="reset-new-pwd">
+                                    <label for="pwd" stonejs>New password:</label>
+                                    <input type="password" class="form-control" id="reset-new-pwd">
                                 </div>
                                 <div class="form-group">
-                                  <label for="pwd">Retype New password:</label>
-                                  <input type="password" class="form-control" id="reset-retype-new-pwd">
+                                    <label for="pwd" stonejs>Retype New password:</label>
+                                    <input type="password" class="form-control" id="reset-retype-new-pwd">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Reset password</button>
+                                <button type="submit" class="btn btn-primary" stonejs>Reset password</button>
                             </form>
                         </div>
-                      </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="help-modal" class="modal fade">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Help</h4>
-                    </div>
-                    <div class="modal-body">
-                        <ul>
-                            <li><ul> <a href="#" onclick="showPrivacyPolicy();"> Privacy Policy</a><br> </ul></li>
-                            <li><ul> Rules - the short version:
-                                    <li>White goes first</li>
-                                    <li>On first move, each player must place his opponent's tile</li>
-                                    <li>Create a path with flat stones and capstones between any two opposite ends of the board</li>
-                                    <li>Complete rules can be found <a target="_blank" href="http://cheapass.com/wp-content/uploads/2016/07/Tak-Beta-Rules.pdf">here</a> [PDF]</li>
-                                    <li>You can learn about the game notation <a target="_blank" href="https://www.reddit.com/r/Tak/wiki/portable_tak_notation">here</a></li>
-                                </ul></li>
-                            <li><ul>Controls:
-                                    <li>Left click-drag (or touch-drag) to rotate board</li>
-                                    <li>Left click a piece to select it. Left click on it again (or right click) to rotate it</li>
-                                    <li>Left click on a square to place selected piece or to pick up stack</li>
-                                    <li>Right click on a stack to hide pieces on all other squares (to see stack clearly)</li>
-                                    <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
-                                    <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch. Or use zoom buttons on bottom right.</li>
-                                    <li>Current player to move is indicated by highlighting their name with a border</li>
-                                    <li>If any of the above controls don't work, it means that control is invalid for current move</li>
-                                </ul></li>
-                            <li><ul>Play locally:
-                                    <li>Select board size to create a new empty board on which you can play locally</li>
-                                </ul></li>
-                            <li><ul>Play online:
-                                    <li>Login to server by clicking "Sign up/Login" button, signup and then login</li>
-                                    <li>Post your seek by selecting board size in "Create game" menu or accept another player's
-                                        seek by selecting it in "Join game" menu</li>
-                                    <li>Click on one of any ongoing games from "Watch" menu to watch an ongoing game</li>
-                                </ul></li>
-                            <li><ul>About the game:
-                                    <li>Rules for TAK are made by <a target="_blank" href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit <a target="_blank" href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
-                                    <li>This is an unofficial implementation by <a target="_blank" href="https://github.com/chaitu236">Chaitanya Vadrevu</a> with the help of other volunteers</li>
-                                    <li>Front end code can be found <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a>,
-                                    backend code <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a></li>
-                                    <li>Check out <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">these </a>
-                                        - <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
-                                </ul></li>
-                        </ul>
-                    </div>
+    <div id="help-modal" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" stonejs>Help</h4>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>
+                            <ul>
+                                <a href="#" onclick="showPrivacyPolicy();" stonejs>Privacy Policy</a>
+                                <br> </ul>
+                        </li>
+                        <li>
+                            <ul> Rules - the short version:
+                                <li>White goes first</li>
+                                <li>On first move, each player must place his opponent's tile</li>
+                                <li>Create a path with flat stones and capstones between any two opposite ends of the board</li>
+                                <li>Complete rules can be found
+                                    <a target="_blank" href="http://cheapass.com/wp-content/uploads/2016/07/Tak-Beta-Rules.pdf">here</a> [PDF]</li>
+                                <li>You can learn about the game notation
+                                    <a target="_blank" href="https://www.reddit.com/r/Tak/wiki/portable_tak_notation">here</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul>Controls:
+                                <li>Left click-drag (or touch-drag) to rotate board</li>
+                                <li>Left click a piece to select it. Left click on it again (or right click) to rotate it</li>
+                                <li>Left click on a square to place selected piece or to pick up stack</li>
+                                <li>Right click on a stack to hide pieces on all other squares (to see stack clearly)</li>
+                                <li>Right click-drag to move the board. For touch devices, three-finger touch and drag</li>
+                                <li>Scroll wheel to zoom in/out. For touch devices, use two-finger pinch. Or use zoom buttons
+                                    on bottom right.</li>
+                                <li>Current player to move is indicated by highlighting their name with a border</li>
+                                <li>If any of the above controls don't work, it means that control is invalid for current move</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul>Play locally:
+                                <li>Select board size to create a new empty board on which you can play locally</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul>Play online:
+                                <li>Login to server by clicking "Sign up/Login" button, signup and then login</li>
+                                <li>Post your seek by selecting board size in "Create game" menu or accept another player's seek
+                                    by selecting it in "Join game" menu</li>
+                                <li>Click on one of any ongoing games from "Watch" menu to watch an ongoing game</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul>About the game:
+                                <li>Rules for TAK are made by
+                                    <a target="_blank" href="https://en.wikipedia.org/wiki/James_Ernest">James Ernest</a> and
+                                    <a target="_blank" href="https://en.wikipedia.org/wiki/Patrick_Rothfuss">Patrick Rothfuss</a>. Visit
+                                    <a target="_blank" href="http://cheapass.com/games/tak">cheapass.com</a> for more info</li>
+                                <li>This is an unofficial implementation by
+                                    <a target="_blank" href="https://github.com/chaitu236">Chaitanya Vadrevu</a> with the help of other volunteers</li>
+                                <li>Front end code can be found
+                                    <a target="_blank" href="https://github.com/chaitu236/TakWeb">here</a>, backend code
+                                    <a target="_blank" href="https://github.com/chaitu236/TakServer">here</a>
+                                </li>
+                                <li>Check out
+                                    <a target="_blank" href="https://www.reddit.com/r/KingkillerChronicle/">these </a>
+                                    -
+                                    <a target="_blank" href="https://www.reddit.com/r/Tak/"> awesome</a> subreddits</li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="joingame-modal" class="modal fade">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Join Game</h4>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table table-hover">
-                          <tbody id="seeklist">
-                          </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-header">
-                        <h4 class="modal-title">Join AI Game</h4>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table table-hover">
-                          <tbody id="seeklistbot">
-                          </tbody>
-                        </table>
-                    </div>
+    <div id="joingame-modal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" stonejs>Join Game</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover">
+                        <tbody id="seeklist">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-header">
+                    <h4 class="modal-title" stonejs>Join AI Game</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover">
+                        <tbody id="seeklistbot">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="watchgame-modal" class="modal fade">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Watch Game</h4>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table table-hover table-condensed">
-                          <tbody id="gamelist">
-                          </tbody>
-                        </table>
-                    </div>
+    <div id="watchgame-modal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" stonejs>Watch Game</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover table-condensed">
+                        <tbody id="gamelist">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="zoomcontrols">
-            <a href="#" onclick="zoom(true)">
-                <i class="fa fa-search-minus fa-2x" aria-hidden="true"></i>
-            </a>
-            <a href="#" onclick="zoom(false)">
-                <i class="fa fa-search-plus fa-2x" aria-hidden="true"></i>
-            </a>
-            <a href="#" onclick="tour(true)">
-                <i class="fa fa-bus fa-2x" aria-hidden="true"></i>
-            </a>
-        </div>
+    <div id="zoomcontrols">
+        <a href="#" onclick="zoom(true)">
+            <i class="fa fa-search-minus fa-2x" aria-hidden="true"></i>
+        </a>
+        <a href="#" onclick="zoom(false)">
+            <i class="fa fa-search-plus fa-2x" aria-hidden="true"></i>
+        </a>
+        <a href="#" onclick="tour(true)">
+            <i class="fa fa-bus fa-2x" aria-hidden="true"></i>
+        </a>
+    </div>
 
-        <script src="js/main.js?v=2"></script>
-    </body>
+    <script src="js/main.js?v=2"></script>
+</body>
+
 </html>
