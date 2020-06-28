@@ -39,13 +39,14 @@ var server = {
             var blob = e.data;
             var reader = new FileReader();
             reader.onload = function (event) {
-                var res = reader.result.split("\n");
+                var res_text = new TextDecoder("utf-8").decode(reader.result);
+                var res = res_text.split("\n");
                 var i;
                 for (i = 0; i < res.length - 1; i++) {
                     server.msg(res[i]);
                 }
             };
-            reader.readAsText(blob);
+            reader.readAsArrayBuffer(blob);
         };
         this.connection.onopen = function (e) {
         };
@@ -676,8 +677,10 @@ var server = {
         this.send('LeaveRoom ' + room);
     },
     send: function (e) {
+        var binary_data = (new TextEncoder()).encode(e + "\n");
+
         if (this.connection && this.connection.readyState === 1)
-            this.connection.send(e + "\n");
+            this.connection.send(binary_data);
         else
             this.error("You are not logged on to the server");
     },
