@@ -21,14 +21,10 @@ var server = {
             localStorage.removeItem('token');
             return;
         }
-        var url = 'www.playtak.com/ws';
+        var url = window.location.host + '/ws';
         var proto = 'wss://';
-        if (window.location.protocol === "http:" && window.location.host.indexOf("playtak") === -1){
+        if (window.location.protocol === "http:") {
             proto = 'ws://';
-            url = window.location.host;
-        }
-        else if (window.location.protocol === "https:" && window.location.host.indexOf("playtak") === -1){
-            url = window.location.host;
         }
         this.connection = new WebSocket(proto+url, "binary");
         board.server = this;
