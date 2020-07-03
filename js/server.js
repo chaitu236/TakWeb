@@ -114,7 +114,7 @@ var server = {
         var retyped_email = $('#retype-register-email').val();
 
         if (email !== retyped_email) {
-          alert("danger", "Email address doesn't match");
+          alert("danger", "Email addresses don't match");
           return;
         }
 
@@ -657,6 +657,20 @@ var server = {
         else if (e.startsWith("Reset token sent")) {
             alert("success", "Token sent to your email");
             $("#resetpwd-ul li:eq(1) a").tab('show');
+        }
+        //Wrong token
+        else if (e.startsWith("Wrong token")) {
+            alert("danger", "Wrong token. Try again");
+        }
+        //Password is changed
+        else if (e.startsWith("Password is changed")) {
+            alert("danger", "Password changed. Login with your new password.");
+            $('#resetpwd-modal').modal('hide');
+
+            var name = $('#resetpwd-username').val();
+            var pass = $('#reset-new-pwd').val();
+
+            this.send("Login " + name + " " + pass);
         }
     },
     chat: function (type, name, msg) {
